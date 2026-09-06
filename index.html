@@ -301,6 +301,14 @@
     border-color: var(--gold);
     font-weight: 500;
   }
+  .envelope-btn.send:disabled{ opacity: 0.6; cursor: default; }
+
+  .envelope-status{
+    margin-top: 12px;
+    font-size: 13px;
+    min-height: 18px;
+    color: var(--gold);
+  }
 
   @media (max-width: 640px){
     .card-btn{ width: 190px; height: 140px; box-shadow: none; }
@@ -356,6 +364,7 @@
         <button class="envelope-btn" id="envelopeCancelBtn">закрыть</button>
         <button class="envelope-btn send" id="envelopeSendBtn">отправить</button>
       </div>
+      <div class="envelope-status" id="envelopeStatus"></div>
     </div>
   </div>
 
@@ -562,6 +571,7 @@ const envelopeOpenBtn = document.getElementById('envelopeOpenBtn');
 const envelopeCancelBtn = document.getElementById('envelopeCancelBtn');
 const envelopeSendBtn = document.getElementById('envelopeSendBtn');
 const envelopeText = document.getElementById('envelopeText');
+const envelopeStatus = document.getElementById('envelopeStatus');
 
 envelopeOpenBtn.addEventListener('click', () => {
   envelopeLayer.classList.add('show');
@@ -576,12 +586,36 @@ envelopeLayer.addEventListener('click', (e) => {
   if(e.target === envelopeLayer) envelopeLayer.classList.remove('show');
 });
 
-envelopeSendBtn.addEventListener('click', () => {
+envelopeSendBtn.addEventListener('click', async () => {
   const msg = envelopeText.value.trim();
   if(!msg) { envelopeText.focus(); return; }
-  const subject = encodeURIComponent('for keepa — ответ');
-  const body = encodeURIComponent(msg);
-  window.location.href = `mailto:akazbekov09@gmail.com?subject=${subject}&body=${body}`;
+
+  envelopeSendBtn.disabled = true;
+  envelopeSendBtn.textContent = 'отправка...';
+  envelopeStatus.textContent = '';
+
+  try{
+    const res = await fetch('https://formsubmit.co/ajax/akazbekov09@gmail.com', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
+      body: JSON.stringify({
+        _subject: 'for keepa — ответ',
+        message: msg
+      })
+    });
+    if(res.ok){
+      envelopeStatus.textContent = 'отправлено 💌';
+      envelopeText.value = '';
+      setTimeout(() => { envelopeLayer.classList.remove('show'); envelopeStatus.textContent=''; }, 1400);
+    } else {
+      envelopeStatus.textContent = 'не получилось, попробуй ещё раз';
+    }
+  } catch(err){
+    envelopeStatus.textContent = 'не получилось, попробуй ещё раз';
+  } finally {
+    envelopeSendBtn.disabled = false;
+    envelopeSendBtn.textContent = 'отправить';
+  }
 });
 </script>
 
