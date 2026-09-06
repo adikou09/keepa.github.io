@@ -132,12 +132,13 @@
     transform: scale(0.15) rotate(0deg);
     will-change: transform, opacity;
   }
-  .stage.open .fbloom{ animation: fly 1.5s cubic-bezier(.16,.9,.3,1) forwards; }
+  .stage.open .fbloom{ animation: fly 1.9s cubic-bezier(.16,.9,.3,1) forwards; }
 
   @keyframes fly{
     0%{ opacity: 0; transform: translate(0,0) scale(0.15) rotate(0deg); }
-    50%{ opacity: 1; }
-    100%{ opacity: 0.96; transform: translate(var(--tx), var(--ty)) scale(var(--ts)) rotate(var(--tr)); }
+    45%{ opacity: 1; }
+    75%{ opacity: 0.9; }
+    100%{ opacity: 0; transform: translate(var(--tx), var(--ty)) scale(calc(var(--ts) * 0.7)) rotate(var(--tr)); }
   }
 
   .glint{
