@@ -130,6 +130,7 @@
     opacity: 0;
     left: 50%; top: 46%;
     transform: scale(0.15) rotate(0deg);
+    will-change: transform, opacity;
   }
   .stage.open .fbloom{ animation: fly 1.5s cubic-bezier(.16,.9,.3,1) forwards; }
 
@@ -146,7 +147,7 @@
     border-radius: 50%;
     background: var(--gold);
     opacity: 0;
-    box-shadow: 0 0 8px 2px rgba(224,179,116,0.7);
+    will-change: transform, opacity;
   }
   .stage.open .glint{ animation: flyGlint 1.3s ease-out forwards; }
   @keyframes flyGlint{
@@ -206,6 +207,13 @@
     transition: opacity 1s ease 2.3s;
   }
   .stage.open .rule{ opacity: 0.8; }
+
+  @media (max-width: 420px){
+    .frame{ display: none; }
+    .damask{ opacity: 0.3; }
+    .card-btn{ width: 190px; height: 140px; }
+    .card-btn svg{ width: 76px; height: 76px; }
+  }
 </style>
 </head>
 <body>
@@ -260,7 +268,6 @@ const PALETTES = {
   blush:  ["#c15a4a", "#e88a72", "#f4cdb8", "#f6e8da"],
 };
 
-// build one ranunculus bloom as an SVG <g>, returns markup string
 function bloomMarkup(paletteKey, seed){
   const p = PALETTES[paletteKey];
   const rings = [
@@ -290,20 +297,32 @@ function bloomMarkup(paletteKey, seed){
   return s;
 }
 
-function makeBloomEl(paletteKey, seed, size){
-  const g = document.createElementNS(NS,'g');
-  g.innerHTML = bloomMarkup(paletteKey, seed);
-  return g;
+function burstBloomMarkup(paletteKey, seed){
+  const p = PALETTES[paletteKey];
+  const rings = [
+    { count: 8, rIn: 2, rOut: 34, len: 28, wid: 15, color: p[3] },
+    { count: 7, rIn: 3, rOut: 18, len: 18, wid: 10, color: p[1] },
+  ];
+  let s = '';
+  rings.forEach((ring, ri) => {
+    const offset = (seed + ri*11) % 360;
+    for(let i=0;i<ring.count;i++){
+      const angle = (360/ring.count)*i + offset;
+      s += `<path transform="rotate(${angle})" d="M0,${-ring.rIn} C ${-ring.wid},${-ring.rIn-ring.len*0.45} ${-ring.wid*0.8},${-ring.rIn-ring.len} 0,${-ring.rIn-ring.len-4}
+               C ${ring.wid*0.8},${-ring.rIn-ring.len} ${ring.wid},${-ring.rIn-ring.len*0.45} 0,${-ring.rIn}Z"
+            fill="${ring.color}" opacity="0.97"/>`;
+    }
+  });
+  s += `<circle r="6" fill="${p[0]}"/>`;
+  return s;
 }
 
-// ---- hero flower ----
 const hero = document.getElementById('heroFlower');
 const heroG = document.createElementNS(NS,'g');
 heroG.setAttribute('transform','translate(50,54)');
 heroG.innerHTML = bloomMarkup('coral', 12);
 hero.appendChild(heroG);
 
-// ---- bouquet ----
 const bq = document.getElementById('bouquetSVG');
 bq.innerHTML = `
   <defs>
@@ -313,7 +332,6 @@ bq.innerHTML = `
     </linearGradient>
   </defs>
 
-  <!-- flanking scrollwork -->
   <g stroke="#e0b374" stroke-width="1" fill="none" opacity="0.5">
     <path d="M46 210 C 16 200, 14 168, 38 158 C 18 152, 20 122, 46 122"/>
     <path d="M46 122 C 38 132, 52 142, 62 134"/>
@@ -323,13 +341,11 @@ bq.innerHTML = `
   <circle cx="38" cy="158" r="2" fill="#e0b374" opacity="0.65"/>
   <circle cx="282" cy="158" r="2" fill="#e0b374" opacity="0.65"/>
 
-  <!-- paper wrap cone -->
   <path d="M110 268 L160 355 L210 268 Z" fill="url(#wrapGrad)" stroke="#e0b374" stroke-opacity="0.45" stroke-width="1"/>
   <path d="M122 268 L160 338 L198 268 Z" fill="#2a0810" opacity="0.28"/>
   <path d="M134 268 L160 320 L186 268 Z" fill="#e0b374" opacity="0.12"/>
   <path d="M112 275 Q160 292 208 275" stroke="#e0b374" stroke-width="0.8" fill="none" opacity="0.5"/>
 
-  <!-- stems converging -->
   <g stroke="#5c7a52" stroke-width="2.2" fill="none" opacity="0.9">
     <path d="M160 268 L100 165"/>
     <path d="M160 268 L130 150"/>
@@ -340,7 +356,6 @@ bq.innerHTML = `
     <path d="M160 268 L202 195"/>
   </g>
 
-  <!-- leaves -->
   <path d="M118 240 Q86 232 80 206 Q110 210 118 240Z" fill="#3d5636" opacity="0.9"/>
   <path d="M202 240 Q234 232 240 206 Q210 210 202 240Z" fill="#5c7a52" opacity="0.9"/>
   <path d="M138 255 Q116 250 112 230 Q136 232 138 255Z" fill="#4f6a4a" opacity="0.85"/>
@@ -348,21 +363,17 @@ bq.innerHTML = `
   <circle cx="96" cy="200" r="2.4" fill="#e0b374" opacity="0.6"/>
   <circle cx="224" cy="200" r="2.4" fill="#e0b374" opacity="0.6"/>
 
-  <!-- back layer blooms (smaller, softer) -->
   <g transform="translate(100,150) scale(0.55) rotate(-14)" data-pal="blush" data-seed="22"></g>
   <g transform="translate(220,150) scale(0.55) rotate(14)" data-pal="blush" data-seed="61"></g>
   <g transform="translate(160,118) scale(0.6) rotate(4)" data-pal="gold" data-seed="9"></g>
 
-  <!-- middle layer -->
   <g transform="translate(128,148) scale(0.85) rotate(-10)" data-pal="coral" data-seed="33"></g>
   <g transform="translate(192,148) scale(0.85) rotate(10)" data-pal="gold" data-seed="77"></g>
   <g transform="translate(118,192) scale(0.7) rotate(-6)" data-pal="gold" data-seed="45"></g>
   <g transform="translate(202,192) scale(0.7) rotate(6)" data-pal="coral" data-seed="88"></g>
 
-  <!-- front hero bloom, largest, centered -->
   <g transform="translate(160,168) scale(1.25)" data-pal="coral" data-seed="3"></g>
 
-  <!-- ribbon bow at tie -->
   <path d="M130 266 Q160 246 190 266" stroke="#e0b374" stroke-width="4" fill="none"/>
   <path d="M112 258 Q140 240 160 258 Q180 240 208 258" stroke="#e0b374" stroke-width="4" fill="none" opacity="0.85"/>
   <circle cx="160" cy="258" r="6" fill="#b8823f"/>
@@ -374,14 +385,14 @@ bq.querySelectorAll('g[data-pal]').forEach(g => {
   g.innerHTML = bloomMarkup(g.getAttribute('data-pal'), Number(g.getAttribute('data-seed')));
 });
 
-// ---- interaction ----
 const stage = document.getElementById('stage');
 const btn = document.getElementById('cardBtn');
 const burst = document.getElementById('burst');
 const palettes = Object.keys(PALETTES);
 
 function spawnFlowers(){
-  const count = 46;
+  const mobile = window.innerWidth < 640;
+  const count = mobile ? 16 : 46;
   for(let i=0;i<count;i++){
     const wrap = document.createElement('div');
     wrap.className = 'fbloom';
@@ -404,24 +415,25 @@ function spawnFlowers(){
     const g = document.createElementNS(NS,'g');
     g.setAttribute('transform','translate(50,50)');
     const pal = palettes[i % palettes.length];
-    g.innerHTML = bloomMarkup(pal, i*17);
+    g.innerHTML = burstBloomMarkup(pal, i*17);
     svg.appendChild(g);
     wrap.appendChild(svg);
     burst.appendChild(wrap);
 
-    // glints
-    const glint = document.createElement('div');
-    glint.className = 'glint';
-    glint.style.setProperty('--tx', (tx*1.2)+'px');
-    glint.style.setProperty('--ty', (ty*1.2)+'px');
-    glint.style.animationDelay = (Math.random()*0.5)+'s';
-    burst.appendChild(glint);
+    if(!mobile || i % 2 === 0){
+      const glint = document.createElement('div');
+      glint.className = 'glint';
+      glint.style.setProperty('--tx', (tx*1.2)+'px');
+      glint.style.setProperty('--ty', (ty*1.2)+'px');
+      glint.style.animationDelay = (Math.random()*0.5)+'s';
+      burst.appendChild(glint);
+    }
   }
 }
 
-// ambient sparkles before open
 const stageEl = document.getElementById('stage');
-for(let i=0;i<34;i++){
+const sparkleCount = window.innerWidth < 640 ? 14 : 34;
+for(let i=0;i<sparkleCount;i++){
   const sp = document.createElement('div');
   sp.className = 'sparkle';
   const size = 2 + Math.random()*3;
