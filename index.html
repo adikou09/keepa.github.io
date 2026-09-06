@@ -201,6 +201,107 @@
   }
   .stage.open .rule{ opacity: 0.8; }
 
+  /* ---------- ENVELOPE PROMPT ---------- */
+  .next-hint{
+    margin-top: 22px;
+    font-size: 11px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0;
+    cursor: pointer;
+    background: none;
+    border: 1px solid var(--gold-deep);
+    border-radius: 20px;
+    padding: 10px 20px;
+    transition: opacity 1s ease 2.6s, background 0.3s ease;
+    -webkit-tap-highlight-color: transparent;
+  }
+  .stage.open .next-hint{ opacity: 0.85; }
+  .next-hint:active{ background: rgba(224,179,116,0.12); }
+
+  .envelope-layer{
+    position: fixed;
+    inset: 0;
+    z-index: 40;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    background: rgba(20,6,10,0.55);
+    opacity: 0;
+    pointer-events: none;
+    transition: opacity 0.4s ease;
+  }
+  .envelope-layer.show{ opacity: 1; pointer-events: auto; }
+
+  .envelope-card{
+    width: 100%;
+    max-width: 380px;
+    background: linear-gradient(180deg, rgba(246,232,218,0.07), rgba(246,232,218,0.02));
+    border: 1px solid var(--gold-deep);
+    border-radius: 8px;
+    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
+    padding: 28px 24px;
+    text-align: center;
+    transform: translateY(16px) scale(0.97);
+    transition: transform 0.4s cubic-bezier(.19,1,.22,1);
+  }
+  .envelope-layer.show .envelope-card{ transform: translateY(0) scale(1); }
+
+  .envelope-icon{ width: 64px; height: 64px; margin: 0 auto 14px; display: block; }
+
+  .envelope-title{
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-size: 22px;
+    color: var(--gold);
+    margin: 0 0 18px;
+  }
+
+  .envelope-textarea{
+    width: 100%;
+    min-height: 110px;
+    background: rgba(0,0,0,0.2);
+    border: 1px solid var(--gold-deep);
+    border-radius: 6px;
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    font-size: 15px;
+    padding: 12px;
+    resize: vertical;
+    box-sizing: border-box;
+    outline: none;
+  }
+  .envelope-textarea::placeholder{ color: rgba(246,232,218,0.4); }
+
+  .envelope-actions{
+    display: flex;
+    gap: 10px;
+    margin-top: 16px;
+  }
+
+  .envelope-btn{
+    flex: 1;
+    padding: 12px;
+    border-radius: 6px;
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    cursor: pointer;
+    -webkit-tap-highlight-color: transparent;
+    border: 1px solid var(--gold-deep);
+    background: none;
+    color: var(--cream);
+  }
+  .envelope-btn.send{
+    background: var(--gold);
+    color: #2a0810;
+    border-color: var(--gold);
+    font-weight: 500;
+  }
+
   @media (max-width: 640px){
     .card-btn{ width: 190px; height: 140px; box-shadow: none; }
     .card-btn svg{ width: 76px; height: 76px; filter: none; animation: none; }
@@ -238,6 +339,24 @@
 
   <div class="bouquet-wrap">
     <svg class="bouquet" id="bouquetSVG" viewBox="10 60 300 320" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+    <button class="next-hint" id="envelopeOpenBtn">написать в ответ</button>
+  </div>
+
+  <div class="envelope-layer" id="envelopeLayer">
+    <div class="envelope-card">
+      <svg class="envelope-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <rect x="10" y="24" width="80" height="56" rx="4" fill="none" stroke="#e0b374" stroke-width="2.5"/>
+        <path d="M12 26 L50 58 L88 26" fill="none" stroke="#e0b374" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
+        <path d="M12 78 L38 50" fill="none" stroke="#e0b374" stroke-width="1.6" opacity="0.6"/>
+        <path d="M88 78 L62 50" fill="none" stroke="#e0b374" stroke-width="1.6" opacity="0.6"/>
+      </svg>
+      <p class="envelope-title">keepa отвечает</p>
+      <textarea class="envelope-textarea" id="envelopeText" placeholder="напиши что хочешь..."></textarea>
+      <div class="envelope-actions">
+        <button class="envelope-btn" id="envelopeCancelBtn">закрыть</button>
+        <button class="envelope-btn send" id="envelopeSendBtn">отправить</button>
+      </div>
+    </div>
   </div>
 
 </div>
@@ -435,6 +554,34 @@ if(!isMobile){
 btn.addEventListener('click', () => {
   spawnFlowers();
   stage.classList.add('open');
+});
+
+// ---- envelope ----
+const envelopeLayer = document.getElementById('envelopeLayer');
+const envelopeOpenBtn = document.getElementById('envelopeOpenBtn');
+const envelopeCancelBtn = document.getElementById('envelopeCancelBtn');
+const envelopeSendBtn = document.getElementById('envelopeSendBtn');
+const envelopeText = document.getElementById('envelopeText');
+
+envelopeOpenBtn.addEventListener('click', () => {
+  envelopeLayer.classList.add('show');
+  envelopeText.focus();
+});
+
+envelopeCancelBtn.addEventListener('click', () => {
+  envelopeLayer.classList.remove('show');
+});
+
+envelopeLayer.addEventListener('click', (e) => {
+  if(e.target === envelopeLayer) envelopeLayer.classList.remove('show');
+});
+
+envelopeSendBtn.addEventListener('click', () => {
+  const msg = envelopeText.value.trim();
+  if(!msg) { envelopeText.focus(); return; }
+  const subject = encodeURIComponent('for keepa — ответ');
+  const body = encodeURIComponent(msg);
+  window.location.href = `mailto:akazbekov09@gmail.com?subject=${subject}&body=${body}`;
 });
 </script>
 
