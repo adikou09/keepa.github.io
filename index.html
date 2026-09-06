@@ -1,0 +1,444 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>for keepa</title>
+<style>
+  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Jost:wght@300;400;500&display=swap');
+
+  :root{
+    --bg1: #4a1420;
+    --bg2: #2a0810;
+    --bg3: #1a0509;
+    --cream: #f6e8da;
+    --coral: #ea9d84;
+    --coral-soft: #e2765e;
+    --coral-deep: #ab4030;
+    --gold: #e0b374;
+    --gold-deep: #b8823f;
+    --blush: #f4cdb8;
+    --leaf: #5c7a52;
+    --leaf-deep: #3d5636;
+  }
+
+  *{ box-sizing: border-box; }
+
+  html, body{
+    margin:0;
+    height:100%;
+    background:
+      radial-gradient(circle at 30% 20%, rgba(224,179,116,0.10) 0%, transparent 45%),
+      radial-gradient(circle at 75% 75%, rgba(171,64,48,0.18) 0%, transparent 50%),
+      radial-gradient(circle at 50% 40%, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
+    color: var(--cream);
+    font-family: 'Jost', sans-serif;
+    overflow: hidden;
+  }
+
+  .stage{
+    height: 100svh;
+    width: 100vw;
+    position: relative;
+  }
+
+  .sparkle{
+    position: absolute;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0.5;
+    animation: twinkle 3.5s ease-in-out infinite;
+  }
+  @keyframes twinkle{
+    0%,100%{ opacity: 0.15; transform: scale(0.7); }
+    50%{ opacity: 0.75; transform: scale(1.2); }
+  }
+
+  .damask{
+    position: absolute;
+    inset: 0;
+    z-index: 1;
+    opacity: 0.5;
+    pointer-events: none;
+  }
+
+  .frame{
+    position: absolute;
+    inset: 14px;
+    z-index: 25;
+    pointer-events: none;
+  }
+  .frame svg{ width: 100%; height: 100%; }
+  .frame .corner{ opacity: 0.55; }
+
+  /* ---------- CLOSED CARD ---------- */
+  .card-wrap{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 20;
+    transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
+  }
+
+  .card-btn{
+    background: radial-gradient(circle at 50% 40%, rgba(224,179,116,0.10), transparent 70%);
+    border: 1px solid var(--gold-deep);
+    box-shadow: 0 0 0 1px rgba(224,179,116,0.15), 0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(224,179,116,0.06);
+    border-radius: 6px;
+    width: 240px;
+    height: 170px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    -webkit-tap-highlight-color: transparent;
+    touch-action: manipulation;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+  }
+  .card-btn:active{ transform: scale(0.96); }
+  .card-btn svg{ width: 92px; height: 92px; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.4)); animation: idle 3.6s ease-in-out infinite; }
+
+  @keyframes idle{
+    0%,100%{ transform: scale(1) rotate(0deg); }
+    50%{ transform: scale(1.06) rotate(-2deg); }
+  }
+
+  .hint{
+    margin-top: 24px;
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.7;
+  }
+
+  .stage.open .card-wrap{
+    opacity: 0;
+    transform: scale(0.85);
+    pointer-events: none;
+  }
+
+  /* ---------- BURSTING FLOWERS ---------- */
+  .burst{ position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+
+  .fbloom{
+    position: absolute;
+    opacity: 0;
+    left: 50%; top: 46%;
+    transform: scale(0.15) rotate(0deg);
+  }
+  .stage.open .fbloom{ animation: fly 1.5s cubic-bezier(.16,.9,.3,1) forwards; }
+
+  @keyframes fly{
+    0%{ opacity: 0; transform: translate(0,0) scale(0.15) rotate(0deg); }
+    50%{ opacity: 1; }
+    100%{ opacity: 0.96; transform: translate(var(--tx), var(--ty)) scale(var(--ts)) rotate(var(--tr)); }
+  }
+
+  .glint{
+    position: absolute;
+    left: 50%; top: 46%;
+    width: 6px; height: 6px;
+    border-radius: 50%;
+    background: var(--gold);
+    opacity: 0;
+    box-shadow: 0 0 8px 2px rgba(224,179,116,0.7);
+  }
+  .stage.open .glint{ animation: flyGlint 1.3s ease-out forwards; }
+  @keyframes flyGlint{
+    0%{ opacity: 0; transform: translate(0,0) scale(0.3); }
+    30%{ opacity: 1; }
+    100%{ opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.4); }
+  }
+
+  /* ---------- BOUQUET ---------- */
+  .bouquet-wrap{
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    z-index: 15;
+    opacity: 0;
+    transition: opacity 1s ease 1.15s;
+  }
+  .stage.open .bouquet-wrap{ opacity: 1; }
+
+  .bouquet{
+    width: min(88vw, 380px);
+    height: auto;
+    filter: drop-shadow(0 24px 50px rgba(0,0,0,0.55));
+    opacity: 0;
+    transform: translateY(22px) scale(0.94);
+    transition: opacity 1s ease 1.2s, transform 1s cubic-bezier(.19,1,.22,1) 1.2s;
+  }
+  .stage.open .bouquet{ opacity: 1; transform: translateY(0) scale(1); }
+
+  .caption{
+    margin-top: 6px;
+    font-family: 'Fraunces', serif;
+    font-style: italic;
+    font-weight: 600;
+    font-size: clamp(34px, 9vw, 56px);
+    background: linear-gradient(180deg, var(--blush), var(--gold) 60%, var(--gold-deep));
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    filter: drop-shadow(0 2px 12px rgba(224,179,116,0.25));
+    opacity: 0;
+    transform: translateY(10px);
+    transition: opacity 0.9s ease 1.9s, transform 0.9s ease 1.9s;
+  }
+  .stage.open .caption{ opacity: 1; transform: translateY(0); }
+
+  .rule{
+    width: 60px;
+    height: 1px;
+    background: linear-gradient(90deg, transparent, var(--gold), transparent);
+    margin: 14px auto 0;
+    opacity: 0;
+    transition: opacity 1s ease 2.3s;
+  }
+  .stage.open .rule{ opacity: 0.8; }
+</style>
+</head>
+<body>
+
+<div class="stage" id="stage">
+
+  <svg class="damask" preserveAspectRatio="xMidYMid slice" viewBox="0 0 400 400" xmlns="http://www.w3.org/2000/svg">
+    <defs>
+      <pattern id="damaskPattern" width="100" height="100" patternUnits="userSpaceOnUse">
+        <g stroke="#e0b374" stroke-width="0.6" fill="none" opacity="0.5">
+          <path d="M50 8 C70 20 78 40 50 55 C22 40 30 20 50 8Z"/>
+          <path d="M50 92 C70 80 78 60 50 45 C22 60 30 80 50 92Z"/>
+          <circle cx="50" cy="50" r="3"/>
+          <path d="M0 50 Q25 35 50 50 Q75 65 100 50" opacity="0.35"/>
+        </g>
+      </pattern>
+    </defs>
+    <rect width="400" height="400" fill="url(#damaskPattern)"/>
+  </svg>
+
+  <div class="frame">
+    <svg viewBox="0 0 400 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+      <g stroke="#e0b374" stroke-width="1.4" fill="none" class="corner">
+        <path d="M4 60 Q4 4 60 4 M4 30 Q20 30 20 46 M30 4 Q30 20 46 20"/>
+        <path d="M396 60 Q396 4 340 4 M396 30 Q380 30 380 46 M370 4 Q370 20 354 20"/>
+        <path d="M4 640 Q4 696 60 696 M4 670 Q20 670 20 654 M30 696 Q30 680 46 680"/>
+        <path d="M396 640 Q396 696 340 696 M396 670 Q380 670 380 654 M370 696 Q370 680 354 680"/>
+      </g>
+      <rect x="14" y="14" width="372" height="672" rx="4" stroke="#e0b374" stroke-width="0.7" fill="none" opacity="0.35"/>
+    </svg>
+  </div>
+
+  <div class="card-wrap">
+    <button class="card-btn" id="cardBtn" aria-label="open">
+      <svg id="heroFlower" viewBox="0 0 100 100"></svg>
+    </button>
+  </div>
+
+  <div class="burst" id="burst"></div>
+
+  <div class="bouquet-wrap">
+    <svg class="bouquet" id="bouquetSVG" viewBox="10 60 300 320" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+  </div>
+
+</div>
+
+<script>
+const NS = "http://www.w3.org/2000/svg";
+const PALETTES = {
+  coral:  ["#ab4030", "#e2765e", "#ea9d84", "#f4cdb8"],
+  gold:   ["#b8823f", "#e0b374", "#f0cf9e", "#f6e8da"],
+  blush:  ["#c15a4a", "#e88a72", "#f4cdb8", "#f6e8da"],
+};
+
+// build one ranunculus bloom as an SVG <g>, returns markup string
+function bloomMarkup(paletteKey, seed){
+  const p = PALETTES[paletteKey];
+  const rings = [
+    { count: 13, rIn: 2,  rOut: 40, len: 34, wid: 16,   color: p[3] },
+    { count: 12, rIn: 3,  rOut: 30, len: 28, wid: 14,   color: p[2] },
+    { count: 10, rIn: 3,  rOut: 20, len: 21, wid: 11.5, color: p[1] },
+    { count: 9,  rIn: 3,  rOut: 12, len: 14, wid: 8,    color: p[0] },
+    { count: 7,  rIn: 2,  rOut: 6,  len: 8,  wid: 5,    color: p[1] },
+  ];
+  let s = '';
+  rings.forEach((ring, ri) => {
+    const offset = (seed + ri*11) % 360;
+    for(let i=0;i<ring.count;i++){
+      const angle = (360/ring.count)*i + offset;
+      s += `<g transform="rotate(${angle})">
+        <path d="M0,${-ring.rIn} C ${-ring.wid},${-ring.rIn-ring.len*0.45} ${-ring.wid*0.8},${-ring.rIn-ring.len} 0,${-ring.rIn-ring.len-4}
+                 C ${ring.wid*0.8},${-ring.rIn-ring.len} ${ring.wid},${-ring.rIn-ring.len*0.45} 0,${-ring.rIn}Z"
+              fill="${ring.color}" opacity="0.97"/>
+        <path d="M0,${-ring.rIn-2} C ${-ring.wid*0.35},${-ring.rIn-ring.len*0.5} ${-ring.wid*0.28},${-ring.rIn-ring.len*0.85} 0,${-ring.rIn-ring.len*0.95}
+                 C ${ring.wid*0.28},${-ring.rIn-ring.len*0.85} ${ring.wid*0.35},${-ring.rIn-ring.len*0.5} 0,${-ring.rIn-2}Z"
+              fill="#fff6ec" opacity="0.16"/>
+        <line x1="0" y1="${-ring.rIn-3}" x2="0" y2="${-ring.rIn-ring.len-2}" stroke="#3d2418" stroke-width="0.4" opacity="0.18"/>
+      </g>`;
+    }
+  });
+  s += `<circle r="7" fill="${p[0]}"/><circle r="4" fill="${p[1]}" opacity="0.9"/><circle r="1.6" fill="#3d2418" opacity="0.7"/>`;
+  return s;
+}
+
+function makeBloomEl(paletteKey, seed, size){
+  const g = document.createElementNS(NS,'g');
+  g.innerHTML = bloomMarkup(paletteKey, seed);
+  return g;
+}
+
+// ---- hero flower ----
+const hero = document.getElementById('heroFlower');
+const heroG = document.createElementNS(NS,'g');
+heroG.setAttribute('transform','translate(50,54)');
+heroG.innerHTML = bloomMarkup('coral', 12);
+hero.appendChild(heroG);
+
+// ---- bouquet ----
+const bq = document.getElementById('bouquetSVG');
+bq.innerHTML = `
+  <defs>
+    <linearGradient id="wrapGrad" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#f4cdb8" stop-opacity="0.22"/>
+      <stop offset="100%" stop-color="#ab4030" stop-opacity="0.35"/>
+    </linearGradient>
+  </defs>
+
+  <!-- flanking scrollwork -->
+  <g stroke="#e0b374" stroke-width="1" fill="none" opacity="0.5">
+    <path d="M46 210 C 16 200, 14 168, 38 158 C 18 152, 20 122, 46 122"/>
+    <path d="M46 122 C 38 132, 52 142, 62 134"/>
+    <path d="M274 210 C 304 200, 306 168, 282 158 C 302 152, 300 122, 274 122"/>
+    <path d="M274 122 C 282 132, 268 142, 258 134"/>
+  </g>
+  <circle cx="38" cy="158" r="2" fill="#e0b374" opacity="0.65"/>
+  <circle cx="282" cy="158" r="2" fill="#e0b374" opacity="0.65"/>
+
+  <!-- paper wrap cone -->
+  <path d="M110 268 L160 355 L210 268 Z" fill="url(#wrapGrad)" stroke="#e0b374" stroke-opacity="0.45" stroke-width="1"/>
+  <path d="M122 268 L160 338 L198 268 Z" fill="#2a0810" opacity="0.28"/>
+  <path d="M134 268 L160 320 L186 268 Z" fill="#e0b374" opacity="0.12"/>
+  <path d="M112 275 Q160 292 208 275" stroke="#e0b374" stroke-width="0.8" fill="none" opacity="0.5"/>
+
+  <!-- stems converging -->
+  <g stroke="#5c7a52" stroke-width="2.2" fill="none" opacity="0.9">
+    <path d="M160 268 L100 165"/>
+    <path d="M160 268 L130 150"/>
+    <path d="M160 268 L160 135"/>
+    <path d="M160 268 L190 150"/>
+    <path d="M160 268 L220 165"/>
+    <path d="M160 268 L118 195"/>
+    <path d="M160 268 L202 195"/>
+  </g>
+
+  <!-- leaves -->
+  <path d="M118 240 Q86 232 80 206 Q110 210 118 240Z" fill="#3d5636" opacity="0.9"/>
+  <path d="M202 240 Q234 232 240 206 Q210 210 202 240Z" fill="#5c7a52" opacity="0.9"/>
+  <path d="M138 255 Q116 250 112 230 Q136 232 138 255Z" fill="#4f6a4a" opacity="0.85"/>
+  <path d="M182 255 Q204 250 208 230 Q184 232 182 255Z" fill="#4f6a4a" opacity="0.85"/>
+  <circle cx="96" cy="200" r="2.4" fill="#e0b374" opacity="0.6"/>
+  <circle cx="224" cy="200" r="2.4" fill="#e0b374" opacity="0.6"/>
+
+  <!-- back layer blooms (smaller, softer) -->
+  <g transform="translate(100,150) scale(0.55) rotate(-14)" data-pal="blush" data-seed="22"></g>
+  <g transform="translate(220,150) scale(0.55) rotate(14)" data-pal="blush" data-seed="61"></g>
+  <g transform="translate(160,118) scale(0.6) rotate(4)" data-pal="gold" data-seed="9"></g>
+
+  <!-- middle layer -->
+  <g transform="translate(128,148) scale(0.85) rotate(-10)" data-pal="coral" data-seed="33"></g>
+  <g transform="translate(192,148) scale(0.85) rotate(10)" data-pal="gold" data-seed="77"></g>
+  <g transform="translate(118,192) scale(0.7) rotate(-6)" data-pal="gold" data-seed="45"></g>
+  <g transform="translate(202,192) scale(0.7) rotate(6)" data-pal="coral" data-seed="88"></g>
+
+  <!-- front hero bloom, largest, centered -->
+  <g transform="translate(160,168) scale(1.25)" data-pal="coral" data-seed="3"></g>
+
+  <!-- ribbon bow at tie -->
+  <path d="M130 266 Q160 246 190 266" stroke="#e0b374" stroke-width="4" fill="none"/>
+  <path d="M112 258 Q140 240 160 258 Q180 240 208 258" stroke="#e0b374" stroke-width="4" fill="none" opacity="0.85"/>
+  <circle cx="160" cy="258" r="6" fill="#b8823f"/>
+  <path d="M150 262 L138 288 L154 280 Z" fill="#e0b374" opacity="0.85"/>
+  <path d="M170 262 L182 288 L166 280 Z" fill="#e0b374" opacity="0.85"/>
+`;
+
+bq.querySelectorAll('g[data-pal]').forEach(g => {
+  g.innerHTML = bloomMarkup(g.getAttribute('data-pal'), Number(g.getAttribute('data-seed')));
+});
+
+// ---- interaction ----
+const stage = document.getElementById('stage');
+const btn = document.getElementById('cardBtn');
+const burst = document.getElementById('burst');
+const palettes = Object.keys(PALETTES);
+
+function spawnFlowers(){
+  const count = 46;
+  for(let i=0;i<count;i++){
+    const wrap = document.createElement('div');
+    wrap.className = 'fbloom';
+    const angle = Math.random()*Math.PI*2;
+    const dist = 90 + Math.random()*300;
+    const tx = Math.cos(angle)*dist;
+    const ty = Math.sin(angle)*dist*0.85 - 30;
+    const ts = 0.35 + Math.random()*0.55;
+    const tr = (Math.random()*360-180)+'deg';
+    wrap.style.setProperty('--tx', tx+'px');
+    wrap.style.setProperty('--ty', ty+'px');
+    wrap.style.setProperty('--ts', ts);
+    wrap.style.setProperty('--tr', tr);
+    wrap.style.animationDelay = (Math.random()*0.4)+'s';
+
+    const svg = document.createElementNS(NS,'svg');
+    svg.setAttribute('viewBox','0 0 100 100');
+    svg.setAttribute('width','70');
+    svg.setAttribute('height','70');
+    const g = document.createElementNS(NS,'g');
+    g.setAttribute('transform','translate(50,50)');
+    const pal = palettes[i % palettes.length];
+    g.innerHTML = bloomMarkup(pal, i*17);
+    svg.appendChild(g);
+    wrap.appendChild(svg);
+    burst.appendChild(wrap);
+
+    // glints
+    const glint = document.createElement('div');
+    glint.className = 'glint';
+    glint.style.setProperty('--tx', (tx*1.2)+'px');
+    glint.style.setProperty('--ty', (ty*1.2)+'px');
+    glint.style.animationDelay = (Math.random()*0.5)+'s';
+    burst.appendChild(glint);
+  }
+}
+
+// ambient sparkles before open
+const stageEl = document.getElementById('stage');
+for(let i=0;i<34;i++){
+  const sp = document.createElement('div');
+  sp.className = 'sparkle';
+  const size = 2 + Math.random()*3;
+  sp.style.width = size+'px';
+  sp.style.height = size+'px';
+  sp.style.left = (Math.random()*100)+'%';
+  sp.style.top = (Math.random()*100)+'%';
+  sp.style.animationDelay = (Math.random()*3.5)+'s';
+  sp.style.zIndex = 5;
+  stageEl.appendChild(sp);
+}
+
+btn.addEventListener('click', () => {
+  spawnFlowers();
+  stage.classList.add('open');
+});
+</script>
+
+</body>
+</html>
