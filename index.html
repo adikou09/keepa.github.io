@@ -208,11 +208,16 @@
   }
   .stage.open .rule{ opacity: 0.8; }
 
-  @media (max-width: 420px){
+  @media (max-width: 640px){
     .frame{ display: none; }
-    .damask{ opacity: 0.3; }
-    .card-btn{ width: 190px; height: 140px; }
-    .card-btn svg{ width: 76px; height: 76px; }
+    .damask{ display: none; }
+    .card-btn{ width: 190px; height: 140px; box-shadow: none; }
+    .card-btn svg{ width: 76px; height: 76px; filter: none; animation: none; }
+    .bouquet{ filter: none; }
+    .caption{ filter: none; }
+    .glint{ display: none; }
+    .sparkle{ display: none; }
+    html, body{ background: var(--bg2); }
   }
 </style>
 </head>
@@ -320,7 +325,8 @@ function burstBloomMarkup(paletteKey, seed){
 const hero = document.getElementById('heroFlower');
 const heroG = document.createElementNS(NS,'g');
 heroG.setAttribute('transform','translate(50,54)');
-heroG.innerHTML = bloomMarkup('coral', 12);
+const isMobile = window.innerWidth < 640;
+heroG.innerHTML = isMobile ? burstBloomMarkup('coral', 12) : bloomMarkup('coral', 12);
 hero.appendChild(heroG);
 
 const bq = document.getElementById('bouquetSVG');
@@ -382,7 +388,8 @@ bq.innerHTML = `
 `;
 
 bq.querySelectorAll('g[data-pal]').forEach(g => {
-  g.innerHTML = bloomMarkup(g.getAttribute('data-pal'), Number(g.getAttribute('data-seed')));
+  const fn = isMobile ? burstBloomMarkup : bloomMarkup;
+  g.innerHTML = fn(g.getAttribute('data-pal'), Number(g.getAttribute('data-seed')));
 });
 
 const stage = document.getElementById('stage');
@@ -392,7 +399,7 @@ const palettes = Object.keys(PALETTES);
 
 function spawnFlowers(){
   const mobile = window.innerWidth < 640;
-  const count = mobile ? 16 : 46;
+  const count = mobile ? 10 : 46;
   for(let i=0;i<count;i++){
     const wrap = document.createElement('div');
     wrap.className = 'fbloom';
@@ -420,7 +427,7 @@ function spawnFlowers(){
     wrap.appendChild(svg);
     burst.appendChild(wrap);
 
-    if(!mobile || i % 2 === 0){
+    if(!mobile){
       const glint = document.createElement('div');
       glint.className = 'glint';
       glint.style.setProperty('--tx', (tx*1.2)+'px');
@@ -432,18 +439,20 @@ function spawnFlowers(){
 }
 
 const stageEl = document.getElementById('stage');
-const sparkleCount = window.innerWidth < 640 ? 14 : 34;
-for(let i=0;i<sparkleCount;i++){
-  const sp = document.createElement('div');
-  sp.className = 'sparkle';
-  const size = 2 + Math.random()*3;
-  sp.style.width = size+'px';
-  sp.style.height = size+'px';
-  sp.style.left = (Math.random()*100)+'%';
-  sp.style.top = (Math.random()*100)+'%';
-  sp.style.animationDelay = (Math.random()*3.5)+'s';
-  sp.style.zIndex = 5;
-  stageEl.appendChild(sp);
+if(!isMobile){
+  const sparkleCount = 34;
+  for(let i=0;i<sparkleCount;i++){
+    const sp = document.createElement('div');
+    sp.className = 'sparkle';
+    const size = 2 + Math.random()*3;
+    sp.style.width = size+'px';
+    sp.style.height = size+'px';
+    sp.style.left = (Math.random()*100)+'%';
+    sp.style.top = (Math.random()*100)+'%';
+    sp.style.animationDelay = (Math.random()*3.5)+'s';
+    sp.style.zIndex = 5;
+    stageEl.appendChild(sp);
+  }
 }
 
 btn.addEventListener('click', () => {
