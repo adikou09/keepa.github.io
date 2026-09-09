@@ -201,6 +201,68 @@
   }
   .stage.open .rule{ opacity: 0.8; }
 
+  /* ---------- BEHAVIOR RATING ---------- */
+  .behavior-wrap{
+    margin-top: 18px;
+    opacity: 0;
+    transition: opacity 1s ease 2.45s;
+  }
+  .stage.open .behavior-wrap{ opacity: 1; }
+
+  .behavior-title{
+    font-size: 12px;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--gold);
+    opacity: 0.8;
+    margin: 0 0 12px;
+  }
+
+  .behavior-actions{
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+  }
+
+  .behavior-btn{
+    font-family: 'Jost', sans-serif;
+    font-size: 13px;
+    letter-spacing: 0.05em;
+    padding: 10px 18px;
+    border-radius: 20px;
+    -webkit-tap-highlight-color: transparent;
+  }
+
+  .behavior-btn.good{
+    background: var(--gold);
+    color: #2a0810;
+    border: 1px solid var(--gold);
+    font-weight: 500;
+    cursor: pointer;
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+  }
+  .behavior-btn.good:hover{ box-shadow: 0 6px 18px rgba(224,179,116,0.35); }
+  .behavior-btn.good:active{ transform: scale(0.95); }
+
+  .behavior-btn.bad{
+    background: none;
+    color: rgba(246,232,218,0.3);
+    border: 1px dashed rgba(246,232,218,0.25);
+    cursor: not-allowed;
+    pointer-events: none;
+    opacity: 0.5;
+  }
+
+  .behavior-status{
+    margin-top: 12px;
+    font-size: 13px;
+    min-height: 18px;
+    color: var(--gold);
+    opacity: 0;
+    transition: opacity 0.5s ease;
+  }
+  .behavior-status.show{ opacity: 1; }
+
   /* ---------- ENVELOPE PROMPT ---------- */
   .next-hint{
     margin-top: 22px;
@@ -347,6 +409,16 @@
 
   <div class="bouquet-wrap">
     <svg class="bouquet" id="bouquetSVG" viewBox="10 60 300 320" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
+
+    <div class="behavior-wrap">
+      <p class="behavior-title">какое у меня поведение?</p>
+      <div class="behavior-actions">
+        <button class="behavior-btn good" id="behaviorGood">идеальнейшее</button>
+        <button class="behavior-btn bad" id="behaviorBad" disabled tabindex="-1" aria-disabled="true">плохое</button>
+      </div>
+      <div class="behavior-status" id="behaviorStatus"></div>
+    </div>
+
     <button class="next-hint" id="envelopeOpenBtn">написать в ответ</button>
   </div>
 
@@ -563,6 +635,28 @@ if(!isMobile){
 btn.addEventListener('click', () => {
   spawnFlowers();
   stage.classList.add('open');
+});
+
+// ---- behavior rating (good is the only real option) ----
+const behaviorGood = document.getElementById('behaviorGood');
+const behaviorBad = document.getElementById('behaviorBad');
+const behaviorStatus = document.getElementById('behaviorStatus');
+
+const goodReplies = [
+  'конечно 💛',
+  'единственный правильный ответ',
+  'так и запишем: идеальнейшее',
+  'а как иначе'
+];
+
+behaviorGood.addEventListener('click', () => {
+  const msg = goodReplies[Math.floor(Math.random()*goodReplies.length)];
+  behaviorStatus.textContent = msg;
+  behaviorStatus.classList.add('show');
+});
+
+behaviorBad.addEventListener('click', (e) => {
+  e.preventDefault();
 });
 
 // ---- envelope ----
