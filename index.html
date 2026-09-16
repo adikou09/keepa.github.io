@@ -1,3 +1,4 @@
+```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
@@ -80,7 +81,7 @@ nav button.active {
 /* ===== MAIN ===== */
 
 main {
-    max-width: 1400px;
+    max-width: 1500px;
     margin: auto;
     padding: 25px;
 }
@@ -194,6 +195,58 @@ main {
     opacity: .85;
 }
 
+/* ===== LESSON TABS ===== */
+
+.lesson-tabs {
+    display: flex;
+    gap: 8px;
+    flex-wrap: wrap;
+    margin-bottom: 18px;
+}
+
+.lesson-tab {
+    border: 1px solid #c7ced6;
+    background: #f5f7f9;
+    border-radius: 8px;
+    padding: 12px 18px;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.lesson-tab:hover {
+    background: #e9eef3;
+}
+
+.lesson-tab.active {
+    background: #243447;
+    color: white;
+    border-color: #243447;
+}
+
+.lesson-tab strong {
+    display: block;
+    font-size: 15px;
+}
+
+.lesson-tab small {
+    display: block;
+    margin-top: 3px;
+}
+
+/* ===== LESSON INFO ===== */
+
+.lesson-info {
+    background: #edf4f8;
+    border: 1px solid #d5e2ea;
+    border-radius: 8px;
+    padding: 13px 15px;
+    margin-bottom: 15px;
+}
+
+.lesson-info strong {
+    font-size: 16px;
+}
+
 /* ===== JOURNAL ===== */
 
 .table-wrapper {
@@ -203,7 +256,7 @@ main {
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 850px;
+    min-width: 1050px;
 }
 
 th {
@@ -215,11 +268,13 @@ th, td {
     border: 1px solid #b9c2ca;
     padding: 9px;
     text-align: center;
+    vertical-align: middle;
 }
 
 td.name {
     text-align: left;
     font-weight: bold;
+    min-width: 260px;
 }
 
 input,
@@ -234,6 +289,10 @@ textarea {
 
 textarea {
     resize: vertical;
+}
+
+input[type="number"] {
+    text-align: center;
 }
 
 /* ===== STATUS ===== */
@@ -251,6 +310,14 @@ textarea {
 .status-late {
     color: #d68910;
     font-weight: bold;
+}
+
+/* ===== TOILET ===== */
+
+.toilet-input {
+    max-width: 80px;
+    margin: auto;
+    text-align: center;
 }
 
 /* ===== RED UNDERLINE ===== */
@@ -350,6 +417,26 @@ textarea {
     font-size: 22px;
     font-weight: bold;
     margin-bottom: 15px;
+}
+
+.duty-person {
+    display: inline-block;
+    background: #edf4f8;
+    border: 1px solid #d5e2ea;
+    padding: 12px 16px;
+    border-radius: 8px;
+    margin: 4px;
+    font-weight: bold;
+}
+
+.duty-person.completed {
+    background: #d1e7dd;
+    border-color: #a3cfbb;
+}
+
+.duty-person.not-completed {
+    background: #f8d7da;
+    border-color: #f1aeb5;
 }
 
 /* ===== STUDENTS ===== */
@@ -456,6 +543,15 @@ textarea {
     .calendar-event {
         font-size: 9px;
     }
+
+    .lesson-tabs {
+        display: grid;
+        grid-template-columns: 1fr;
+    }
+
+    .lesson-tab {
+        width: 100%;
+    }
 }
 </style>
 </head>
@@ -505,33 +601,52 @@ textarea {
         </div>
 
         <div class="card">
-            <div class="card-title">Присутствуют</div>
+            <div class="card-title">Присутствуют сегодня</div>
             <div class="card-value" id="homePresent">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">Отсутствуют</div>
+            <div class="card-title">Отсутствуют сегодня</div>
             <div class="card-value" id="homeAbsent">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">Опоздали</div>
+            <div class="card-title">Опоздания сегодня</div>
             <div class="card-value" id="homeLate">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">Опоздали >20 мин</div>
+            <div class="card-title">Опоздания >20 мин</div>
             <div class="card-value" id="homeCriticalLate">0</div>
         </div>
 
         <div class="card">
-            <div class="card-title">Дежурный сегодня</div>
-            <div class="card-value" id="homeDuty" style="font-size:18px">—</div>
+            <div class="card-title">Дежурные сегодня</div>
+            <div class="card-value" id="homeDuty" style="font-size:16px">—</div>
         </div>
 
     </div>
 
     <div class="panel">
+
+        <h2>📚 Расписание на день</h2>
+
+        <div class="lesson-info">
+            <strong>1-я пара</strong> — 08:45–10:05
+        </div>
+
+        <div class="lesson-info">
+            <strong>2-я пара</strong> — 10:15–11:35
+        </div>
+
+        <div class="lesson-info">
+            <strong>3-я пара</strong> — 11:55–13:15
+        </div>
+
+    </div>
+
+    <div class="panel">
+
         <h2>⚡ Быстрая отметка</h2>
 
         <button class="btn btn-success" onclick="markAllPresent()">
@@ -541,18 +656,23 @@ textarea {
         <button class="btn btn-secondary" onclick="showPageByName('journal')">
             Открыть журнал
         </button>
+
     </div>
 
     <div class="panel">
+
         <h2>📅 Сегодня</h2>
 
         <div id="todaySummary"></div>
+
     </div>
 
     <div class="panel">
+
         <h2>🎂 Ближайшие события</h2>
 
         <div id="upcomingEvents"></div>
+
     </div>
 
 </section>
@@ -571,8 +691,45 @@ textarea {
 
     <div class="panel">
 
+        <div class="lesson-tabs">
+
+            <button
+                class="lesson-tab active"
+                id="lessonTab1"
+                onclick="selectLesson(1)"
+            >
+                <strong>1-я пара</strong>
+                <small>08:45 – 10:05</small>
+            </button>
+
+            <button
+                class="lesson-tab"
+                id="lessonTab2"
+                onclick="selectLesson(2)"
+            >
+                <strong>2-я пара</strong>
+                <small>10:15 – 11:35</small>
+            </button>
+
+            <button
+                class="lesson-tab"
+                id="lessonTab3"
+                onclick="selectLesson(3)"
+            >
+                <strong>3-я пара</strong>
+                <small>11:55 – 13:15</small>
+            </button>
+
+        </div>
+
+        <div class="lesson-info" id="currentLessonInfo"></div>
+
         <button class="btn btn-success" onclick="markAllPresent()">
-            ✓ Все присутствуют
+            ✓ Все присутствуют на всех парах
+        </button>
+
+        <button class="btn btn-secondary" onclick="markLessonPresent()">
+            ✓ Все присутствуют на этой паре
         </button>
 
         <button class="btn btn-secondary" onclick="resetToday()">
@@ -584,15 +741,18 @@ textarea {
             <table>
 
                 <thead>
+
                     <tr>
                         <th>№</th>
                         <th>ФИО студента</th>
                         <th>Статус</th>
                         <th>Время прихода</th>
                         <th>Опоздание</th>
+                        <th>🚻 Туалет</th>
                         <th>Причина</th>
                         <th>Примечание</th>
                     </tr>
+
                 </thead>
 
                 <tbody id="journalBody"></tbody>
@@ -614,41 +774,49 @@ textarea {
 
     <div class="page-title">
         <h1>Дежурства</h1>
-        <p>Очередность дежурств группы</p>
+        <p>Каждый день дежурят 2 человека</p>
     </div>
 
     <div class="panel">
 
-        <h2>🔵 Сегодня дежурит</h2>
+        <h2>🔵 Сегодня дежурят</h2>
 
-        <div class="duty-current" id="currentDuty">
-            —
-        </div>
+        <div id="currentDuty"></div>
+
+        <br>
 
         <button class="btn btn-success" onclick="completeDuty()">
-            ✓ Дежурство выполнено
+            ✓ Оба выполнили дежурство
         </button>
 
         <button class="btn btn-danger" onclick="skipDuty()">
-            ✕ Не выполнил
+            ✕ Кто-то не выполнил
         </button>
 
     </div>
 
     <div class="panel">
 
-        <h2>📋 Очередь</h2>
+        <h2>📋 Очередь дежурств</h2>
+
+        <p>
+            После каждого дня очередь автоматически переходит
+            к следующим двум студентам.
+        </p>
 
         <div class="table-wrapper">
 
             <table>
 
                 <thead>
+
                     <tr>
                         <th>№</th>
-                        <th>Студент</th>
+                        <th>Студент 1</th>
+                        <th>Студент 2</th>
                         <th>Статус</th>
                     </tr>
+
                 </thead>
 
                 <tbody id="dutyBody"></tbody>
@@ -661,7 +829,7 @@ textarea {
 
     <div class="panel">
 
-        <h2>⚠ Вне очереди</h2>
+        <h2>⚠ Дополнительные дежурства</h2>
 
         <div id="outsideQueue"></div>
 
@@ -739,6 +907,11 @@ textarea {
             <div class="card-value" id="statCritical"></div>
         </div>
 
+        <div class="card">
+            <div class="card-title">Выходы в туалет</div>
+            <div class="card-value" id="statToilet"></div>
+        </div>
+
     </div>
 
     <div class="panel">
@@ -750,6 +923,7 @@ textarea {
             <table>
 
                 <thead>
+
                     <tr>
                         <th>№</th>
                         <th>ФИО</th>
@@ -757,7 +931,9 @@ textarea {
                         <th>Пропуски</th>
                         <th>Опоздания</th>
                         <th>>20 минут</th>
+                        <th>🚻 Туалет</th>
                     </tr>
+
                 </thead>
 
                 <tbody id="statisticsBody"></tbody>
@@ -821,7 +997,11 @@ textarea {
             rows="4"
         ></textarea>
 
-        <button class="btn btn-primary" onclick="addNote()" style="margin-top:10px">
+        <button
+            class="btn btn-primary"
+            onclick="addNote()"
+            style="margin-top:10px"
+        >
             + Добавить заметку
         </button>
 
@@ -937,16 +1117,6 @@ textarea {
         <input id="groupName" style="margin-top:7px">
 
         <label style="display:block;margin-top:12px">
-            Время начала урока
-        </label>
-
-        <input
-            id="lessonStart"
-            type="time"
-            style="margin-top:7px"
-        >
-
-        <label style="display:block;margin-top:12px">
             Максимальное допустимое опоздание
         </label>
 
@@ -956,6 +1126,11 @@ textarea {
             min="0"
             style="margin-top:7px"
         >
+
+        <p style="margin-top:15px;color:#667085">
+            Сейчас установлен лимит: более
+            <strong id="settingsLateText">20</strong> минут.
+        </p>
 
         <button
             class="btn btn-primary"
@@ -969,13 +1144,38 @@ textarea {
 
     <div class="panel">
 
+        <h2>📚 Расписание пар</h2>
+
+        <div class="lesson-info">
+            <strong>1-я пара:</strong> 08:45 – 10:05
+        </div>
+
+        <div class="lesson-info">
+            <strong>2-я пара:</strong> 10:15 – 11:35
+        </div>
+
+        <div class="lesson-info">
+            <strong>3-я пара:</strong> 11:55 – 13:15
+        </div>
+
+        <p style="color:#667085">
+            Время пар фиксировано согласно расписанию группы.
+        </p>
+
+    </div>
+
+    <div class="panel">
+
         <h2>💾 Резервная копия</h2>
 
         <button class="btn btn-primary" onclick="exportData()">
             Скачать резервную копию
         </button>
 
-        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+        <button
+            class="btn btn-secondary"
+            onclick="document.getElementById('importFile').click()"
+        >
             Восстановить данные
         </button>
 
@@ -1068,7 +1268,7 @@ const defaultStudents = [
     "Джумагуов Тимур Алмазбекович",
     "Жаркынбаев Тимурлан Кубанычбекович",
     "Закиров Камиль Шамилевич",
-    "Икбалидаев Бекруз Икбалидаевич",
+    "Икбалидаев Бекруз Икбалиаевич",
     "Казбеков Адилет Урматович",
     "Крамаренко Руслан Дмитриевич",
     "Курманбеков Хамза Мунарбекович",
@@ -1082,6 +1282,35 @@ const defaultStudents = [
     "Тороев Амир Уланбекович",
     "Хакимов Санжар Рахимжанович"
 ];
+
+/* =====================================================
+   LESSONS
+===================================================== */
+
+const lessons = {
+    1: {
+        name: "1-я пара",
+        start: "08:45",
+        end: "10:05"
+    },
+    2: {
+        name: "2-я пара",
+        start: "10:15",
+        end: "11:35"
+    },
+    3: {
+        name: "3-я пара",
+        start: "11:55",
+        end: "13:15"
+    }
+};
+
+let selectedLesson = 1;
+
+
+/* =====================================================
+   STUDENTS
+===================================================== */
 
 function createStudents() {
 
@@ -1097,6 +1326,11 @@ function createStudents() {
 let students =
     JSON.parse(localStorage.getItem("group3_students"))
     || createStudents();
+
+
+/* =====================================================
+   DATA
+===================================================== */
 
 let attendance =
     JSON.parse(localStorage.getItem("group3_attendance"))
@@ -1126,7 +1360,6 @@ let settings =
     JSON.parse(localStorage.getItem("group3_settings"))
     || {
         groupName: "Группа 3",
-        lessonStart: "09:00",
         lateLimit: 20
     };
 
@@ -1215,13 +1448,106 @@ function calculateLateMinutes(startTime, arrivalTime) {
         return 0;
     }
 
-    const [sh, sm] = startTime.split(":").map(Number);
-    const [ah, am] = arrivalTime.split(":").map(Number);
+    const [sh, sm] =
+        startTime.split(":").map(Number);
 
-    const start = sh * 60 + sm;
-    const arrival = ah * 60 + am;
+    const [ah, am] =
+        arrivalTime.split(":").map(Number);
 
-    return Math.max(0, arrival - start);
+    const start =
+        sh * 60 + sm;
+
+    const arrival =
+        ah * 60 + am;
+
+    return Math.max(
+        0,
+        arrival - start
+    );
+
+}
+
+
+/* =====================================================
+   ATTENDANCE STRUCTURE
+===================================================== */
+
+function createLessonRecord() {
+
+    return {
+        status: "present",
+        arrival: "",
+        toilet: 0,
+        reason: "",
+        note: ""
+    };
+
+}
+
+function createDayRecord() {
+
+    return {
+        lessons: {
+            1: createLessonRecord(),
+            2: createLessonRecord(),
+            3: createLessonRecord()
+        }
+    };
+
+}
+
+function ensureStudentDay(studentId, day) {
+
+    if (!attendance[day]) {
+        attendance[day] = {};
+    }
+
+    if (!attendance[day][studentId]) {
+
+        attendance[day][studentId] =
+            createDayRecord();
+
+    }
+
+    /*
+       Поддержка старого формата журнала.
+       Если раньше были status/arrival напрямую,
+       переносим их в 1-ю пару.
+    */
+
+    const oldData =
+        attendance[day][studentId];
+
+    if (!oldData.lessons) {
+
+        attendance[day][studentId] = {
+            lessons: {
+                1: {
+                    status: oldData.status || "present",
+                    arrival: oldData.arrival || "",
+                    toilet: 0,
+                    reason: oldData.reason || "",
+                    note: oldData.note || ""
+                },
+                2: createLessonRecord(),
+                3: createLessonRecord()
+            }
+        };
+
+    }
+
+    for (let i = 1; i <= 3; i++) {
+
+        if (!attendance[day][studentId].lessons[i]) {
+
+            attendance[day][studentId].lessons[i] =
+                createLessonRecord();
+
+        }
+
+    }
+
+    return attendance[day][studentId];
 
 }
 
@@ -1264,6 +1590,33 @@ function showPageByName(pageId) {
 
 
 /* =====================================================
+   SELECT LESSON
+===================================================== */
+
+function selectLesson(number) {
+
+    selectedLesson = number;
+
+    document.querySelectorAll(".lesson-tab")
+        .forEach(tab => {
+            tab.classList.remove("active");
+        });
+
+    const tab =
+        document.getElementById(
+            `lessonTab${number}`
+        );
+
+    if (tab) {
+        tab.classList.add("active");
+    }
+
+    renderJournal();
+
+}
+
+
+/* =====================================================
    JOURNAL
 ===================================================== */
 
@@ -1274,29 +1627,39 @@ function renderJournal() {
     document.getElementById("journalDate").textContent =
         "Дата: " + formatDate(today);
 
-    if (!attendance[today]) {
-        attendance[today] = {};
-    }
+    const lesson =
+        lessons[selectedLesson];
 
-    const body = document.getElementById("journalBody");
+    document.getElementById("currentLessonInfo").innerHTML = `
+        <strong>📚 ${lesson.name}</strong>
+        — ${lesson.start}–${lesson.end}
+        <br>
+        <small>
+            Опоздание более ${settings.lateLimit} минут
+            автоматически считается критическим.
+        </small>
+    `;
+
+    const body =
+        document.getElementById("journalBody");
 
     body.innerHTML = "";
 
     students.forEach((student, index) => {
 
+        const dayData =
+            ensureStudentDay(
+                student.id,
+                today
+            );
+
         const data =
-            attendance[today][student.id]
-            || {
-                status: "present",
-                arrival: "",
-                reason: "",
-                note: ""
-            };
+            dayData.lessons[selectedLesson];
 
         const late =
             data.status === "late"
                 ? calculateLateMinutes(
-                    settings.lessonStart,
+                    lesson.start,
                     data.arrival
                 )
                 : 0;
@@ -1310,22 +1673,6 @@ function renderJournal() {
             nameClass += " late-critical";
         }
 
-        let statusHTML = `
-            <select onchange="changeStatus(${student.id}, this.value)">
-                <option value="present" ${data.status === "present" ? "selected" : ""}>
-                    🟢 Был
-                </option>
-
-                <option value="absent" ${data.status === "absent" ? "selected" : ""}>
-                    🔴 Отсутствует
-                </option>
-
-                <option value="late" ${data.status === "late" ? "selected" : ""}>
-                    🟡 Опоздал
-                </option>
-            </select>
-        `;
-
         body.innerHTML += `
             <tr>
 
@@ -1337,56 +1684,140 @@ function renderJournal() {
                 </td>
 
                 <td>
-                    ${statusHTML}
+
+                    <select
+                        onchange="
+                            changeStatus(
+                                ${student.id},
+                                this.value
+                            )
+                        "
+                    >
+
+                        <option
+                            value="present"
+                            ${data.status === "present" ? "selected" : ""}
+                        >
+                            🟢 Был
+                        </option>
+
+                        <option
+                            value="absent"
+                            ${data.status === "absent" ? "selected" : ""}
+                        >
+                            🔴 Отсутствует
+                        </option>
+
+                        <option
+                            value="late"
+                            ${data.status === "late" ? "selected" : ""}
+                        >
+                            🟡 Опоздал
+                        </option>
+
+                    </select>
+
                 </td>
 
                 <td>
+
                     <input
                         type="time"
                         value="${data.arrival || ""}"
-                        onchange="setArrival(${student.id}, this.value)"
-                        ${data.status !== "late" ? "disabled" : ""}
+                        onchange="
+                            setArrival(
+                                ${student.id},
+                                this.value
+                            )
+                        "
                     >
+
                 </td>
 
                 <td>
+
                     ${
-                        data.status === "late"
-                        ? `<strong class="${critical ? "late-critical" : "status-late"}">
-                            ${late} мин.
+                        data.arrival
+                        ? `<strong class="${
+                            critical
+                                ? "late-critical"
+                                : late > 0
+                                    ? "status-late"
+                                    : "status-present"
+                        }">
+                            ${
+                                late > 0
+                                    ? late + " мин."
+                                    : "Вовремя"
+                            }
                            </strong>`
                         : "—"
                     }
 
                     ${
                         critical
-                        ? `<br><small style="color:#c0392b">
-                            ВНЕ ОЧЕРЕДИ
+                        ? `<br>
+                           <small style="color:#c0392b">
+                               ⚠ ВНЕ ОЧЕРЕДИ
                            </small>`
                         : ""
                     }
+
                 </td>
 
                 <td>
+
                     <input
-                        value="${data.reason || ""}"
+                        class="toilet-input"
+                        type="number"
+                        min="0"
+                        value="${Number(data.toilet) || 0}"
+                        onchange="
+                            setToilet(
+                                ${student.id},
+                                this.value
+                            )
+                        "
+                    >
+
+                </td>
+
+                <td>
+
+                    <input
+                        value="${escapeHtml(data.reason || "")}"
                         placeholder="Причина"
-                        onchange="setReason(${student.id}, this.value)"
+                        onchange="
+                            setReason(
+                                ${student.id},
+                                this.value
+                            )
+                        "
                     >
+
                 </td>
 
                 <td>
+
                     <input
-                        value="${data.note || ""}"
+                        value="${escapeHtml(data.note || "")}"
                         placeholder="Примечание"
-                        onchange="setNote(${student.id}, this.value)"
+                        onchange="
+                            setNote(
+                                ${student.id},
+                                this.value
+                            )
+                        "
                     >
+
                 </td>
 
             </tr>
         `;
 
     });
+
+    saveAll();
 
 }
 
@@ -1399,33 +1830,42 @@ function changeStatus(studentId, status) {
 
     const today = dateKey();
 
-    if (!attendance[today]) {
-        attendance[today] = {};
-    }
+    const dayData =
+        ensureStudentDay(
+            studentId,
+            today
+        );
 
-    if (!attendance[today][studentId]) {
-        attendance[today][studentId] = {};
-    }
+    const data =
+        dayData.lessons[selectedLesson];
 
-    attendance[today][studentId].status = status;
+    const previousStatus =
+        data.status;
 
-    if (status !== "late") {
-        attendance[today][studentId].arrival = "";
+    data.status = status;
+
+    if (status === "absent") {
+        data.arrival = "";
     }
 
     addHistory(
         today,
         studentId,
-        status === "present"
-            ? "Присутствовал"
-            : status === "absent"
-                ? "Отсутствовал"
-                : "Опоздал"
+        `${lessons[selectedLesson].name}: ${
+            status === "present"
+                ? "Присутствовал"
+                : status === "absent"
+                    ? "Отсутствовал"
+                    : "Опоздал"
+        }`
     );
 
     saveAll();
 
-    checkCriticalLate(studentId);
+    checkCriticalLate(
+        studentId,
+        selectedLesson
+    );
 
     refreshAll();
 
@@ -1440,35 +1880,54 @@ function setArrival(studentId, arrival) {
 
     const today = dateKey();
 
-    if (!attendance[today]) {
-        attendance[today] = {};
-    }
-
-    if (!attendance[today][studentId]) {
-        attendance[today][studentId] = {
-            status: "late"
-        };
-    }
-
-    attendance[today][studentId].arrival = arrival;
-
-    const late = calculateLateMinutes(
-        settings.lessonStart,
-        arrival
-    );
-
-    if (late > Number(settings.lateLimit)) {
-
-        addExtraDuty(
+    const dayData =
+        ensureStudentDay(
             studentId,
-            `Опоздание более ${settings.lateLimit} минут`
+            today
         );
 
-        addHistory(
-            today,
-            studentId,
-            `Опоздал на ${late} минут — вне очереди`
-        );
+    const data =
+        dayData.lessons[selectedLesson];
+
+    data.arrival = arrival;
+
+    if (arrival) {
+
+        const late =
+            calculateLateMinutes(
+                lessons[selectedLesson].start,
+                arrival
+            );
+
+        /*
+           Если студент пришёл позже начала,
+           автоматически ставим "Опоздал".
+        */
+
+        if (late > 0) {
+            data.status = "late";
+        } else if (data.status !== "absent") {
+            data.status = "present";
+        }
+
+        if (
+            late >
+            Number(settings.lateLimit)
+        ) {
+
+            addExtraDuty(
+                studentId,
+                `Критическое опоздание: ${lessons[selectedLesson].name}, ${late} минут`,
+                selectedLesson
+            );
+
+            addHistory(
+                today,
+                studentId,
+                `${lessons[selectedLesson].name}: опоздание на ${late} минут — дополнительное дежурство`
+            );
+
+        }
 
     }
 
@@ -1480,30 +1939,117 @@ function setArrival(studentId, arrival) {
 
 
 /* =====================================================
-   CRITICAL LATE
+   TOILET
 ===================================================== */
 
-function checkCriticalLate(studentId) {
+function setToilet(studentId, value) {
 
     const today = dateKey();
 
-    const data =
+    const dayData =
+        ensureStudentDay(
+            studentId,
+            today
+        );
+
+    const number =
+        Math.max(
+            0,
+            Number(value) || 0
+        );
+
+    dayData.lessons[selectedLesson].toilet =
+        number;
+
+    saveAll();
+
+}
+
+
+/* =====================================================
+   REASON
+===================================================== */
+
+function setReason(studentId, value) {
+
+    const today = dateKey();
+
+    const dayData =
+        ensureStudentDay(
+            studentId,
+            today
+        );
+
+    dayData.lessons[selectedLesson].reason =
+        value;
+
+    saveAll();
+
+}
+
+
+/* =====================================================
+   NOTE
+===================================================== */
+
+function setNote(studentId, value) {
+
+    const today = dateKey();
+
+    const dayData =
+        ensureStudentDay(
+            studentId,
+            today
+        );
+
+    dayData.lessons[selectedLesson].note =
+        value;
+
+    saveAll();
+
+}
+
+
+/* =====================================================
+   CRITICAL LATE
+===================================================== */
+
+function checkCriticalLate(
+    studentId,
+    lessonNumber
+) {
+
+    const today = dateKey();
+
+    const dayData =
         attendance[today]?.[studentId];
 
-    if (!data || data.status !== "late") {
+    if (!dayData || !dayData.lessons) {
         return;
     }
 
-    const late = calculateLateMinutes(
-        settings.lessonStart,
-        data.arrival
-    );
+    const data =
+        dayData.lessons[lessonNumber];
 
-    if (late > Number(settings.lateLimit)) {
+    if (!data || !data.arrival) {
+        return;
+    }
+
+    const late =
+        calculateLateMinutes(
+            lessons[lessonNumber].start,
+            data.arrival
+        );
+
+    if (
+        data.status === "late" &&
+        late > Number(settings.lateLimit)
+    ) {
 
         addExtraDuty(
             studentId,
-            `Опоздание ${late} минут`
+            `Критическое опоздание: ${lessons[lessonNumber].name}, ${late} минут`,
+            lessonNumber
         );
 
     }
@@ -1515,25 +2061,48 @@ function checkCriticalLate(studentId) {
    EXTRA DUTY
 ===================================================== */
 
-function addExtraDuty(studentId, reason) {
+function addExtraDuty(
+    studentId,
+    reason,
+    lessonNumber = null
+) {
 
-    const exists = duties.extra.find(
-        d =>
-            d.studentId === studentId &&
-            d.date === dateKey() &&
-            !d.completed
-    );
+    const today = dateKey();
+
+    const exists =
+        duties.extra.find(
+            d =>
+                d.studentId === studentId &&
+                d.date === today &&
+                d.lesson === lessonNumber &&
+                !d.completed
+        );
 
     if (exists) {
         return;
     }
 
     duties.extra.push({
-        id: Date.now(),
-        studentId: studentId,
-        date: dateKey(),
-        reason: reason,
-        completed: false
+
+        id:
+            Date.now() +
+            Math.random(),
+
+        studentId:
+            studentId,
+
+        date:
+            today,
+
+        lesson:
+            lessonNumber,
+
+        reason:
+            reason,
+
+        completed:
+            false
+
     });
 
     saveAll();
@@ -1549,15 +2118,87 @@ function markAllPresent() {
 
     const today = dateKey();
 
-    attendance[today] = {};
+    if (!attendance[today]) {
+        attendance[today] = {};
+    }
 
     students.forEach(student => {
 
-        attendance[today][student.id] = {
+        const dayData =
+            ensureStudentDay(
+                student.id,
+                today
+            );
+
+        for (let i = 1; i <= 3; i++) {
+
+            dayData.lessons[i] = {
+                status: "present",
+                arrival: lessons[i].start,
+                toilet:
+                    dayData.lessons[i].toilet || 0,
+                reason:
+                    dayData.lessons[i].reason || "",
+                note:
+                    dayData.lessons[i].note || ""
+            };
+
+        }
+
+    });
+
+    addHistory(
+        today,
+        null,
+        "Староста отметил всю группу как присутствующую на всех трёх парах"
+    );
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   MARK CURRENT LESSON PRESENT
+===================================================== */
+
+function markLessonPresent() {
+
+    const today = dateKey();
+
+    if (!attendance[today]) {
+        attendance[today] = {};
+    }
+
+    students.forEach(student => {
+
+        const dayData =
+            ensureStudentDay(
+                student.id,
+                today
+            );
+
+        const old =
+            dayData.lessons[selectedLesson];
+
+        dayData.lessons[selectedLesson] = {
+
             status: "present",
-            arrival: "",
-            reason: "",
-            note: ""
+
+            arrival:
+                lessons[selectedLesson].start,
+
+            toilet:
+                old.toilet || 0,
+
+            reason:
+                old.reason || "",
+
+            note:
+                old.note || ""
+
         };
 
     });
@@ -1565,7 +2206,7 @@ function markAllPresent() {
     addHistory(
         today,
         null,
-        "Староста отметил всю группу как присутствующую"
+        `${lessons[selectedLesson].name}: вся группа отмечена как присутствующая`
     );
 
     saveAll();
@@ -1581,11 +2222,27 @@ function markAllPresent() {
 
 function resetToday() {
 
-    if (!confirm("Сбросить сегодняшний журнал?")) {
+    if (
+        !confirm(
+            "Сбросить сегодняшний журнал по всем трём парам?"
+        )
+    ) {
         return;
     }
 
     delete attendance[dateKey()];
+
+    /*
+       Удаляем незавершённые дополнительные
+       дежурства, созданные за сегодняшний день.
+    */
+
+    duties.extra =
+        duties.extra.filter(
+            item =>
+                item.date !== dateKey()
+                || item.completed
+        );
 
     saveAll();
 
@@ -1598,18 +2255,34 @@ function resetToday() {
    HISTORY
 ===================================================== */
 
-function addHistory(date, studentId, text) {
+function addHistory(
+    date,
+    studentId,
+    text
+) {
 
     const student =
-        students.find(s => s.id == studentId);
+        students.find(
+            s => s.id == studentId
+        );
 
     history.unshift({
-        id: Date.now() + Math.random(),
-        date: date,
-        student: student
-            ? student.name
-            : "Группа",
-        text: text
+
+        id:
+            Date.now() +
+            Math.random(),
+
+        date:
+            date,
+
+        student:
+            student
+                ? student.name
+                : "Группа",
+
+        text:
+            text
+
     });
 
     saveAll();
@@ -1619,7 +2292,9 @@ function addHistory(date, studentId, text) {
 function renderHistory() {
 
     const container =
-        document.getElementById("historyList");
+        document.getElementById(
+            "historyList"
+        );
 
     if (!history.length) {
 
@@ -1632,22 +2307,31 @@ function renderHistory() {
 
     container.innerHTML =
         history.map(item => `
+
             <div class="alert alert-success">
 
-                <strong>${formatDate(item.date)}</strong>
+                <strong>
+                    ${formatDate(item.date)}
+                </strong>
 
                 <br>
 
-                ${item.student} — ${item.text}
+                ${item.student}
+                — ${item.text}
 
             </div>
+
         `).join("");
 
 }
 
 function clearHistory() {
 
-    if (!confirm("Удалить всю историю?")) {
+    if (
+        !confirm(
+            "Удалить всю историю?"
+        )
+    ) {
         return;
     }
 
@@ -1668,7 +2352,8 @@ function renderHome() {
 
     const today = dateKey();
 
-    const records = attendance[today] || {};
+    const records =
+        attendance[today] || {};
 
     let present = 0;
     let absent = 0;
@@ -1677,65 +2362,128 @@ function renderHome() {
 
     students.forEach(student => {
 
-        const data = records[student.id];
+        const dayData =
+            records[student.id];
 
-        if (!data) {
+        if (!dayData) {
             return;
         }
 
-        if (data.status === "present") {
-            present++;
+        if (!dayData.lessons) {
+            return;
         }
 
-        if (data.status === "absent") {
-            absent++;
-        }
+        for (let i = 1; i <= 3; i++) {
 
-        if (data.status === "late") {
+            const data =
+                dayData.lessons[i];
 
-            late++;
+            if (!data) {
+                continue;
+            }
 
-            const minutes =
-                calculateLateMinutes(
-                    settings.lessonStart,
-                    data.arrival
-                );
+            if (data.status === "present") {
+                present++;
+            }
 
-            if (minutes > Number(settings.lateLimit)) {
-                critical++;
+            if (data.status === "absent") {
+                absent++;
+            }
+
+            if (data.status === "late") {
+
+                late++;
+
+                const minutes =
+                    calculateLateMinutes(
+                        lessons[i].start,
+                        data.arrival
+                    );
+
+                if (
+                    minutes >
+                    Number(settings.lateLimit)
+                ) {
+                    critical++;
+                }
+
             }
 
         }
 
     });
 
-    document.getElementById("totalStudents").textContent =
+    document.getElementById(
+        "totalStudents"
+    ).textContent =
         students.length;
 
-    document.getElementById("homePresent").textContent =
+    document.getElementById(
+        "homePresent"
+    ).textContent =
         present;
 
-    document.getElementById("homeAbsent").textContent =
+    document.getElementById(
+        "homeAbsent"
+    ).textContent =
         absent;
 
-    document.getElementById("homeLate").textContent =
+    document.getElementById(
+        "homeLate"
+    ).textContent =
         late;
 
-    document.getElementById("homeCriticalLate").textContent =
+    document.getElementById(
+        "homeCriticalLate"
+    ).textContent =
         critical;
 
-    const duty =
-        students[duties.currentIndex];
+    const dutyStudents =
+        getTodayDutyStudents();
 
-    document.getElementById("homeDuty").textContent =
-        duty ? duty.name : "—";
+    document.getElementById(
+        "homeDuty"
+    ).textContent =
+        dutyStudents.length
+            ? dutyStudents
+                .map(s => s.name.split(" ")[0])
+                .join(" + ")
+            : "—";
 
-    document.getElementById("todaySummary").innerHTML = `
-        <p>👥 Всего студентов: <strong>${students.length}</strong></p>
-        <p>🟢 Присутствуют: <strong>${present}</strong></p>
-        <p>🔴 Отсутствуют: <strong>${absent}</strong></p>
-        <p>🟡 Опоздали: <strong>${late}</strong></p>
-        <p>⚠ Опоздали более ${settings.lateLimit} минут: <strong>${critical}</strong></p>
+    document.getElementById(
+        "todaySummary"
+    ).innerHTML = `
+
+        <p>
+            👥 Всего студентов:
+            <strong>${students.length}</strong>
+        </p>
+
+        <p>
+            📚 Всего пар сегодня:
+            <strong>3</strong>
+        </p>
+
+        <p>
+            🟢 Отметок "Был":
+            <strong>${present}</strong>
+        </p>
+
+        <p>
+            🔴 Отметок "Отсутствует":
+            <strong>${absent}</strong>
+        </p>
+
+        <p>
+            🟡 Опозданий:
+            <strong>${late}</strong>
+        </p>
+
+        <p>
+            ⚠ Опозданий более ${settings.lateLimit} минут:
+            <strong>${critical}</strong>
+        </p>
+
     `;
 
     renderAlerts();
@@ -1752,35 +2500,71 @@ function renderAlerts() {
     const today = dateKey();
 
     const alerts =
-        document.getElementById("homeAlerts");
+        document.getElementById(
+            "homeAlerts"
+        );
 
     let html = "";
 
-    const records = attendance[today] || {};
+    const records =
+        attendance[today] || {};
 
     students.forEach(student => {
 
-        const data = records[student.id];
+        const dayData =
+            records[student.id];
 
-        if (!data || data.status !== "late") {
+        if (!dayData || !dayData.lessons) {
             return;
         }
 
-        const late =
-            calculateLateMinutes(
-                settings.lessonStart,
-                data.arrival
-            );
+        for (let i = 1; i <= 3; i++) {
 
-        if (late > Number(settings.lateLimit)) {
+            const data =
+                dayData.lessons[i];
 
-            html += `
-                <div class="alert alert-danger">
-                    ⚠ <strong>${student.name}</strong>
-                    опоздал на ${late} минут.
-                    Студент находится <strong>вне очереди</strong>.
-                </div>
-            `;
+            if (
+                !data ||
+                data.status !== "late"
+            ) {
+                continue;
+            }
+
+            const late =
+                calculateLateMinutes(
+                    lessons[i].start,
+                    data.arrival
+                );
+
+            if (
+                late >
+                Number(settings.lateLimit)
+            ) {
+
+                html += `
+
+                    <div class="alert alert-danger">
+
+                        ⚠ <strong>${student.name}</strong>
+
+                        <br>
+
+                        ${lessons[i].name}:
+                        опоздание на
+                        <strong>${late} минут</strong>.
+
+                        <br>
+
+                        Студент получил
+                        <strong>
+                            дополнительное дежурство
+                        </strong>.
+
+                    </div>
+
+                `;
+
+            }
 
         }
 
@@ -1795,19 +2579,33 @@ function renderAlerts() {
 
         const student =
             students.find(
-                s => s.id === item.studentId
+                s =>
+                    s.id === item.studentId
             );
 
-        if (student) {
-
-            html += `
-                <div class="alert alert-warning">
-                    ⚠ ${student.name}
-                    должен выполнить дополнительное дежурство.
-                </div>
-            `;
-
+        if (!student) {
+            return;
         }
+
+        html += `
+
+            <div class="alert alert-warning">
+
+                ⚠ <strong>${student.name}</strong>
+
+                должен выполнить
+                <strong>
+                    дополнительное дежурство
+                </strong>.
+
+                <br>
+
+                Причина:
+                ${item.reason}
+
+            </div>
+
+        `;
 
     });
 
@@ -1817,53 +2615,158 @@ function renderAlerts() {
 
 
 /* =====================================================
+   GET TODAY DUTY
+===================================================== */
+
+function getTodayDutyStudents() {
+
+    const result = [];
+
+    if (!students.length) {
+        return result;
+    }
+
+    const start =
+        duties.currentIndex % students.length;
+
+    result.push(
+        students[start]
+    );
+
+    if (students.length > 1) {
+
+        const second =
+            (start + 1) %
+            students.length;
+
+        result.push(
+            students[second]
+        );
+
+    }
+
+    return result;
+
+}
+
+
+/* =====================================================
    DUTIES
 ===================================================== */
+
+function getDutyPairs() {
+
+    const pairs = [];
+
+    if (!students.length) {
+        return pairs;
+    }
+
+    for (
+        let i = 0;
+        i < students.length;
+        i += 2
+    ) {
+
+        const first =
+            students[i];
+
+        const second =
+            students[
+                (i + 1) %
+                students.length
+            ];
+
+        pairs.push({
+            first,
+            second
+        });
+
+    }
+
+    return pairs;
+
+}
 
 function renderDuties() {
 
     const current =
-        students[duties.currentIndex];
+        getTodayDutyStudents();
 
-    document.getElementById("currentDuty").textContent =
-        current
-            ? current.name
-            : "—";
+    const container =
+        document.getElementById(
+            "currentDuty"
+        );
+
+    if (!current.length) {
+
+        container.innerHTML =
+            "—";
+
+    } else {
+
+        container.innerHTML =
+            current.map(student => `
+
+                <div class="duty-person">
+                    👤 ${student.name}
+                </div>
+
+            `).join("");
+
+    }
 
     const body =
-        document.getElementById("dutyBody");
+        document.getElementById(
+            "dutyBody"
+        );
 
     body.innerHTML = "";
 
-    students.forEach((student, index) => {
+    const pairs =
+        getDutyPairs();
+
+    pairs.forEach((pair, index) => {
+
+        const firstIndex =
+            index * 2;
 
         const isCurrent =
-            index === duties.currentIndex;
+            firstIndex ===
+            duties.currentIndex;
 
         body.innerHTML += `
+
             <tr>
 
                 <td>${index + 1}</td>
 
                 <td style="text-align:left">
-                    ${student.name}
+                    ${pair.first.name}
+                </td>
+
+                <td style="text-align:left">
+                    ${pair.second.name}
                 </td>
 
                 <td>
                     ${
                         isCurrent
-                        ? "🔵 Сегодня"
-                        : "В очереди"
+                            ? "🔵 Сегодня"
+                            : "В очереди"
                     }
                 </td>
 
             </tr>
+
         `;
 
     });
 
     const outside =
-        document.getElementById("outsideQueue");
+        document.getElementById(
+            "outsideQueue"
+        );
 
     const extra =
         duties.extra.filter(
@@ -1884,7 +2787,9 @@ function renderDuties() {
 
             const student =
                 students.find(
-                    s => s.id === item.studentId
+                    s =>
+                        s.id ===
+                        item.studentId
                 );
 
             if (!student) {
@@ -1892,24 +2797,33 @@ function renderDuties() {
             }
 
             return `
+
                 <div class="alert alert-warning">
 
-                    <strong>${student.name}</strong>
+                    <strong>
+                        ${student.name}
+                    </strong>
 
                     <br>
 
-                    Причина: ${item.reason}
+                    Причина:
+                    ${item.reason}
 
                     <br><br>
 
                     <button
                         class="btn btn-success"
-                        onclick="completeExtraDuty(${item.id})"
+                        onclick="
+                            completeExtraDuty(
+                                ${item.id}
+                            )
+                        "
                     >
                         ✓ Выполнено
                     </button>
 
                 </div>
+
             `;
 
         }).join("");
@@ -1923,27 +2837,48 @@ function renderDuties() {
 
 function completeDuty() {
 
-    const student =
-        students[duties.currentIndex];
+    const current =
+        getTodayDutyStudents();
 
-    if (!student) {
+    if (current.length < 2) {
         return;
     }
 
-    duties.completed[dateKey()] = {
-        studentId: student.id,
-        completed: true
+    const today =
+        dateKey();
+
+    duties.completed[today] = {
+
+        studentIds:
+            current.map(
+                s => s.id
+            ),
+
+        completed:
+            true
+
     };
 
-    addHistory(
-        dateKey(),
-        student.id,
-        "Дежурство выполнено"
-    );
+    current.forEach(student => {
+
+        addHistory(
+            today,
+            student.id,
+            "Дежурство выполнено"
+        );
+
+    });
+
+    /*
+       Переходим сразу на следующих 2 человек.
+    */
 
     duties.currentIndex =
-        (duties.currentIndex + 1)
-        % students.length;
+        (
+            duties.currentIndex +
+            2
+        ) %
+        students.length;
 
     saveAll();
 
@@ -1953,12 +2888,51 @@ function completeDuty() {
 
 function skipDuty() {
 
-    const student =
-        students[duties.currentIndex];
+    const current =
+        getTodayDutyStudents();
 
-    if (!student) {
+    if (!current.length) {
         return;
     }
+
+    /*
+       Показываем выбор, кто именно
+       не выполнил дежурство.
+    */
+
+    let message =
+        "Кто не выполнил дежурство?\n\n";
+
+    current.forEach(
+        (student, index) => {
+
+            message +=
+                `${index + 1}. ${student.name}\n`;
+
+        }
+    );
+
+    const choice =
+        prompt(
+            message +
+            "\nВведите номер студента:"
+        );
+
+    const number =
+        Number(choice);
+
+    if (
+        number < 1 ||
+        number > current.length ||
+        !Number.isInteger(number)
+    ) {
+
+        return;
+
+    }
+
+    const student =
+        current[number - 1];
 
     addExtraDuty(
         student.id,
@@ -1968,12 +2942,20 @@ function skipDuty() {
     addHistory(
         dateKey(),
         student.id,
-        "Не выполнил дежурство"
+        "Не выполнил обычное дежурство"
     );
 
+    /*
+       После дня очередь всё равно
+       переходит к следующим двум.
+    */
+
     duties.currentIndex =
-        (duties.currentIndex + 1)
-        % students.length;
+        (
+            duties.currentIndex +
+            2
+        ) %
+        students.length;
 
     saveAll();
 
@@ -1984,18 +2966,15 @@ function skipDuty() {
 function completeExtraDuty(id) {
 
     const item =
-        duties.extra.find(d => d.id === id);
+        duties.extra.find(
+            d => d.id === id
+        );
 
     if (!item) {
         return;
     }
 
     item.completed = true;
-
-    const student =
-        students.find(
-            s => s.id === item.studentId
-        );
 
     addHistory(
         dateKey(),
@@ -2017,19 +2996,25 @@ function completeExtraDuty(id) {
 function renderStudents() {
 
     const query =
-        document.getElementById("studentSearch")
+        document.getElementById(
+            "studentSearch"
+        )
         ?.value
         .toLowerCase()
         || "";
 
     const grid =
-        document.getElementById("studentGrid");
+        document.getElementById(
+            "studentGrid"
+        );
 
     grid.innerHTML = "";
 
     students
         .filter(student =>
-            student.name.toLowerCase().includes(query)
+            student.name
+                .toLowerCase()
+                .includes(query)
         )
         .forEach((student, index) => {
 
@@ -2037,40 +3022,73 @@ function renderStudents() {
             let absent = 0;
             let late = 0;
             let critical = 0;
+            let toilet = 0;
 
-            Object.values(attendance).forEach(day => {
+            Object.values(
+                attendance
+            ).forEach(day => {
 
-                const data =
+                const dayData =
                     day[student.id];
 
-                if (!data) {
+                if (
+                    !dayData ||
+                    !dayData.lessons
+                ) {
                     return;
                 }
 
-                if (data.status === "present") {
-                    present++;
-                }
+                for (let i = 1; i <= 3; i++) {
 
-                if (data.status === "absent") {
-                    absent++;
-                }
+                    const data =
+                        dayData.lessons[i];
 
-                if (data.status === "late") {
-
-                    late++;
-
-                    const minutes =
-                        calculateLateMinutes(
-                            settings.lessonStart,
-                            data.arrival
-                        );
+                    if (!data) {
+                        continue;
+                    }
 
                     if (
-                        minutes >
-                        Number(settings.lateLimit)
+                        data.status ===
+                        "present"
                     ) {
-                        critical++;
+                        present++;
                     }
+
+                    if (
+                        data.status ===
+                        "absent"
+                    ) {
+                        absent++;
+                    }
+
+                    if (
+                        data.status ===
+                        "late"
+                    ) {
+
+                        late++;
+
+                        const minutes =
+                            calculateLateMinutes(
+                                lessons[i].start,
+                                data.arrival
+                            );
+
+                        if (
+                            minutes >
+                            Number(
+                                settings.lateLimit
+                            )
+                        ) {
+                            critical++;
+                        }
+
+                    }
+
+                    toilet +=
+                        Number(
+                            data.toilet
+                        ) || 0;
 
                 }
 
@@ -2081,33 +3099,45 @@ function renderStudents() {
                 <div class="student-card">
 
                     <h3>
-                        ${index + 1}. ${student.name}
+                        ${index + 1}.
+                        ${student.name}
                     </h3>
 
                     <div class="student-info">
 
                         🎂 Дата рождения:
-                        ${student.birthday
-                            ? formatDate(student.birthday)
-                            : "не указана"
+                        ${
+                            student.birthday
+                                ? formatDate(
+                                    student.birthday
+                                )
+                                : "не указана"
                         }
 
                         <br>
 
-                        🟢 Посещений: ${present}
+                        🟢 Посещений:
+                        ${present}
 
                         <br>
 
-                        🔴 Пропусков: ${absent}
+                        🔴 Пропусков:
+                        ${absent}
 
                         <br>
 
-                        🟡 Опозданий: ${late}
+                        🟡 Опозданий:
+                        ${late}
 
                         <br>
 
                         ⚠ Опозданий >20 мин:
                         ${critical}
+
+                        <br>
+
+                        🚻 Выходов в туалет:
+                        ${toilet}
 
                     </div>
 
@@ -2115,19 +3145,28 @@ function renderStudents() {
 
                     <button
                         class="btn btn-primary"
-                        onclick="editStudent(${student.id})"
+                        onclick="
+                            editStudent(
+                                ${student.id}
+                            )
+                        "
                     >
                         Изменить
                     </button>
 
                     <button
                         class="btn btn-danger"
-                        onclick="deleteStudent(${student.id})"
+                        onclick="
+                            deleteStudent(
+                                ${student.id}
+                            )
+                        "
                     >
                         Удалить
                     </button>
 
                 </div>
+
             `;
 
         });
@@ -2141,75 +3180,110 @@ function renderStudents() {
 
 function openAddStudentModal() {
 
-    document.getElementById("studentModalTitle").textContent =
+    document.getElementById(
+        "studentModalTitle"
+    ).textContent =
         "Добавить студента";
 
-    document.getElementById("editStudentId").value = "";
+    document.getElementById(
+        "editStudentId"
+    ).value = "";
 
-    document.getElementById("studentName").value = "";
+    document.getElementById(
+        "studentName"
+    ).value = "";
 
-    document.getElementById("studentBirthday").value = "";
+    document.getElementById(
+        "studentBirthday"
+    ).value = "";
 
-    document.getElementById("studentNote").value = "";
+    document.getElementById(
+        "studentNote"
+    ).value = "";
 
-    document.getElementById("studentModal")
-        .classList.add("show");
+    document.getElementById(
+        "studentModal"
+    ).classList.add("show");
 
 }
 
 function editStudent(id) {
 
     const student =
-        students.find(s => s.id === id);
+        students.find(
+            s => s.id === id
+        );
 
     if (!student) {
         return;
     }
 
-    document.getElementById("studentModalTitle").textContent =
+    document.getElementById(
+        "studentModalTitle"
+    ).textContent =
         "Редактировать студента";
 
-    document.getElementById("editStudentId").value =
+    document.getElementById(
+        "editStudentId"
+    ).value =
         student.id;
 
-    document.getElementById("studentName").value =
+    document.getElementById(
+        "studentName"
+    ).value =
         student.name;
 
-    document.getElementById("studentBirthday").value =
+    document.getElementById(
+        "studentBirthday"
+    ).value =
         student.birthday;
 
-    document.getElementById("studentNote").value =
+    document.getElementById(
+        "studentNote"
+    ).value =
         student.note;
 
-    document.getElementById("studentModal")
-        .classList.add("show");
+    document.getElementById(
+        "studentModal"
+    ).classList.add("show");
 
 }
 
 function closeModal() {
 
-    document.getElementById("studentModal")
-        .classList.remove("show");
+    document.getElementById(
+        "studentModal"
+    ).classList.remove("show");
 
 }
 
 function saveStudent() {
 
     const id =
-        document.getElementById("editStudentId").value;
+        document.getElementById(
+            "editStudentId"
+        ).value;
 
     const name =
-        document.getElementById("studentName").value.trim();
+        document.getElementById(
+            "studentName"
+        ).value.trim();
 
     const birthday =
-        document.getElementById("studentBirthday").value;
+        document.getElementById(
+            "studentBirthday"
+        ).value;
 
     const note =
-        document.getElementById("studentNote").value;
+        document.getElementById(
+            "studentNote"
+        ).value;
 
     if (!name) {
 
-        alert("Введите ФИО студента.");
+        alert(
+            "Введите ФИО студента."
+        );
 
         return;
 
@@ -2224,9 +3298,14 @@ function saveStudent() {
 
         if (student) {
 
-            student.name = name;
-            student.birthday = birthday;
-            student.note = note;
+            student.name =
+                name;
+
+            student.birthday =
+                birthday;
+
+            student.note =
+                note;
 
         }
 
@@ -2234,14 +3313,27 @@ function saveStudent() {
 
         const newId =
             students.length
-                ? Math.max(...students.map(s => s.id)) + 1
+                ? Math.max(
+                    ...students.map(
+                        s => s.id
+                    )
+                ) + 1
                 : 1;
 
         students.push({
-            id: newId,
-            name: name,
-            birthday: birthday,
-            note: note
+
+            id:
+                newId,
+
+            name:
+                name,
+
+            birthday:
+                birthday,
+
+            note:
+                note
+
         });
 
     }
@@ -2257,7 +3349,9 @@ function saveStudent() {
 function deleteStudent(id) {
 
     const student =
-        students.find(s => s.id === id);
+        students.find(
+            s => s.id === id
+        );
 
     if (!student) {
         return;
@@ -2275,6 +3369,25 @@ function deleteStudent(id) {
         students.filter(
             s => s.id !== id
         );
+
+    /*
+       Если удалили студента,
+       корректируем индекс очереди.
+    */
+
+    if (
+        students.length > 0
+    ) {
+
+        duties.currentIndex =
+            duties.currentIndex %
+            students.length;
+
+    } else {
+
+        duties.currentIndex = 0;
+
+    }
 
     saveAll();
 
@@ -2294,44 +3407,77 @@ function renderStatistics() {
     let absent = 0;
     let late = 0;
     let critical = 0;
+    let totalToilet = 0;
 
     students.forEach(student => {
 
-        Object.values(attendance).forEach(day => {
+        Object.values(
+            attendance
+        ).forEach(day => {
 
-            const data =
+            const dayData =
                 day[student.id];
 
-            if (!data) {
+            if (
+                !dayData ||
+                !dayData.lessons
+            ) {
                 return;
             }
 
-            total++;
+            for (let i = 1; i <= 3; i++) {
 
-            if (data.status === "present") {
-                present++;
-            }
+                const data =
+                    dayData.lessons[i];
 
-            if (data.status === "absent") {
-                absent++;
-            }
+                if (!data) {
+                    continue;
+                }
 
-            if (data.status === "late") {
-
-                late++;
-
-                const minutes =
-                    calculateLateMinutes(
-                        settings.lessonStart,
-                        data.arrival
-                    );
+                total++;
 
                 if (
-                    minutes >
-                    Number(settings.lateLimit)
+                    data.status ===
+                    "present"
                 ) {
-                    critical++;
+                    present++;
                 }
+
+                if (
+                    data.status ===
+                    "absent"
+                ) {
+                    absent++;
+                }
+
+                if (
+                    data.status ===
+                    "late"
+                ) {
+
+                    late++;
+
+                    const minutes =
+                        calculateLateMinutes(
+                            lessons[i].start,
+                            data.arrival
+                        );
+
+                    if (
+                        minutes >
+                        Number(
+                            settings.lateLimit
+                        )
+                    ) {
+                        critical++;
+                    }
+
+                }
+
+                totalToilet +=
+                    Number(
+                        data.toilet
+                    ) || 0;
 
             }
 
@@ -2339,83 +3485,160 @@ function renderStatistics() {
 
     });
 
-    document.getElementById("statTotal").textContent =
+    document.getElementById(
+        "statTotal"
+    ).textContent =
         total;
 
-    document.getElementById("statPresent").textContent =
+    document.getElementById(
+        "statPresent"
+    ).textContent =
         present;
 
-    document.getElementById("statAbsent").textContent =
+    document.getElementById(
+        "statAbsent"
+    ).textContent =
         absent;
 
-    document.getElementById("statLate").textContent =
+    document.getElementById(
+        "statLate"
+    ).textContent =
         late;
 
-    document.getElementById("statCritical").textContent =
+    document.getElementById(
+        "statCritical"
+    ).textContent =
         critical;
 
+    document.getElementById(
+        "statToilet"
+    ).textContent =
+        totalToilet;
+
     const body =
-        document.getElementById("statisticsBody");
+        document.getElementById(
+            "statisticsBody"
+        );
 
     body.innerHTML = "";
 
-    students.forEach((student, index) => {
+    students.forEach(
+        (student, index) => {
 
-        let p = 0;
-        let a = 0;
-        let l = 0;
-        let c = 0;
+            let p = 0;
+            let a = 0;
+            let l = 0;
+            let c = 0;
+            let t = 0;
 
-        Object.values(attendance).forEach(day => {
+            Object.values(
+                attendance
+            ).forEach(day => {
 
-            const data =
-                day[student.id];
-
-            if (!data) {
-                return;
-            }
-
-            if (data.status === "present") {
-                p++;
-            }
-
-            if (data.status === "absent") {
-                a++;
-            }
-
-            if (data.status === "late") {
-
-                l++;
-
-                const minutes =
-                    calculateLateMinutes(
-                        settings.lessonStart,
-                        data.arrival
-                    );
+                const dayData =
+                    day[student.id];
 
                 if (
-                    minutes >
-                    Number(settings.lateLimit)
+                    !dayData ||
+                    !dayData.lessons
                 ) {
-                    c++;
+                    return;
                 }
 
-            }
+                for (let i = 1; i <= 3; i++) {
 
-        });
+                    const data =
+                        dayData.lessons[i];
 
-        body.innerHTML += `
-            <tr>
-                <td>${index + 1}</td>
-                <td style="text-align:left">${student.name}</td>
-                <td>${p}</td>
-                <td>${a}</td>
-                <td>${l}</td>
-                <td>${c}</td>
-            </tr>
-        `;
+                    if (!data) {
+                        continue;
+                    }
 
-    });
+                    if (
+                        data.status ===
+                        "present"
+                    ) {
+                        p++;
+                    }
+
+                    if (
+                        data.status ===
+                        "absent"
+                    ) {
+                        a++;
+                    }
+
+                    if (
+                        data.status ===
+                        "late"
+                    ) {
+
+                        l++;
+
+                        const minutes =
+                            calculateLateMinutes(
+                                lessons[i].start,
+                                data.arrival
+                            );
+
+                        if (
+                            minutes >
+                            Number(
+                                settings.lateLimit
+                            )
+                        ) {
+                            c++;
+                        }
+
+                    }
+
+                    t +=
+                        Number(
+                            data.toilet
+                        ) || 0;
+
+                }
+
+            });
+
+            body.innerHTML += `
+
+                <tr>
+
+                    <td>
+                        ${index + 1}
+                    </td>
+
+                    <td style="text-align:left">
+                        ${student.name}
+                    </td>
+
+                    <td>
+                        ${p}
+                    </td>
+
+                    <td>
+                        ${a}
+                    </td>
+
+                    <td>
+                        ${l}
+                    </td>
+
+                    <td>
+                        ${c}
+                    </td>
+
+                    <td>
+                        ${t}
+                    </td>
+
+                </tr>
+
+            `;
+
+        }
+    );
 
 }
 
@@ -2427,25 +3650,42 @@ function renderStatistics() {
 function addNote() {
 
     const title =
-        document.getElementById("noteTitle").value.trim();
+        document.getElementById(
+            "noteTitle"
+        ).value.trim();
 
     const text =
-        document.getElementById("noteText").value.trim();
+        document.getElementById(
+            "noteText"
+        ).value.trim();
 
     if (!title && !text) {
         return;
     }
 
     notes.unshift({
-        id: Date.now(),
-        title: title || "Без названия",
-        text: text,
-        date: dateKey()
+
+        id:
+            Date.now(),
+
+        title:
+            title || "Без названия",
+
+        text:
+            text,
+
+        date:
+            dateKey()
+
     });
 
-    document.getElementById("noteTitle").value = "";
+    document.getElementById(
+        "noteTitle"
+    ).value = "";
 
-    document.getElementById("noteText").value = "";
+    document.getElementById(
+        "noteText"
+    ).value = "";
 
     saveAll();
 
@@ -2456,7 +3696,9 @@ function addNote() {
 function renderNotes() {
 
     const list =
-        document.getElementById("notesList");
+        document.getElementById(
+            "notesList"
+        );
 
     if (!notes.length) {
 
@@ -2472,9 +3714,13 @@ function renderNotes() {
 
             <div class="panel">
 
-                <h3>${note.title}</h3>
+                <h3>
+                    ${note.title}
+                </h3>
 
-                <p>${note.text}</p>
+                <p>
+                    ${note.text}
+                </p>
 
                 <small>
                     ${formatDate(note.date)}
@@ -2484,7 +3730,11 @@ function renderNotes() {
 
                 <button
                     class="btn btn-danger"
-                    onclick="deleteNote(${note.id})"
+                    onclick="
+                        deleteNote(
+                            ${note.id}
+                        )
+                    "
                 >
                     Удалить
                 </button>
@@ -2516,7 +3766,8 @@ function deleteNote(id) {
 function changeMonth(amount) {
 
     calendarDate.setMonth(
-        calendarDate.getMonth() + amount
+        calendarDate.getMonth() +
+        amount
     );
 
     renderCalendar();
@@ -2525,7 +3776,8 @@ function changeMonth(amount) {
 
 function goToday() {
 
-    calendarDate = new Date();
+    calendarDate =
+        new Date();
 
     renderCalendar();
 
@@ -2548,13 +3800,17 @@ function renderCalendar() {
             }
         );
 
-    document.getElementById("calendarTitle")
-        .textContent =
+    document.getElementById(
+        "calendarTitle"
+    ).textContent =
         monthName.charAt(0).toUpperCase()
-        + monthName.slice(1);
+        +
+        monthName.slice(1);
 
     const grid =
-        document.getElementById("calendarGrid");
+        document.getElementById(
+            "calendarGrid"
+        );
 
     grid.innerHTML = "";
 
@@ -2571,15 +3827,21 @@ function renderCalendar() {
     days.forEach(day => {
 
         grid.innerHTML += `
+
             <div class="calendar-day-name">
                 ${day}
             </div>
+
         `;
 
     });
 
     const firstDay =
-        new Date(year, month, 1).getDay();
+        new Date(
+            year,
+            month,
+            1
+        ).getDay();
 
     let start =
         firstDay === 0
@@ -2593,7 +3855,11 @@ function renderCalendar() {
             0
         ).getDate();
 
-    for (let i = 0; i < start; i++) {
+    for (
+        let i = 0;
+        i < start;
+        i++
+    ) {
 
         grid.innerHTML += `
             <div class="calendar-cell"></div>
@@ -2601,10 +3867,18 @@ function renderCalendar() {
 
     }
 
-    for (let day = 1; day <= daysInMonth; day++) {
+    for (
+        let day = 1;
+        day <= daysInMonth;
+        day++
+    ) {
 
         const current =
-            new Date(year, month, day);
+            new Date(
+                year,
+                month,
+                day
+            );
 
         const key =
             dateKey(current);
@@ -2614,8 +3888,6 @@ function renderCalendar() {
 
         let events = "";
 
-        /* birthdays */
-
         students.forEach(student => {
 
             if (!student.birthday) {
@@ -2623,7 +3895,9 @@ function renderCalendar() {
             }
 
             const birth =
-                new Date(student.birthday);
+                new Date(
+                    student.birthday
+                );
 
             if (
                 birth.getMonth() === month &&
@@ -2631,39 +3905,53 @@ function renderCalendar() {
             ) {
 
                 events += `
+
                     <div
                         class="calendar-event"
                         title="День рождения"
                     >
                         🎂 ${student.name}
                     </div>
+
                 `;
 
             }
 
         });
 
-        /* reminders */
-
         reminders
-            .filter(r => r.date === key)
-            .forEach(reminder => {
+            .filter(
+                r => r.date === key
+            )
+            .forEach(
+                reminder => {
 
-                events += `
-                    <div
-                        class="calendar-event"
-                        title="${reminder.description || ""}"
-                    >
-                        📝 ${reminder.title}
-                    </div>
-                `;
+                    events += `
 
-            });
+                        <div
+                            class="calendar-event"
+                            title="${
+                                escapeHtml(
+                                    reminder.description || ""
+                                )
+                            }"
+                        >
+                            📝
+                            ${escapeHtml(
+                                reminder.title
+                            )}
+                        </div>
+
+                    `;
+
+                }
+            );
 
         grid.innerHTML += `
 
             <div
-                class="calendar-cell ${today ? "today" : ""}"
+                class="calendar-cell
+                    ${today ? "today" : ""}"
             >
 
                 <div class="calendar-number">
@@ -2690,44 +3978,62 @@ function renderCalendar() {
 function addReminder() {
 
     const title =
-        document.getElementById("reminderTitle")
-        .value.trim();
+        document.getElementById(
+            "reminderTitle"
+        ).value.trim();
 
     const date =
-        document.getElementById("reminderDate")
-        .value;
+        document.getElementById(
+            "reminderDate"
+        ).value;
 
     const time =
-        document.getElementById("reminderTime")
-        .value;
+        document.getElementById(
+            "reminderTime"
+        ).value;
 
     const description =
-        document.getElementById("reminderDescription")
-        .value.trim();
+        document.getElementById(
+            "reminderDescription"
+        ).value.trim();
 
     if (!title || !date) {
 
-        alert("Введите название и дату.");
+        alert(
+            "Введите название и дату."
+        );
 
         return;
 
     }
 
     reminders.push({
-        id: Date.now(),
+
+        id:
+            Date.now(),
+
         title,
         date,
         time,
         description
+
     });
 
-    document.getElementById("reminderTitle").value = "";
+    document.getElementById(
+        "reminderTitle"
+    ).value = "";
 
-    document.getElementById("reminderDate").value = "";
+    document.getElementById(
+        "reminderDate"
+    ).value = "";
 
-    document.getElementById("reminderTime").value = "";
+    document.getElementById(
+        "reminderTime"
+    ).value = "";
 
-    document.getElementById("reminderDescription").value = "";
+    document.getElementById(
+        "reminderDescription"
+    ).value = "";
 
     saveAll();
 
@@ -2745,11 +4051,14 @@ function addReminder() {
 function renderBirthdays() {
 
     const list =
-        document.getElementById("birthdaysList");
+        document.getElementById(
+            "birthdaysList"
+        );
 
     const birthdays =
         students.filter(
-            student => student.birthday
+            student =>
+                student.birthday
         );
 
     if (!birthdays.length) {
@@ -2765,23 +4074,32 @@ function renderBirthdays() {
         birthdays
         .sort(
             (a,b) =>
-                new Date(a.birthday).getTime()
+                new Date(
+                    a.birthday
+                ).getTime()
                 -
-                new Date(b.birthday).getTime()
+                new Date(
+                    b.birthday
+                ).getTime()
         )
-        .map(student => `
+        .map(
+            student => `
 
-            <div class="alert alert-success">
+                <div class="alert alert-success">
 
-                🎂 <strong>
-                    ${student.name}
-                </strong>
+                    🎂 <strong>
+                        ${student.name}
+                    </strong>
 
-                — ${formatDate(student.birthday)}
+                    —
+                    ${formatDate(
+                        student.birthday
+                    )}
 
-            </div>
+                </div>
 
-        `)
+            `
+        )
         .join("");
 
 }
@@ -2794,7 +4112,9 @@ function renderBirthdays() {
 function renderUpcomingEvents() {
 
     const container =
-        document.getElementById("upcomingEvents");
+        document.getElementById(
+            "upcomingEvents"
+        );
 
     const today =
         new Date();
@@ -2808,7 +4128,9 @@ function renderUpcomingEvents() {
         }
 
         const birth =
-            new Date(student.birthday);
+            new Date(
+                student.birthday
+            );
 
         let next =
             new Date(
@@ -2820,14 +4142,20 @@ function renderUpcomingEvents() {
         if (next < today) {
 
             next.setFullYear(
-                today.getFullYear() + 1
+                today.getFullYear() +
+                1
             );
 
         }
 
         events.push({
-            date: next,
-            text: `🎂 День рождения — ${student.name}`
+
+            date:
+                next,
+
+            text:
+                `🎂 День рождения — ${student.name}`
+
         });
 
     });
@@ -2836,14 +4164,20 @@ function renderUpcomingEvents() {
 
         const date =
             new Date(
-                reminder.date + "T00:00:00"
+                reminder.date +
+                "T00:00:00"
             );
 
         if (date >= today) {
 
             events.push({
-                date: date,
-                text: `📝 ${reminder.title}`
+
+                date:
+                    date,
+
+                text:
+                    `📝 ${reminder.title}`
+
             });
 
         }
@@ -2867,21 +4201,24 @@ function renderUpcomingEvents() {
     container.innerHTML =
         events
         .slice(0, 5)
-        .map(event => `
+        .map(
+            event => `
 
-            <div class="alert alert-success">
+                <div class="alert alert-success">
 
-                <strong>
-                    ${event.date.toLocaleDateString(
-                        "ru-RU"
-                    )}
-                </strong>
+                    <strong>
+                        ${event.date.toLocaleDateString(
+                            "ru-RU"
+                        )}
+                    </strong>
 
-                — ${event.text}
+                    —
+                    ${event.text}
 
-            </div>
+                </div>
 
-        `)
+            `
+        )
         .join("");
 
 }
@@ -2893,13 +4230,19 @@ function renderUpcomingEvents() {
 
 function renderSettings() {
 
-    document.getElementById("groupName").value =
+    document.getElementById(
+        "groupName"
+    ).value =
         settings.groupName;
 
-    document.getElementById("lessonStart").value =
-        settings.lessonStart;
+    document.getElementById(
+        "lateLimit"
+    ).value =
+        settings.lateLimit;
 
-    document.getElementById("lateLimit").value =
+    document.getElementById(
+        "settingsLateText"
+    ).textContent =
         settings.lateLimit;
 
 }
@@ -2907,21 +4250,33 @@ function renderSettings() {
 function saveSettings() {
 
     settings.groupName =
-        document.getElementById("groupName").value;
-
-    settings.lessonStart =
-        document.getElementById("lessonStart").value;
+        document.getElementById(
+            "groupName"
+        ).value;
 
     settings.lateLimit =
         Number(
-            document.getElementById("lateLimit").value
+            document.getElementById(
+                "lateLimit"
+            ).value
         );
+
+    if (
+        isNaN(settings.lateLimit) ||
+        settings.lateLimit < 0
+    ) {
+
+        settings.lateLimit = 20;
+
+    }
 
     saveAll();
 
     refreshAll();
 
-    alert("Настройки сохранены.");
+    alert(
+        "Настройки сохранены."
+    );
 
 }
 
@@ -2933,6 +4288,7 @@ function saveSettings() {
 function exportData() {
 
     const data = {
+
         students,
         attendance,
         history,
@@ -2940,6 +4296,7 @@ function exportData() {
         reminders,
         duties,
         settings
+
     };
 
     const blob =
@@ -2952,24 +4309,32 @@ function exportData() {
                 )
             ],
             {
-                type: "application/json"
+                type:
+                    "application/json"
             }
         );
 
     const url =
-        URL.createObjectURL(blob);
+        URL.createObjectURL(
+            blob
+        );
 
     const a =
-        document.createElement("a");
+        document.createElement(
+            "a"
+        );
 
-    a.href = url;
+    a.href =
+        url;
 
     a.download =
         "journal-group-3-backup.json";
 
     a.click();
 
-    URL.revokeObjectURL(url);
+    URL.revokeObjectURL(
+        url
+    );
 
 }
 
@@ -2990,62 +4355,79 @@ function importData(event) {
     const reader =
         new FileReader();
 
-    reader.onload = function(e) {
+    reader.onload =
+        function(e) {
 
-        try {
+            try {
 
-            const data =
-                JSON.parse(e.target.result);
+                const data =
+                    JSON.parse(
+                        e.target.result
+                    );
 
-            if (
-                !confirm(
-                    "Заменить текущие данные резервной копией?"
-                )
-            ) {
-                return;
+                if (
+                    !confirm(
+                        "Заменить текущие данные резервной копией?"
+                    )
+                ) {
+                    return;
+                }
+
+                students =
+                    data.students ||
+                    createStudents();
+
+                attendance =
+                    data.attendance ||
+                    {};
+
+                history =
+                    data.history ||
+                    [];
+
+                notes =
+                    data.notes ||
+                    [];
+
+                reminders =
+                    data.reminders ||
+                    [];
+
+                duties =
+                    data.duties ||
+                    {
+                        currentIndex: 0,
+                        completed: {},
+                        extra: []
+                    };
+
+                settings =
+                    data.settings ||
+                    {
+                        groupName:
+                            "Группа 3",
+                        lateLimit:
+                            20
+                    };
+
+                saveAll();
+
+                refreshAll();
+
+                alert(
+                    "Данные восстановлены."
+                );
+
+            }
+            catch {
+
+                alert(
+                    "Ошибка: файл поврежден или имеет неправильный формат."
+                );
+
             }
 
-            students =
-                data.students || [];
-
-            attendance =
-                data.attendance || {};
-
-            history =
-                data.history || [];
-
-            notes =
-                data.notes || [];
-
-            reminders =
-                data.reminders || [];
-
-            duties =
-                data.duties || {
-                    currentIndex: 0,
-                    completed: {},
-                    extra: []
-                };
-
-            settings =
-                data.settings || settings;
-
-            saveAll();
-
-            refreshAll();
-
-            alert("Данные восстановлены.");
-
-        }
-        catch {
-
-            alert(
-                "Ошибка: файл поврежден или имеет неправильный формат."
-            );
-
-        }
-
-    };
+        };
 
     reader.readAsText(file);
 
@@ -3058,16 +4440,55 @@ function importData(event) {
 
 function updateHeader() {
 
-    document.getElementById("headerDate")
-        .textContent =
+    document.getElementById(
+        "headerDate"
+    ).textContent =
         new Date().toLocaleDateString(
             "ru-RU",
             {
-                weekday: "long",
-                day: "numeric",
-                month: "long",
-                year: "numeric"
+                weekday:
+                    "long",
+
+                day:
+                    "numeric",
+
+                month:
+                    "long",
+
+                year:
+                    "numeric"
             }
+        );
+
+}
+
+
+/* =====================================================
+   ESCAPE HTML
+===================================================== */
+
+function escapeHtml(value) {
+
+    return String(value)
+        .replace(
+            /&/g,
+            "&amp;"
+        )
+        .replace(
+            /</g,
+            "&lt;"
+        )
+        .replace(
+            />/g,
+            "&gt;"
+        )
+        .replace(
+            /"/g,
+            "&quot;"
+        )
+        .replace(
+            /'/g,
+            "&#039;"
         );
 
 }
@@ -3114,3 +4535,4 @@ refreshAll();
 
 </body>
 </html>
+```
