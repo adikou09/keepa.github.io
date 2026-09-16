@@ -1,716 +1,3115 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>for keepa</title>
+<title>Электронный журнал — Группа 3</title>
+
 <style>
-  @import url('https://fonts.googleapis.com/css2?family=Fraunces:ital,opsz,wght@0,9..144,400;0,9..144,600;1,9..144,500&family=Jost:wght@300;400;500&display=swap');
+* {
+    box-sizing: border-box;
+}
 
-  :root{
-    --bg1: #4a1420;
-    --bg2: #2a0810;
-    --bg3: #1a0509;
-    --cream: #f6e8da;
-    --coral: #ea9d84;
-    --coral-soft: #e2765e;
-    --coral-deep: #ab4030;
-    --gold: #e0b374;
-    --gold-deep: #b8823f;
-    --blush: #f4cdb8;
-    --leaf: #5c7a52;
-    --leaf-deep: #3d5636;
-  }
+body {
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background: #eef2f5;
+    color: #1f2933;
+}
 
-  *{ box-sizing: border-box; }
+/* ===== HEADER ===== */
 
-  html, body{
-    margin:0;
-    height:100%;
-    background:
-      radial-gradient(circle at 30% 20%, rgba(224,179,116,0.10) 0%, transparent 45%),
-      radial-gradient(circle at 75% 75%, rgba(171,64,48,0.18) 0%, transparent 50%),
-      radial-gradient(circle at 50% 40%, var(--bg1) 0%, var(--bg2) 55%, var(--bg3) 100%);
-    color: var(--cream);
-    font-family: 'Jost', sans-serif;
-    overflow: hidden;
-  }
-
-  .stage{
-    height: 100svh;
-    width: 100vw;
-    position: relative;
-  }
-
-  .sparkle{
-    position: absolute;
-    border-radius: 50%;
-    background: var(--gold);
-    opacity: 0.5;
-    animation: twinkle 3.5s ease-in-out infinite;
-  }
-  @keyframes twinkle{
-    0%,100%{ opacity: 0.15; transform: scale(0.7); }
-    50%{ opacity: 0.75; transform: scale(1.2); }
-  }
-
-  .frame{
-    position: absolute;
-    inset: 14px;
-    z-index: 25;
-    pointer-events: none;
-  }
-  .frame svg{ width: 100%; height: 100%; }
-  .frame .corner{ opacity: 0.55; }
-
-  /* ---------- CLOSED CARD ---------- */
-  .card-wrap{
-    position: absolute;
-    inset: 0;
+header {
+    background: #243447;
+    color: white;
+    padding: 18px 25px;
     display: flex;
-    flex-direction: column;
+    justify-content: space-between;
     align-items: center;
-    justify-content: center;
-    text-align: center;
-    z-index: 20;
-    transition: opacity 0.6s ease 0.4s, transform 0.6s ease 0.4s;
-  }
+    position: sticky;
+    top: 0;
+    z-index: 100;
+}
 
-  .card-btn{
-    background: radial-gradient(circle at 50% 40%, rgba(224,179,116,0.10), transparent 70%);
-    border: 1px solid var(--gold-deep);
-    box-shadow: 0 0 0 1px rgba(224,179,116,0.15), 0 20px 60px rgba(0,0,0,0.5), inset 0 0 40px rgba(224,179,116,0.06);
+.logo {
+    font-size: 22px;
+    font-weight: bold;
+}
+
+.logo span {
+    color: #8ecae6;
+}
+
+.header-date {
+    font-size: 14px;
+}
+
+/* ===== NAVIGATION ===== */
+
+nav {
+    background: white;
+    border-bottom: 1px solid #d5dce2;
+    display: flex;
+    gap: 5px;
+    padding: 8px 15px;
+    overflow-x: auto;
+    position: sticky;
+    top: 66px;
+    z-index: 99;
+}
+
+nav button {
+    border: none;
+    background: transparent;
+    padding: 11px 15px;
+    border-radius: 7px;
+    cursor: pointer;
+    font-size: 14px;
+    white-space: nowrap;
+}
+
+nav button:hover {
+    background: #edf2f7;
+}
+
+nav button.active {
+    background: #243447;
+    color: white;
+}
+
+/* ===== MAIN ===== */
+
+main {
+    max-width: 1400px;
+    margin: auto;
+    padding: 25px;
+}
+
+.page {
+    display: none;
+}
+
+.page.active {
+    display: block;
+}
+
+.page-title {
+    margin-bottom: 20px;
+}
+
+.page-title h1 {
+    margin: 0 0 5px;
+    font-size: 28px;
+}
+
+.page-title p {
+    margin: 0;
+    color: #6b7280;
+}
+
+/* ===== CARDS ===== */
+
+.cards {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.card {
+    background: white;
+    border-radius: 10px;
+    padding: 18px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.06);
+    border: 1px solid #e0e5ea;
+}
+
+.card-title {
+    font-size: 13px;
+    color: #6b7280;
+    margin-bottom: 8px;
+}
+
+.card-value {
+    font-size: 27px;
+    font-weight: bold;
+}
+
+.card small {
+    color: #6b7280;
+}
+
+/* ===== SECTION ===== */
+
+.panel {
+    background: white;
+    border-radius: 10px;
+    border: 1px solid #e0e5ea;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+}
+
+.panel h2 {
+    margin-top: 0;
+}
+
+/* ===== BUTTONS ===== */
+
+.btn {
+    border: none;
     border-radius: 6px;
-    width: 240px;
-    height: 170px;
+    padding: 9px 13px;
     cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    -webkit-tap-highlight-color: transparent;
-    touch-action: manipulation;
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-  }
-  .card-btn:active{ transform: scale(0.96); }
-  .card-btn svg{ width: 92px; height: 92px; filter: drop-shadow(0 6px 14px rgba(0,0,0,0.4)); animation: idle 3.6s ease-in-out infinite; }
+    font-size: 14px;
+    margin: 2px;
+}
 
-  @keyframes idle{
-    0%,100%{ transform: scale(1) rotate(0deg); }
-    50%{ transform: scale(1.06) rotate(-2deg); }
-  }
+.btn-primary {
+    background: #243447;
+    color: white;
+}
 
-  .hint{
-    margin-top: 24px;
-    font-size: 11px;
-    letter-spacing: 0.18em;
-    text-transform: uppercase;
-    color: var(--gold);
-    opacity: 0.7;
-  }
+.btn-success {
+    background: #2e8b57;
+    color: white;
+}
 
-  .stage.open .card-wrap{
-    opacity: 0;
-    transform: scale(0.85);
-    pointer-events: none;
-  }
+.btn-danger {
+    background: #c0392b;
+    color: white;
+}
 
-  /* ---------- BURSTING FLOWERS ---------- */
-  .burst{ position: absolute; inset: 0; z-index: 10; pointer-events: none; }
+.btn-warning {
+    background: #e0a11a;
+    color: white;
+}
 
-  .fbloom{
-    position: absolute;
-    opacity: 0;
-    left: 50%; top: 46%;
-    transform: scale(0.15) rotate(0deg);
-    will-change: transform, opacity;
-  }
-  .stage.open .fbloom{ animation: fly 1.9s cubic-bezier(.16,.9,.3,1) forwards; }
+.btn-secondary {
+    background: #e5e7eb;
+    color: #1f2933;
+}
 
-  @keyframes fly{
-    0%{ opacity: 0; transform: translate(0,0) scale(0.15) rotate(0deg); }
-    45%{ opacity: 1; }
-    75%{ opacity: 0.9; }
-    100%{ opacity: 0; transform: translate(var(--tx), var(--ty)) scale(calc(var(--ts) * 0.7)) rotate(var(--tr)); }
-  }
+.btn:hover {
+    opacity: .85;
+}
 
-  .glint{
-    position: absolute;
-    left: 50%; top: 46%;
-    width: 6px; height: 6px;
-    border-radius: 50%;
-    background: var(--gold);
-    opacity: 0;
-    will-change: transform, opacity;
-  }
-  .stage.open .glint{ animation: flyGlint 1.3s ease-out forwards; }
-  @keyframes flyGlint{
-    0%{ opacity: 0; transform: translate(0,0) scale(0.3); }
-    30%{ opacity: 1; }
-    100%{ opacity: 0; transform: translate(var(--tx), var(--ty)) scale(1.4); }
-  }
+/* ===== JOURNAL ===== */
 
-  /* ---------- BOUQUET ---------- */
-  .bouquet-wrap{
-    position: absolute;
-    inset: 0;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
+.table-wrapper {
+    overflow-x: auto;
+}
+
+table {
+    width: 100%;
+    border-collapse: collapse;
+    min-width: 850px;
+}
+
+th {
+    background: #e7edf3;
+    font-weight: bold;
+}
+
+th, td {
+    border: 1px solid #b9c2ca;
+    padding: 9px;
     text-align: center;
-    z-index: 15;
-    opacity: 0;
-    transition: opacity 1s ease 1.15s;
-  }
-  .stage.open .bouquet-wrap{ opacity: 1; }
+}
 
-  .bouquet{
-    width: min(88vw, 380px);
-    height: auto;
-    filter: drop-shadow(0 24px 50px rgba(0,0,0,0.55));
-    opacity: 0;
-    transform: translateY(22px) scale(0.94);
-    transition: opacity 1s ease 1.2s, transform 1s cubic-bezier(.19,1,.22,1) 1.2s;
-  }
-  .stage.open .bouquet{ opacity: 1; transform: translateY(0) scale(1); }
+td.name {
+    text-align: left;
+    font-weight: bold;
+}
 
-  .caption{
-    margin-top: 6px;
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-weight: 600;
-    font-size: clamp(34px, 9vw, 56px);
-    background: linear-gradient(180deg, var(--blush), var(--gold) 60%, var(--gold-deep));
-    -webkit-background-clip: text;
-    background-clip: text;
-    color: transparent;
-    filter: drop-shadow(0 2px 12px rgba(224,179,116,0.25));
-    opacity: 0;
-    transform: translateY(10px);
-    transition: opacity 0.9s ease 1.9s, transform 0.9s ease 1.9s;
-  }
-  .stage.open .caption{ opacity: 1; transform: translateY(0); }
+input,
+select,
+textarea {
+    width: 100%;
+    padding: 8px;
+    border: 1px solid #c7ced6;
+    border-radius: 5px;
+    font-size: 14px;
+}
 
-  .rule{
-    width: 60px;
-    height: 1px;
-    background: linear-gradient(90deg, transparent, var(--gold), transparent);
-    margin: 14px auto 0;
-    opacity: 0;
-    transition: opacity 1s ease 2.3s;
-  }
-  .stage.open .rule{ opacity: 0.8; }
+textarea {
+    resize: vertical;
+}
 
-  /* ---------- BEHAVIOR RATING ---------- */
-  .behavior-wrap{
-    margin-top: 18px;
-    opacity: 0;
-    transition: opacity 1s ease 2.45s;
-  }
-  .stage.open .behavior-wrap{ opacity: 1; }
+/* ===== STATUS ===== */
 
-  .behavior-title{
-    font-size: 12px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    opacity: 0.8;
-    margin: 0 0 12px;
-  }
+.status-present {
+    color: #198754;
+    font-weight: bold;
+}
 
-  .behavior-actions{
+.status-absent {
+    color: #c0392b;
+    font-weight: bold;
+}
+
+.status-late {
+    color: #d68910;
+    font-weight: bold;
+}
+
+/* ===== RED UNDERLINE ===== */
+
+.late-critical {
+    color: #c0392b !important;
+    text-decoration-line: underline;
+    text-decoration-color: #c0392b;
+    text-decoration-thickness: 3px;
+    text-underline-offset: 3px;
+}
+
+/* ===== ALERT ===== */
+
+.alert {
+    padding: 13px 15px;
+    border-radius: 7px;
+    margin-bottom: 10px;
+}
+
+.alert-warning {
+    background: #fff3cd;
+    border: 1px solid #ffe69c;
+}
+
+.alert-danger {
+    background: #f8d7da;
+    border: 1px solid #f1aeb5;
+}
+
+.alert-success {
+    background: #d1e7dd;
+    border: 1px solid #a3cfbb;
+}
+
+/* ===== CALENDAR ===== */
+
+.calendar-header {
     display: flex;
-    gap: 10px;
-    justify-content: center;
-  }
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 15px;
+}
 
-  .behavior-btn{
-    font-family: 'Jost', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.05em;
-    padding: 10px 18px;
-    border-radius: 20px;
-    -webkit-tap-highlight-color: transparent;
-  }
+.calendar-header h2 {
+    margin: 0;
+}
 
-  .behavior-btn.good{
-    background: var(--gold);
-    color: #2a0810;
-    border: 1px solid var(--gold);
-    font-weight: 500;
+.calendar-grid {
+    display: grid;
+    grid-template-columns: repeat(7, 1fr);
+    border-left: 1px solid #ccd3da;
+    border-top: 1px solid #ccd3da;
+}
+
+.calendar-day-name {
+    background: #e7edf3;
+    padding: 10px;
+    text-align: center;
+    font-weight: bold;
+    border-right: 1px solid #ccd3da;
+    border-bottom: 1px solid #ccd3da;
+}
+
+.calendar-cell {
+    min-height: 100px;
+    padding: 7px;
+    background: white;
+    border-right: 1px solid #ccd3da;
+    border-bottom: 1px solid #ccd3da;
     cursor: pointer;
-    transition: transform 0.2s ease, box-shadow 0.2s ease;
-  }
-  .behavior-btn.good:hover{ box-shadow: 0 6px 18px rgba(224,179,116,0.35); }
-  .behavior-btn.good:active{ transform: scale(0.95); }
+}
 
-  .behavior-btn.bad{
-    background: none;
-    color: rgba(246,232,218,0.3);
-    border: 1px dashed rgba(246,232,218,0.25);
-    cursor: not-allowed;
-    pointer-events: none;
-    opacity: 0.5;
-  }
+.calendar-cell:hover {
+    background: #f5f8fa;
+}
 
-  .behavior-status{
-    margin-top: 12px;
-    font-size: 13px;
-    min-height: 18px;
-    color: var(--gold);
-    opacity: 0;
-    transition: opacity 0.5s ease;
-  }
-  .behavior-status.show{ opacity: 1; }
+.calendar-cell.today {
+    background: #e8f4fb;
+}
 
-  /* ---------- ENVELOPE PROMPT ---------- */
-  .next-hint{
-    margin-top: 22px;
+.calendar-number {
+    font-weight: bold;
+}
+
+.calendar-event {
     font-size: 11px;
-    letter-spacing: 0.14em;
-    text-transform: uppercase;
-    color: var(--gold);
-    opacity: 0;
-    cursor: pointer;
-    background: none;
-    border: 1px solid var(--gold-deep);
-    border-radius: 20px;
-    padding: 10px 20px;
-    transition: opacity 1s ease 2.6s, background 0.3s ease;
-    -webkit-tap-highlight-color: transparent;
-  }
-  .stage.open .next-hint{ opacity: 0.85; }
-  .next-hint:active{ background: rgba(224,179,116,0.12); }
+    margin-top: 5px;
+    padding: 3px 5px;
+    border-radius: 4px;
+    background: #edf2f7;
+}
 
-  .envelope-layer{
+/* ===== DUTIES ===== */
+
+.duty-current {
+    font-size: 22px;
+    font-weight: bold;
+    margin-bottom: 15px;
+}
+
+/* ===== STUDENTS ===== */
+
+.student-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+    gap: 15px;
+}
+
+.student-card {
+    background: white;
+    border: 1px solid #dce2e7;
+    border-radius: 9px;
+    padding: 17px;
+}
+
+.student-card h3 {
+    margin-top: 0;
+}
+
+.student-info {
+    color: #667085;
+    font-size: 14px;
+    line-height: 1.8;
+}
+
+/* ===== SEARCH ===== */
+
+.search-box {
+    max-width: 400px;
+    margin-bottom: 15px;
+}
+
+/* ===== MODAL ===== */
+
+.modal {
+    display: none;
     position: fixed;
     inset: 0;
-    z-index: 40;
-    display: flex;
+    background: rgba(0,0,0,.5);
+    z-index: 200;
     align-items: center;
     justify-content: center;
-    padding: 24px;
-    background: rgba(20,6,10,0.55);
-    opacity: 0;
-    pointer-events: none;
-    transition: opacity 0.4s ease;
-  }
-  .envelope-layer.show{ opacity: 1; pointer-events: auto; }
+    padding: 20px;
+}
 
-  .envelope-card{
-    width: 100%;
-    max-width: 380px;
-    background: linear-gradient(180deg, rgba(246,232,218,0.07), rgba(246,232,218,0.02));
-    border: 1px solid var(--gold-deep);
-    border-radius: 8px;
-    box-shadow: 0 30px 80px rgba(0,0,0,0.6);
-    padding: 28px 24px;
-    text-align: center;
-    transform: translateY(16px) scale(0.97);
-    transition: transform 0.4s cubic-bezier(.19,1,.22,1);
-  }
-  .envelope-layer.show .envelope-card{ transform: translateY(0) scale(1); }
-
-  .envelope-icon{ width: 64px; height: 64px; margin: 0 auto 14px; display: block; }
-
-  .envelope-title{
-    font-family: 'Fraunces', serif;
-    font-style: italic;
-    font-size: 22px;
-    color: var(--gold);
-    margin: 0 0 18px;
-  }
-
-  .envelope-textarea{
-    width: 100%;
-    min-height: 110px;
-    background: rgba(0,0,0,0.2);
-    border: 1px solid var(--gold-deep);
-    border-radius: 6px;
-    color: var(--cream);
-    font-family: 'Jost', sans-serif;
-    font-size: 15px;
-    padding: 12px;
-    resize: vertical;
-    box-sizing: border-box;
-    outline: none;
-  }
-  .envelope-textarea::placeholder{ color: rgba(246,232,218,0.4); }
-
-  .envelope-actions{
+.modal.show {
     display: flex;
-    gap: 10px;
-    margin-top: 16px;
-  }
+}
 
-  .envelope-btn{
-    flex: 1;
-    padding: 12px;
-    border-radius: 6px;
-    font-family: 'Jost', sans-serif;
-    font-size: 13px;
-    letter-spacing: 0.06em;
-    text-transform: uppercase;
-    cursor: pointer;
-    -webkit-tap-highlight-color: transparent;
-    border: 1px solid var(--gold-deep);
+.modal-content {
+    background: white;
+    width: 100%;
+    max-width: 550px;
+    max-height: 90vh;
+    overflow-y: auto;
+    border-radius: 10px;
+    padding: 22px;
+}
+
+.modal-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.close {
+    border: none;
     background: none;
-    color: var(--cream);
-  }
-  .envelope-btn.send{
-    background: var(--gold);
-    color: #2a0810;
-    border-color: var(--gold);
-    font-weight: 500;
-  }
-  .envelope-btn.send:disabled{ opacity: 0.6; cursor: default; }
+    font-size: 25px;
+    cursor: pointer;
+}
 
-  .envelope-status{
-    margin-top: 12px;
-    font-size: 13px;
-    min-height: 18px;
-    color: var(--gold);
-  }
+/* ===== RESPONSIVE ===== */
 
-  @media (max-width: 640px){
-    .card-btn{ width: 190px; height: 140px; box-shadow: none; }
-    .card-btn svg{ width: 76px; height: 76px; filter: none; animation: none; }
-    .bouquet{ filter: none; }
-    .caption{ filter: none; }
-    .glint{ display: none; }
-    .sparkle{ display: none; }
-    html, body{ background: var(--bg2); }
-  }
+@media (max-width: 700px) {
+
+    header {
+        padding: 14px;
+    }
+
+    .header-date {
+        display: none;
+    }
+
+    nav {
+        top: 58px;
+    }
+
+    main {
+        padding: 12px;
+    }
+
+    .page-title h1 {
+        font-size: 23px;
+    }
+
+    .calendar-cell {
+        min-height: 70px;
+        font-size: 12px;
+    }
+
+    .calendar-event {
+        font-size: 9px;
+    }
+}
 </style>
 </head>
+
 <body>
 
-<div class="stage" id="stage">
-
-  <div class="frame">
-    <svg viewBox="0 0 400 700" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
-      <g stroke="#e0b374" stroke-width="1.4" fill="none" class="corner">
-        <path d="M4 60 Q4 4 60 4 M4 30 Q20 30 20 46 M30 4 Q30 20 46 20"/>
-        <path d="M396 60 Q396 4 340 4 M396 30 Q380 30 380 46 M370 4 Q370 20 354 20"/>
-        <path d="M4 640 Q4 696 60 696 M4 670 Q20 670 20 654 M30 696 Q30 680 46 680"/>
-        <path d="M396 640 Q396 696 340 696 M396 670 Q380 670 380 654 M370 696 Q370 680 354 680"/>
-      </g>
-      <rect x="14" y="14" width="372" height="672" rx="4" stroke="#e0b374" stroke-width="0.7" fill="none" opacity="0.35"/>
-    </svg>
-  </div>
-
-  <div class="card-wrap">
-    <button class="card-btn" id="cardBtn" aria-label="open">
-      <svg id="heroFlower" viewBox="0 0 100 100"></svg>
-    </button>
-  </div>
-
-  <div class="burst" id="burst"></div>
-
-  <div class="bouquet-wrap">
-    <svg class="bouquet" id="bouquetSVG" viewBox="10 60 300 320" fill="none" xmlns="http://www.w3.org/2000/svg"></svg>
-
-    <div class="behavior-wrap">
-      <p class="behavior-title">какое у меня поведение?</p>
-      <div class="behavior-actions">
-        <button class="behavior-btn good" id="behaviorGood">идеальнейшее</button>
-        <button class="behavior-btn bad" id="behaviorBad" disabled tabindex="-1" aria-disabled="true">плохое</button>
-      </div>
-      <div class="behavior-status" id="behaviorStatus"></div>
+<header>
+    <div class="logo">
+        📖 Электронный журнал <span>Группа 3</span>
     </div>
 
-    <button class="next-hint" id="envelopeOpenBtn">написать в ответ</button>
-  </div>
+    <div class="header-date" id="headerDate"></div>
+</header>
 
-  <div class="envelope-layer" id="envelopeLayer">
-    <div class="envelope-card">
-      <svg class="envelope-icon" viewBox="0 0 100 100" fill="none" xmlns="http://www.w3.org/2000/svg">
-        <rect x="10" y="24" width="80" height="56" rx="4" fill="none" stroke="#e0b374" stroke-width="2.5"/>
-        <path d="M12 26 L50 58 L88 26" fill="none" stroke="#e0b374" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/>
-        <path d="M12 78 L38 50" fill="none" stroke="#e0b374" stroke-width="1.6" opacity="0.6"/>
-        <path d="M88 78 L62 50" fill="none" stroke="#e0b374" stroke-width="1.6" opacity="0.6"/>
-      </svg>
-      <p class="envelope-title">keepa отвечает</p>
-      <textarea class="envelope-textarea" id="envelopeText" placeholder="напиши что хочешь..."></textarea>
-      <div class="envelope-actions">
-        <button class="envelope-btn" id="envelopeCancelBtn">закрыть</button>
-        <button class="envelope-btn send" id="envelopeSendBtn">отправить</button>
-      </div>
-      <div class="envelope-status" id="envelopeStatus"></div>
+<nav>
+    <button class="nav-btn active" onclick="showPage('home', this)">Главная</button>
+    <button class="nav-btn" onclick="showPage('journal', this)">Журнал</button>
+    <button class="nav-btn" onclick="showPage('duties', this)">Дежурства</button>
+    <button class="nav-btn" onclick="showPage('students', this)">Студенты</button>
+    <button class="nav-btn" onclick="showPage('statistics', this)">Статистика</button>
+    <button class="nav-btn" onclick="showPage('history', this)">История</button>
+    <button class="nav-btn" onclick="showPage('notes', this)">Заметки</button>
+    <button class="nav-btn" onclick="showPage('calendar', this)">Календарь</button>
+    <button class="nav-btn" onclick="showPage('settings', this)">Настройки</button>
+</nav>
+
+<main>
+
+<!-- ================================================= -->
+<!-- HOME -->
+<!-- ================================================= -->
+
+<section id="home" class="page active">
+
+    <div class="page-title">
+        <h1>Главная</h1>
+        <p>Электронный журнал старосты — Группа 3</p>
     </div>
-  </div>
+
+    <div id="homeAlerts"></div>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="card-title">Всего студентов</div>
+            <div class="card-value" id="totalStudents">18</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Присутствуют</div>
+            <div class="card-value" id="homePresent">0</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Отсутствуют</div>
+            <div class="card-value" id="homeAbsent">0</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Опоздали</div>
+            <div class="card-value" id="homeLate">0</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Опоздали >20 мин</div>
+            <div class="card-value" id="homeCriticalLate">0</div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Дежурный сегодня</div>
+            <div class="card-value" id="homeDuty" style="font-size:18px">—</div>
+        </div>
+
+    </div>
+
+    <div class="panel">
+        <h2>⚡ Быстрая отметка</h2>
+
+        <button class="btn btn-success" onclick="markAllPresent()">
+            ✓ Все присутствуют
+        </button>
+
+        <button class="btn btn-secondary" onclick="showPageByName('journal')">
+            Открыть журнал
+        </button>
+    </div>
+
+    <div class="panel">
+        <h2>📅 Сегодня</h2>
+
+        <div id="todaySummary"></div>
+    </div>
+
+    <div class="panel">
+        <h2>🎂 Ближайшие события</h2>
+
+        <div id="upcomingEvents"></div>
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- JOURNAL -->
+<!-- ================================================= -->
+
+<section id="journal" class="page">
+
+    <div class="page-title">
+        <h1>Журнал</h1>
+        <p id="journalDate"></p>
+    </div>
+
+    <div class="panel">
+
+        <button class="btn btn-success" onclick="markAllPresent()">
+            ✓ Все присутствуют
+        </button>
+
+        <button class="btn btn-secondary" onclick="resetToday()">
+            Сбросить сегодняшний день
+        </button>
+
+        <div class="table-wrapper" style="margin-top:15px">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>ФИО студента</th>
+                        <th>Статус</th>
+                        <th>Время прихода</th>
+                        <th>Опоздание</th>
+                        <th>Причина</th>
+                        <th>Примечание</th>
+                    </tr>
+                </thead>
+
+                <tbody id="journalBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- DUTIES -->
+<!-- ================================================= -->
+
+<section id="duties" class="page">
+
+    <div class="page-title">
+        <h1>Дежурства</h1>
+        <p>Очередность дежурств группы</p>
+    </div>
+
+    <div class="panel">
+
+        <h2>🔵 Сегодня дежурит</h2>
+
+        <div class="duty-current" id="currentDuty">
+            —
+        </div>
+
+        <button class="btn btn-success" onclick="completeDuty()">
+            ✓ Дежурство выполнено
+        </button>
+
+        <button class="btn btn-danger" onclick="skipDuty()">
+            ✕ Не выполнил
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>📋 Очередь</h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>Студент</th>
+                        <th>Статус</th>
+                    </tr>
+                </thead>
+
+                <tbody id="dutyBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>⚠ Вне очереди</h2>
+
+        <div id="outsideQueue"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- STUDENTS -->
+<!-- ================================================= -->
+
+<section id="students" class="page">
+
+    <div class="page-title">
+        <h1>Студенты</h1>
+        <p>Список группы</p>
+    </div>
+
+    <div class="panel">
+
+        <input
+            class="search-box"
+            id="studentSearch"
+            placeholder="🔎 Поиск студента..."
+            oninput="renderStudents()"
+        >
+
+        <button class="btn btn-primary" onclick="openAddStudentModal()">
+            + Добавить студента
+        </button>
+
+    </div>
+
+    <div class="student-grid" id="studentGrid"></div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- STATISTICS -->
+<!-- ================================================= -->
+
+<section id="statistics" class="page">
+
+    <div class="page-title">
+        <h1>Статистика</h1>
+        <p>Общая статистика группы</p>
+    </div>
+
+    <div class="cards">
+
+        <div class="card">
+            <div class="card-title">Всего отметок</div>
+            <div class="card-value" id="statTotal"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Присутствия</div>
+            <div class="card-value" id="statPresent"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Пропуски</div>
+            <div class="card-value" id="statAbsent"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Опоздания</div>
+            <div class="card-value" id="statLate"></div>
+        </div>
+
+        <div class="card">
+            <div class="card-title">Опоздания >20 мин</div>
+            <div class="card-value" id="statCritical"></div>
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>Статистика студентов</h2>
+
+        <div class="table-wrapper">
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>№</th>
+                        <th>ФИО</th>
+                        <th>Присутствия</th>
+                        <th>Пропуски</th>
+                        <th>Опоздания</th>
+                        <th>>20 минут</th>
+                    </tr>
+                </thead>
+
+                <tbody id="statisticsBody"></tbody>
+
+            </table>
+
+        </div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- HISTORY -->
+<!-- ================================================= -->
+
+<section id="history" class="page">
+
+    <div class="page-title">
+        <h1>История</h1>
+        <p>История посещаемости и событий</p>
+    </div>
+
+    <div class="panel">
+
+        <button class="btn btn-danger" onclick="clearHistory()">
+            Очистить историю
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <div id="historyList"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- NOTES -->
+<!-- ================================================= -->
+
+<section id="notes" class="page">
+
+    <div class="page-title">
+        <h1>Заметки</h1>
+        <p>Личные заметки старосты</p>
+    </div>
+
+    <div class="panel">
+
+        <input id="noteTitle" placeholder="Название заметки">
+
+        <textarea
+            id="noteText"
+            placeholder="Текст заметки..."
+            style="margin-top:10px"
+            rows="4"
+        ></textarea>
+
+        <button class="btn btn-primary" onclick="addNote()" style="margin-top:10px">
+            + Добавить заметку
+        </button>
+
+    </div>
+
+    <div id="notesList"></div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- CALENDAR -->
+<!-- ================================================= -->
+
+<section id="calendar" class="page">
+
+    <div class="page-title">
+        <h1>Календарь</h1>
+        <p>Дни рождения, события и напоминания</p>
+    </div>
+
+    <div class="panel">
+
+        <div class="calendar-header">
+
+            <button class="btn btn-secondary" onclick="changeMonth(-1)">
+                ‹ Предыдущий
+            </button>
+
+            <h2 id="calendarTitle"></h2>
+
+            <button class="btn btn-secondary" onclick="changeMonth(1)">
+                Следующий ›
+            </button>
+
+        </div>
+
+        <button class="btn btn-primary" onclick="goToday()">
+            Сегодня
+        </button>
+
+        <div style="margin-top:15px">
+
+            <div class="calendar-grid" id="calendarGrid"></div>
+
+        </div>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>📝 Добавить напоминание</h2>
+
+        <input id="reminderTitle" placeholder="Название">
+
+        <input
+            id="reminderDate"
+            type="date"
+            style="margin-top:8px"
+        >
+
+        <input
+            id="reminderTime"
+            type="time"
+            style="margin-top:8px"
+        >
+
+        <textarea
+            id="reminderDescription"
+            placeholder="Описание"
+            rows="3"
+            style="margin-top:8px"
+        ></textarea>
+
+        <button
+            class="btn btn-primary"
+            onclick="addReminder()"
+            style="margin-top:8px"
+        >
+            Добавить напоминание
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>🎂 Дни рождения</h2>
+
+        <div id="birthdaysList"></div>
+
+    </div>
+
+</section>
+
+
+<!-- ================================================= -->
+<!-- SETTINGS -->
+<!-- ================================================= -->
+
+<section id="settings" class="page">
+
+    <div class="page-title">
+        <h1>Настройки</h1>
+        <p>Настройки группы и журнала</p>
+    </div>
+
+    <div class="panel">
+
+        <h2>Группа</h2>
+
+        <label>Название группы</label>
+
+        <input id="groupName" style="margin-top:7px">
+
+        <label style="display:block;margin-top:12px">
+            Время начала урока
+        </label>
+
+        <input
+            id="lessonStart"
+            type="time"
+            style="margin-top:7px"
+        >
+
+        <label style="display:block;margin-top:12px">
+            Максимальное допустимое опоздание
+        </label>
+
+        <input
+            id="lateLimit"
+            type="number"
+            min="0"
+            style="margin-top:7px"
+        >
+
+        <button
+            class="btn btn-primary"
+            onclick="saveSettings()"
+            style="margin-top:12px"
+        >
+            Сохранить настройки
+        </button>
+
+    </div>
+
+    <div class="panel">
+
+        <h2>💾 Резервная копия</h2>
+
+        <button class="btn btn-primary" onclick="exportData()">
+            Скачать резервную копию
+        </button>
+
+        <button class="btn btn-secondary" onclick="document.getElementById('importFile').click()">
+            Восстановить данные
+        </button>
+
+        <input
+            id="importFile"
+            type="file"
+            accept=".json"
+            style="display:none"
+            onchange="importData(event)"
+        >
+
+    </div>
+
+</section>
+
+</main>
+
+
+<!-- ================================================= -->
+<!-- MODAL STUDENT -->
+<!-- ================================================= -->
+
+<div class="modal" id="studentModal">
+
+    <div class="modal-content">
+
+        <div class="modal-header">
+
+            <h2 id="studentModalTitle">
+                Добавить студента
+            </h2>
+
+            <button class="close" onclick="closeModal()">
+                ×
+            </button>
+
+        </div>
+
+        <input type="hidden" id="editStudentId">
+
+        <label>ФИО</label>
+
+        <input
+            id="studentName"
+            style="margin-top:7px"
+        >
+
+        <label style="display:block;margin-top:12px">
+            Дата рождения
+        </label>
+
+        <input
+            id="studentBirthday"
+            type="date"
+            style="margin-top:7px"
+        >
+
+        <label style="display:block;margin-top:12px">
+            Примечание
+        </label>
+
+        <textarea
+            id="studentNote"
+            rows="3"
+            style="margin-top:7px"
+        ></textarea>
+
+        <button
+            class="btn btn-primary"
+            onclick="saveStudent()"
+            style="margin-top:12px"
+        >
+            Сохранить
+        </button>
+
+    </div>
 
 </div>
 
+
 <script>
-const NS = "http://www.w3.org/2000/svg";
-const PALETTES = {
-  coral:  ["#ab4030", "#e2765e", "#ea9d84", "#f4cdb8"],
-  gold:   ["#b8823f", "#e0b374", "#f0cf9e", "#f6e8da"],
-  blush:  ["#c15a4a", "#e88a72", "#f4cdb8", "#f6e8da"],
-};
 
-function bloomMarkup(paletteKey, seed){
-  const p = PALETTES[paletteKey];
-  const rings = [
-    { count: 13, rIn: 2,  rOut: 40, len: 34, wid: 16,   color: p[3] },
-    { count: 12, rIn: 3,  rOut: 30, len: 28, wid: 14,   color: p[2] },
-    { count: 10, rIn: 3,  rOut: 20, len: 21, wid: 11.5, color: p[1] },
-    { count: 9,  rIn: 3,  rOut: 12, len: 14, wid: 8,    color: p[0] },
-    { count: 7,  rIn: 2,  rOut: 6,  len: 8,  wid: 5,    color: p[1] },
-  ];
-  let s = '';
-  rings.forEach((ring, ri) => {
-    const offset = (seed + ri*11) % 360;
-    for(let i=0;i<ring.count;i++){
-      const angle = (360/ring.count)*i + offset;
-      s += `<g transform="rotate(${angle})">
-        <path d="M0,${-ring.rIn} C ${-ring.wid},${-ring.rIn-ring.len*0.45} ${-ring.wid*0.8},${-ring.rIn-ring.len} 0,${-ring.rIn-ring.len-4}
-                 C ${ring.wid*0.8},${-ring.rIn-ring.len} ${ring.wid},${-ring.rIn-ring.len*0.45} 0,${-ring.rIn}Z"
-              fill="${ring.color}" opacity="0.97"/>
-        <path d="M0,${-ring.rIn-2} C ${-ring.wid*0.35},${-ring.rIn-ring.len*0.5} ${-ring.wid*0.28},${-ring.rIn-ring.len*0.85} 0,${-ring.rIn-ring.len*0.95}
-                 C ${ring.wid*0.28},${-ring.rIn-ring.len*0.85} ${ring.wid*0.35},${-ring.rIn-ring.len*0.5} 0,${-ring.rIn-2}Z"
-              fill="#fff6ec" opacity="0.16"/>
-        <line x1="0" y1="${-ring.rIn-3}" x2="0" y2="${-ring.rIn-ring.len-2}" stroke="#3d2418" stroke-width="0.4" opacity="0.18"/>
-      </g>`;
-    }
-  });
-  s += `<circle r="7" fill="${p[0]}"/><circle r="4" fill="${p[1]}" opacity="0.9"/><circle r="1.6" fill="#3d2418" opacity="0.7"/>`;
-  return s;
-}
+/* =====================================================
+   INITIAL DATA
+===================================================== */
 
-function burstBloomMarkup(paletteKey, seed){
-  const p = PALETTES[paletteKey];
-  const rings = [
-    { count: 8, rIn: 2, rOut: 34, len: 28, wid: 15, color: p[3] },
-    { count: 7, rIn: 3, rOut: 18, len: 18, wid: 10, color: p[1] },
-  ];
-  let s = '';
-  rings.forEach((ring, ri) => {
-    const offset = (seed + ri*11) % 360;
-    for(let i=0;i<ring.count;i++){
-      const angle = (360/ring.count)*i + offset;
-      s += `<path transform="rotate(${angle})" d="M0,${-ring.rIn} C ${-ring.wid},${-ring.rIn-ring.len*0.45} ${-ring.wid*0.8},${-ring.rIn-ring.len} 0,${-ring.rIn-ring.len-4}
-               C ${ring.wid*0.8},${-ring.rIn-ring.len} ${ring.wid},${-ring.rIn-ring.len*0.45} 0,${-ring.rIn}Z"
-            fill="${ring.color}" opacity="0.97"/>`;
-    }
-  });
-  s += `<circle r="6" fill="${p[0]}"/>`;
-  return s;
-}
-
-const hero = document.getElementById('heroFlower');
-const heroG = document.createElementNS(NS,'g');
-heroG.setAttribute('transform','translate(50,54)');
-const isMobile = window.innerWidth < 640;
-heroG.innerHTML = isMobile ? burstBloomMarkup('coral', 12) : bloomMarkup('coral', 12);
-hero.appendChild(heroG);
-
-const bq = document.getElementById('bouquetSVG');
-bq.innerHTML = `
-  <defs>
-    <linearGradient id="wrapGrad" x1="0" y1="0" x2="0" y2="1">
-      <stop offset="0%" stop-color="#f4cdb8" stop-opacity="0.22"/>
-      <stop offset="100%" stop-color="#ab4030" stop-opacity="0.35"/>
-    </linearGradient>
-  </defs>
-
-  <g stroke="#e0b374" stroke-width="1" fill="none" opacity="0.5">
-    <path d="M46 210 C 16 200, 14 168, 38 158 C 18 152, 20 122, 46 122"/>
-    <path d="M46 122 C 38 132, 52 142, 62 134"/>
-    <path d="M274 210 C 304 200, 306 168, 282 158 C 302 152, 300 122, 274 122"/>
-    <path d="M274 122 C 282 132, 268 142, 258 134"/>
-  </g>
-  <circle cx="38" cy="158" r="2" fill="#e0b374" opacity="0.65"/>
-  <circle cx="282" cy="158" r="2" fill="#e0b374" opacity="0.65"/>
-
-  <path d="M110 268 L160 355 L210 268 Z" fill="url(#wrapGrad)" stroke="#e0b374" stroke-opacity="0.45" stroke-width="1"/>
-  <path d="M122 268 L160 338 L198 268 Z" fill="#2a0810" opacity="0.28"/>
-  <path d="M134 268 L160 320 L186 268 Z" fill="#e0b374" opacity="0.12"/>
-  <path d="M112 275 Q160 292 208 275" stroke="#e0b374" stroke-width="0.8" fill="none" opacity="0.5"/>
-
-  <g stroke="#5c7a52" stroke-width="2.2" fill="none" opacity="0.9">
-    <path d="M160 268 L100 165"/>
-    <path d="M160 268 L130 150"/>
-    <path d="M160 268 L160 135"/>
-    <path d="M160 268 L190 150"/>
-    <path d="M160 268 L220 165"/>
-    <path d="M160 268 L118 195"/>
-    <path d="M160 268 L202 195"/>
-  </g>
-
-  <path d="M118 240 Q86 232 80 206 Q110 210 118 240Z" fill="#3d5636" opacity="0.9"/>
-  <path d="M202 240 Q234 232 240 206 Q210 210 202 240Z" fill="#5c7a52" opacity="0.9"/>
-  <path d="M138 255 Q116 250 112 230 Q136 232 138 255Z" fill="#4f6a4a" opacity="0.85"/>
-  <path d="M182 255 Q204 250 208 230 Q184 232 182 255Z" fill="#4f6a4a" opacity="0.85"/>
-  <circle cx="96" cy="200" r="2.4" fill="#e0b374" opacity="0.6"/>
-  <circle cx="224" cy="200" r="2.4" fill="#e0b374" opacity="0.6"/>
-
-  <g transform="translate(100,150) scale(0.55) rotate(-14)" data-pal="blush" data-seed="22"></g>
-  <g transform="translate(220,150) scale(0.55) rotate(14)" data-pal="blush" data-seed="61"></g>
-  <g transform="translate(160,118) scale(0.6) rotate(4)" data-pal="gold" data-seed="9"></g>
-
-  <g transform="translate(128,148) scale(0.85) rotate(-10)" data-pal="coral" data-seed="33"></g>
-  <g transform="translate(192,148) scale(0.85) rotate(10)" data-pal="gold" data-seed="77"></g>
-  <g transform="translate(118,192) scale(0.7) rotate(-6)" data-pal="gold" data-seed="45"></g>
-  <g transform="translate(202,192) scale(0.7) rotate(6)" data-pal="coral" data-seed="88"></g>
-
-  <g transform="translate(160,168) scale(1.25)" data-pal="coral" data-seed="3"></g>
-
-  <path d="M130 266 Q160 246 190 266" stroke="#e0b374" stroke-width="4" fill="none"/>
-  <path d="M112 258 Q140 240 160 258 Q180 240 208 258" stroke="#e0b374" stroke-width="4" fill="none" opacity="0.85"/>
-  <circle cx="160" cy="258" r="6" fill="#b8823f"/>
-  <path d="M150 262 L138 288 L154 280 Z" fill="#e0b374" opacity="0.85"/>
-  <path d="M170 262 L182 288 L166 280 Z" fill="#e0b374" opacity="0.85"/>
-`;
-
-bq.querySelectorAll('g[data-pal]').forEach(g => {
-  const fn = isMobile ? burstBloomMarkup : bloomMarkup;
-  g.innerHTML = fn(g.getAttribute('data-pal'), Number(g.getAttribute('data-seed')));
-});
-
-const stage = document.getElementById('stage');
-const btn = document.getElementById('cardBtn');
-const burst = document.getElementById('burst');
-const palettes = Object.keys(PALETTES);
-
-function spawnFlowers(){
-  const mobile = window.innerWidth < 640;
-  const count = mobile ? 10 : 46;
-  for(let i=0;i<count;i++){
-    const wrap = document.createElement('div');
-    wrap.className = 'fbloom';
-    const angle = Math.random()*Math.PI*2;
-    const dist = 90 + Math.random()*300;
-    const tx = Math.cos(angle)*dist;
-    const ty = Math.sin(angle)*dist*0.85 - 30;
-    const ts = 0.35 + Math.random()*0.55;
-    const tr = (Math.random()*360-180)+'deg';
-    wrap.style.setProperty('--tx', tx+'px');
-    wrap.style.setProperty('--ty', ty+'px');
-    wrap.style.setProperty('--ts', ts);
-    wrap.style.setProperty('--tr', tr);
-    wrap.style.animationDelay = (Math.random()*0.4)+'s';
-
-    const svg = document.createElementNS(NS,'svg');
-    svg.setAttribute('viewBox','0 0 100 100');
-    svg.setAttribute('width','70');
-    svg.setAttribute('height','70');
-    const g = document.createElementNS(NS,'g');
-    g.setAttribute('transform','translate(50,50)');
-    const pal = palettes[i % palettes.length];
-    g.innerHTML = burstBloomMarkup(pal, i*17);
-    svg.appendChild(g);
-    wrap.appendChild(svg);
-    burst.appendChild(wrap);
-
-    if(!mobile){
-      const glint = document.createElement('div');
-      glint.className = 'glint';
-      glint.style.setProperty('--tx', (tx*1.2)+'px');
-      glint.style.setProperty('--ty', (ty*1.2)+'px');
-      glint.style.animationDelay = (Math.random()*0.5)+'s';
-      burst.appendChild(glint);
-    }
-  }
-}
-
-const stageEl = document.getElementById('stage');
-if(!isMobile){
-  const sparkleCount = 34;
-  for(let i=0;i<sparkleCount;i++){
-    const sp = document.createElement('div');
-    sp.className = 'sparkle';
-    const size = 2 + Math.random()*3;
-    sp.style.width = size+'px';
-    sp.style.height = size+'px';
-    sp.style.left = (Math.random()*100)+'%';
-    sp.style.top = (Math.random()*100)+'%';
-    sp.style.animationDelay = (Math.random()*3.5)+'s';
-    sp.style.zIndex = 5;
-    stageEl.appendChild(sp);
-  }
-}
-
-btn.addEventListener('click', () => {
-  spawnFlowers();
-  stage.classList.add('open');
-});
-
-// ---- behavior rating (good is the only real option) ----
-const behaviorGood = document.getElementById('behaviorGood');
-const behaviorBad = document.getElementById('behaviorBad');
-const behaviorStatus = document.getElementById('behaviorStatus');
-
-const goodReplies = [
-  'конечно 💛',
-  'единственный правильный ответ',
-  'так и запишем: идеальнейшее',
-  'а как иначе'
+const defaultStudents = [
+    "Абдужапаров Ибрагим Кубанычбекович",
+    "Абдыкалыков Алихан Чынгызбекович",
+    "Джумагуов Тимур Алмазбекович",
+    "Жаркынбаев Тимурлан Кубанычбекович",
+    "Закиров Камиль Шамилевич",
+    "Икбалидаев Бекруз Икбалидаевич",
+    "Казбеков Адилет Урматович",
+    "Крамаренко Руслан Дмитриевич",
+    "Курманбеков Хамза Мунарбекович",
+    "Курманбеков Эмиль Баатырбекович",
+    "Миршакиров Азирет Нурланович",
+    "Муктaров Арген Афтандилович",
+    "Мурзаpаимов Алинуp Нуртилекович",
+    "Сулаиманов Улан Уланбекович",
+    "Таласбеков Абдуллах Таласбекович",
+    "Таласбеков Абдурахман Таласбекович",
+    "Тороев Амир Уланбекович",
+    "Хакимов Санжар Рахимжанович"
 ];
 
-behaviorGood.addEventListener('click', () => {
-  const msg = goodReplies[Math.floor(Math.random()*goodReplies.length)];
-  behaviorStatus.textContent = msg;
-  behaviorStatus.classList.add('show');
-});
+function createStudents() {
 
-behaviorBad.addEventListener('click', (e) => {
-  e.preventDefault();
-});
+    return defaultStudents.map((name, index) => ({
+        id: index + 1,
+        name: name,
+        birthday: "",
+        note: ""
+    }));
 
-// ---- envelope ----
-const envelopeLayer = document.getElementById('envelopeLayer');
-const envelopeOpenBtn = document.getElementById('envelopeOpenBtn');
-const envelopeCancelBtn = document.getElementById('envelopeCancelBtn');
-const envelopeSendBtn = document.getElementById('envelopeSendBtn');
-const envelopeText = document.getElementById('envelopeText');
-const envelopeStatus = document.getElementById('envelopeStatus');
+}
 
-envelopeOpenBtn.addEventListener('click', () => {
-  envelopeLayer.classList.add('show');
-  envelopeText.focus();
-});
+let students =
+    JSON.parse(localStorage.getItem("group3_students"))
+    || createStudents();
 
-envelopeCancelBtn.addEventListener('click', () => {
-  envelopeLayer.classList.remove('show');
-});
+let attendance =
+    JSON.parse(localStorage.getItem("group3_attendance"))
+    || {};
 
-envelopeLayer.addEventListener('click', (e) => {
-  if(e.target === envelopeLayer) envelopeLayer.classList.remove('show');
-});
+let history =
+    JSON.parse(localStorage.getItem("group3_history"))
+    || [];
 
-envelopeSendBtn.addEventListener('click', async () => {
-  const msg = envelopeText.value.trim();
-  if(!msg) { envelopeText.focus(); return; }
+let notes =
+    JSON.parse(localStorage.getItem("group3_notes"))
+    || [];
 
-  envelopeSendBtn.disabled = true;
-  envelopeSendBtn.textContent = 'отправка...';
-  envelopeStatus.textContent = '';
+let reminders =
+    JSON.parse(localStorage.getItem("group3_reminders"))
+    || [];
 
-  try{
-    const res = await fetch('https://formsubmit.co/ajax/akazbekov09@gmail.com', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json', 'Accept': 'application/json' },
-      body: JSON.stringify({
-        _subject: 'for keepa — ответ',
-        message: msg
-      })
-    });
-    if(res.ok){
-      envelopeStatus.textContent = 'отправлено 💌';
-      envelopeText.value = '';
-      setTimeout(() => { envelopeLayer.classList.remove('show'); envelopeStatus.textContent=''; }, 1400);
-    } else {
-      envelopeStatus.textContent = 'не получилось, попробуй ещё раз';
+let duties =
+    JSON.parse(localStorage.getItem("group3_duties"))
+    || {
+        currentIndex: 0,
+        completed: {},
+        extra: []
+    };
+
+let settings =
+    JSON.parse(localStorage.getItem("group3_settings"))
+    || {
+        groupName: "Группа 3",
+        lessonStart: "09:00",
+        lateLimit: 20
+    };
+
+let calendarDate = new Date();
+
+
+/* =====================================================
+   SAVE
+===================================================== */
+
+function saveAll() {
+
+    localStorage.setItem(
+        "group3_students",
+        JSON.stringify(students)
+    );
+
+    localStorage.setItem(
+        "group3_attendance",
+        JSON.stringify(attendance)
+    );
+
+    localStorage.setItem(
+        "group3_history",
+        JSON.stringify(history)
+    );
+
+    localStorage.setItem(
+        "group3_notes",
+        JSON.stringify(notes)
+    );
+
+    localStorage.setItem(
+        "group3_reminders",
+        JSON.stringify(reminders)
+    );
+
+    localStorage.setItem(
+        "group3_duties",
+        JSON.stringify(duties)
+    );
+
+    localStorage.setItem(
+        "group3_settings",
+        JSON.stringify(settings)
+    );
+
+}
+
+
+/* =====================================================
+   DATE
+===================================================== */
+
+function dateKey(date = new Date()) {
+
+    const y = date.getFullYear();
+    const m = String(date.getMonth() + 1).padStart(2, "0");
+    const d = String(date.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${d}`;
+
+}
+
+function formatDate(date) {
+
+    return new Date(date).toLocaleDateString(
+        "ru-RU",
+        {
+            day: "2-digit",
+            month: "2-digit",
+            year: "numeric"
+        }
+    );
+
+}
+
+
+/* =====================================================
+   LATE CALCULATION
+===================================================== */
+
+function calculateLateMinutes(startTime, arrivalTime) {
+
+    if (!startTime || !arrivalTime) {
+        return 0;
     }
-  } catch(err){
-    envelopeStatus.textContent = 'не получилось, попробуй ещё раз';
-  } finally {
-    envelopeSendBtn.disabled = false;
-    envelopeSendBtn.textContent = 'отправить';
-  }
-});
+
+    const [sh, sm] = startTime.split(":").map(Number);
+    const [ah, am] = arrivalTime.split(":").map(Number);
+
+    const start = sh * 60 + sm;
+    const arrival = ah * 60 + am;
+
+    return Math.max(0, arrival - start);
+
+}
+
+
+/* =====================================================
+   NAVIGATION
+===================================================== */
+
+function showPage(pageId, button) {
+
+    document.querySelectorAll(".page").forEach(page => {
+        page.classList.remove("active");
+    });
+
+    document.getElementById(pageId).classList.add("active");
+
+    document.querySelectorAll(".nav-btn").forEach(btn => {
+        btn.classList.remove("active");
+    });
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    refreshAll();
+
+}
+
+function showPageByName(pageId) {
+
+    const button =
+        [...document.querySelectorAll(".nav-btn")]
+        .find(btn =>
+            btn.getAttribute("onclick")?.includes(`'${pageId}'`)
+        );
+
+    showPage(pageId, button);
+
+}
+
+
+/* =====================================================
+   JOURNAL
+===================================================== */
+
+function renderJournal() {
+
+    const today = dateKey();
+
+    document.getElementById("journalDate").textContent =
+        "Дата: " + formatDate(today);
+
+    if (!attendance[today]) {
+        attendance[today] = {};
+    }
+
+    const body = document.getElementById("journalBody");
+
+    body.innerHTML = "";
+
+    students.forEach((student, index) => {
+
+        const data =
+            attendance[today][student.id]
+            || {
+                status: "present",
+                arrival: "",
+                reason: "",
+                note: ""
+            };
+
+        const late =
+            data.status === "late"
+                ? calculateLateMinutes(
+                    settings.lessonStart,
+                    data.arrival
+                )
+                : 0;
+
+        const critical =
+            late > Number(settings.lateLimit);
+
+        let nameClass = "name";
+
+        if (critical) {
+            nameClass += " late-critical";
+        }
+
+        let statusHTML = `
+            <select onchange="changeStatus(${student.id}, this.value)">
+                <option value="present" ${data.status === "present" ? "selected" : ""}>
+                    🟢 Был
+                </option>
+
+                <option value="absent" ${data.status === "absent" ? "selected" : ""}>
+                    🔴 Отсутствует
+                </option>
+
+                <option value="late" ${data.status === "late" ? "selected" : ""}>
+                    🟡 Опоздал
+                </option>
+            </select>
+        `;
+
+        body.innerHTML += `
+            <tr>
+
+                <td>${index + 1}</td>
+
+                <td class="${nameClass}">
+                    ${student.name}
+                    ${critical ? " ⚠" : ""}
+                </td>
+
+                <td>
+                    ${statusHTML}
+                </td>
+
+                <td>
+                    <input
+                        type="time"
+                        value="${data.arrival || ""}"
+                        onchange="setArrival(${student.id}, this.value)"
+                        ${data.status !== "late" ? "disabled" : ""}
+                    >
+                </td>
+
+                <td>
+                    ${
+                        data.status === "late"
+                        ? `<strong class="${critical ? "late-critical" : "status-late"}">
+                            ${late} мин.
+                           </strong>`
+                        : "—"
+                    }
+
+                    ${
+                        critical
+                        ? `<br><small style="color:#c0392b">
+                            ВНЕ ОЧЕРЕДИ
+                           </small>`
+                        : ""
+                    }
+                </td>
+
+                <td>
+                    <input
+                        value="${data.reason || ""}"
+                        placeholder="Причина"
+                        onchange="setReason(${student.id}, this.value)"
+                    >
+                </td>
+
+                <td>
+                    <input
+                        value="${data.note || ""}"
+                        placeholder="Примечание"
+                        onchange="setNote(${student.id}, this.value)"
+                    >
+                </td>
+
+            </tr>
+        `;
+
+    });
+
+}
+
+
+/* =====================================================
+   CHANGE STATUS
+===================================================== */
+
+function changeStatus(studentId, status) {
+
+    const today = dateKey();
+
+    if (!attendance[today]) {
+        attendance[today] = {};
+    }
+
+    if (!attendance[today][studentId]) {
+        attendance[today][studentId] = {};
+    }
+
+    attendance[today][studentId].status = status;
+
+    if (status !== "late") {
+        attendance[today][studentId].arrival = "";
+    }
+
+    addHistory(
+        today,
+        studentId,
+        status === "present"
+            ? "Присутствовал"
+            : status === "absent"
+                ? "Отсутствовал"
+                : "Опоздал"
+    );
+
+    saveAll();
+
+    checkCriticalLate(studentId);
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   ARRIVAL
+===================================================== */
+
+function setArrival(studentId, arrival) {
+
+    const today = dateKey();
+
+    if (!attendance[today]) {
+        attendance[today] = {};
+    }
+
+    if (!attendance[today][studentId]) {
+        attendance[today][studentId] = {
+            status: "late"
+        };
+    }
+
+    attendance[today][studentId].arrival = arrival;
+
+    const late = calculateLateMinutes(
+        settings.lessonStart,
+        arrival
+    );
+
+    if (late > Number(settings.lateLimit)) {
+
+        addExtraDuty(
+            studentId,
+            `Опоздание более ${settings.lateLimit} минут`
+        );
+
+        addHistory(
+            today,
+            studentId,
+            `Опоздал на ${late} минут — вне очереди`
+        );
+
+    }
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   CRITICAL LATE
+===================================================== */
+
+function checkCriticalLate(studentId) {
+
+    const today = dateKey();
+
+    const data =
+        attendance[today]?.[studentId];
+
+    if (!data || data.status !== "late") {
+        return;
+    }
+
+    const late = calculateLateMinutes(
+        settings.lessonStart,
+        data.arrival
+    );
+
+    if (late > Number(settings.lateLimit)) {
+
+        addExtraDuty(
+            studentId,
+            `Опоздание ${late} минут`
+        );
+
+    }
+
+}
+
+
+/* =====================================================
+   EXTRA DUTY
+===================================================== */
+
+function addExtraDuty(studentId, reason) {
+
+    const exists = duties.extra.find(
+        d =>
+            d.studentId === studentId &&
+            d.date === dateKey() &&
+            !d.completed
+    );
+
+    if (exists) {
+        return;
+    }
+
+    duties.extra.push({
+        id: Date.now(),
+        studentId: studentId,
+        date: dateKey(),
+        reason: reason,
+        completed: false
+    });
+
+    saveAll();
+
+}
+
+
+/* =====================================================
+   MARK ALL PRESENT
+===================================================== */
+
+function markAllPresent() {
+
+    const today = dateKey();
+
+    attendance[today] = {};
+
+    students.forEach(student => {
+
+        attendance[today][student.id] = {
+            status: "present",
+            arrival: "",
+            reason: "",
+            note: ""
+        };
+
+    });
+
+    addHistory(
+        today,
+        null,
+        "Староста отметил всю группу как присутствующую"
+    );
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   RESET DAY
+===================================================== */
+
+function resetToday() {
+
+    if (!confirm("Сбросить сегодняшний журнал?")) {
+        return;
+    }
+
+    delete attendance[dateKey()];
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   HISTORY
+===================================================== */
+
+function addHistory(date, studentId, text) {
+
+    const student =
+        students.find(s => s.id == studentId);
+
+    history.unshift({
+        id: Date.now() + Math.random(),
+        date: date,
+        student: student
+            ? student.name
+            : "Группа",
+        text: text
+    });
+
+    saveAll();
+
+}
+
+function renderHistory() {
+
+    const container =
+        document.getElementById("historyList");
+
+    if (!history.length) {
+
+        container.innerHTML =
+            "<p>История пока пустая.</p>";
+
+        return;
+
+    }
+
+    container.innerHTML =
+        history.map(item => `
+            <div class="alert alert-success">
+
+                <strong>${formatDate(item.date)}</strong>
+
+                <br>
+
+                ${item.student} — ${item.text}
+
+            </div>
+        `).join("");
+
+}
+
+function clearHistory() {
+
+    if (!confirm("Удалить всю историю?")) {
+        return;
+    }
+
+    history = [];
+
+    saveAll();
+
+    renderHistory();
+
+}
+
+
+/* =====================================================
+   HOME
+===================================================== */
+
+function renderHome() {
+
+    const today = dateKey();
+
+    const records = attendance[today] || {};
+
+    let present = 0;
+    let absent = 0;
+    let late = 0;
+    let critical = 0;
+
+    students.forEach(student => {
+
+        const data = records[student.id];
+
+        if (!data) {
+            return;
+        }
+
+        if (data.status === "present") {
+            present++;
+        }
+
+        if (data.status === "absent") {
+            absent++;
+        }
+
+        if (data.status === "late") {
+
+            late++;
+
+            const minutes =
+                calculateLateMinutes(
+                    settings.lessonStart,
+                    data.arrival
+                );
+
+            if (minutes > Number(settings.lateLimit)) {
+                critical++;
+            }
+
+        }
+
+    });
+
+    document.getElementById("totalStudents").textContent =
+        students.length;
+
+    document.getElementById("homePresent").textContent =
+        present;
+
+    document.getElementById("homeAbsent").textContent =
+        absent;
+
+    document.getElementById("homeLate").textContent =
+        late;
+
+    document.getElementById("homeCriticalLate").textContent =
+        critical;
+
+    const duty =
+        students[duties.currentIndex];
+
+    document.getElementById("homeDuty").textContent =
+        duty ? duty.name : "—";
+
+    document.getElementById("todaySummary").innerHTML = `
+        <p>👥 Всего студентов: <strong>${students.length}</strong></p>
+        <p>🟢 Присутствуют: <strong>${present}</strong></p>
+        <p>🔴 Отсутствуют: <strong>${absent}</strong></p>
+        <p>🟡 Опоздали: <strong>${late}</strong></p>
+        <p>⚠ Опоздали более ${settings.lateLimit} минут: <strong>${critical}</strong></p>
+    `;
+
+    renderAlerts();
+
+}
+
+
+/* =====================================================
+   ALERTS
+===================================================== */
+
+function renderAlerts() {
+
+    const today = dateKey();
+
+    const alerts =
+        document.getElementById("homeAlerts");
+
+    let html = "";
+
+    const records = attendance[today] || {};
+
+    students.forEach(student => {
+
+        const data = records[student.id];
+
+        if (!data || data.status !== "late") {
+            return;
+        }
+
+        const late =
+            calculateLateMinutes(
+                settings.lessonStart,
+                data.arrival
+            );
+
+        if (late > Number(settings.lateLimit)) {
+
+            html += `
+                <div class="alert alert-danger">
+                    ⚠ <strong>${student.name}</strong>
+                    опоздал на ${late} минут.
+                    Студент находится <strong>вне очереди</strong>.
+                </div>
+            `;
+
+        }
+
+    });
+
+    const extra =
+        duties.extra.filter(
+            d => !d.completed
+        );
+
+    extra.forEach(item => {
+
+        const student =
+            students.find(
+                s => s.id === item.studentId
+            );
+
+        if (student) {
+
+            html += `
+                <div class="alert alert-warning">
+                    ⚠ ${student.name}
+                    должен выполнить дополнительное дежурство.
+                </div>
+            `;
+
+        }
+
+    });
+
+    alerts.innerHTML = html;
+
+}
+
+
+/* =====================================================
+   DUTIES
+===================================================== */
+
+function renderDuties() {
+
+    const current =
+        students[duties.currentIndex];
+
+    document.getElementById("currentDuty").textContent =
+        current
+            ? current.name
+            : "—";
+
+    const body =
+        document.getElementById("dutyBody");
+
+    body.innerHTML = "";
+
+    students.forEach((student, index) => {
+
+        const isCurrent =
+            index === duties.currentIndex;
+
+        body.innerHTML += `
+            <tr>
+
+                <td>${index + 1}</td>
+
+                <td style="text-align:left">
+                    ${student.name}
+                </td>
+
+                <td>
+                    ${
+                        isCurrent
+                        ? "🔵 Сегодня"
+                        : "В очереди"
+                    }
+                </td>
+
+            </tr>
+        `;
+
+    });
+
+    const outside =
+        document.getElementById("outsideQueue");
+
+    const extra =
+        duties.extra.filter(
+            d => !d.completed
+        );
+
+    if (!extra.length) {
+
+        outside.innerHTML =
+            "<p>Нет дополнительных дежурств.</p>";
+
+        return;
+
+    }
+
+    outside.innerHTML =
+        extra.map(item => {
+
+            const student =
+                students.find(
+                    s => s.id === item.studentId
+                );
+
+            if (!student) {
+                return "";
+            }
+
+            return `
+                <div class="alert alert-warning">
+
+                    <strong>${student.name}</strong>
+
+                    <br>
+
+                    Причина: ${item.reason}
+
+                    <br><br>
+
+                    <button
+                        class="btn btn-success"
+                        onclick="completeExtraDuty(${item.id})"
+                    >
+                        ✓ Выполнено
+                    </button>
+
+                </div>
+            `;
+
+        }).join("");
+
+}
+
+
+/* =====================================================
+   DUTY ACTIONS
+===================================================== */
+
+function completeDuty() {
+
+    const student =
+        students[duties.currentIndex];
+
+    if (!student) {
+        return;
+    }
+
+    duties.completed[dateKey()] = {
+        studentId: student.id,
+        completed: true
+    };
+
+    addHistory(
+        dateKey(),
+        student.id,
+        "Дежурство выполнено"
+    );
+
+    duties.currentIndex =
+        (duties.currentIndex + 1)
+        % students.length;
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+function skipDuty() {
+
+    const student =
+        students[duties.currentIndex];
+
+    if (!student) {
+        return;
+    }
+
+    addExtraDuty(
+        student.id,
+        "Не выполнил обычное дежурство"
+    );
+
+    addHistory(
+        dateKey(),
+        student.id,
+        "Не выполнил дежурство"
+    );
+
+    duties.currentIndex =
+        (duties.currentIndex + 1)
+        % students.length;
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+function completeExtraDuty(id) {
+
+    const item =
+        duties.extra.find(d => d.id === id);
+
+    if (!item) {
+        return;
+    }
+
+    item.completed = true;
+
+    const student =
+        students.find(
+            s => s.id === item.studentId
+        );
+
+    addHistory(
+        dateKey(),
+        item.studentId,
+        "Дополнительное дежурство выполнено"
+    );
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   STUDENTS
+===================================================== */
+
+function renderStudents() {
+
+    const query =
+        document.getElementById("studentSearch")
+        ?.value
+        .toLowerCase()
+        || "";
+
+    const grid =
+        document.getElementById("studentGrid");
+
+    grid.innerHTML = "";
+
+    students
+        .filter(student =>
+            student.name.toLowerCase().includes(query)
+        )
+        .forEach((student, index) => {
+
+            let present = 0;
+            let absent = 0;
+            let late = 0;
+            let critical = 0;
+
+            Object.values(attendance).forEach(day => {
+
+                const data =
+                    day[student.id];
+
+                if (!data) {
+                    return;
+                }
+
+                if (data.status === "present") {
+                    present++;
+                }
+
+                if (data.status === "absent") {
+                    absent++;
+                }
+
+                if (data.status === "late") {
+
+                    late++;
+
+                    const minutes =
+                        calculateLateMinutes(
+                            settings.lessonStart,
+                            data.arrival
+                        );
+
+                    if (
+                        minutes >
+                        Number(settings.lateLimit)
+                    ) {
+                        critical++;
+                    }
+
+                }
+
+            });
+
+            grid.innerHTML += `
+
+                <div class="student-card">
+
+                    <h3>
+                        ${index + 1}. ${student.name}
+                    </h3>
+
+                    <div class="student-info">
+
+                        🎂 Дата рождения:
+                        ${student.birthday
+                            ? formatDate(student.birthday)
+                            : "не указана"
+                        }
+
+                        <br>
+
+                        🟢 Посещений: ${present}
+
+                        <br>
+
+                        🔴 Пропусков: ${absent}
+
+                        <br>
+
+                        🟡 Опозданий: ${late}
+
+                        <br>
+
+                        ⚠ Опозданий >20 мин:
+                        ${critical}
+
+                    </div>
+
+                    <br>
+
+                    <button
+                        class="btn btn-primary"
+                        onclick="editStudent(${student.id})"
+                    >
+                        Изменить
+                    </button>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteStudent(${student.id})"
+                    >
+                        Удалить
+                    </button>
+
+                </div>
+            `;
+
+        });
+
+}
+
+
+/* =====================================================
+   STUDENT MODAL
+===================================================== */
+
+function openAddStudentModal() {
+
+    document.getElementById("studentModalTitle").textContent =
+        "Добавить студента";
+
+    document.getElementById("editStudentId").value = "";
+
+    document.getElementById("studentName").value = "";
+
+    document.getElementById("studentBirthday").value = "";
+
+    document.getElementById("studentNote").value = "";
+
+    document.getElementById("studentModal")
+        .classList.add("show");
+
+}
+
+function editStudent(id) {
+
+    const student =
+        students.find(s => s.id === id);
+
+    if (!student) {
+        return;
+    }
+
+    document.getElementById("studentModalTitle").textContent =
+        "Редактировать студента";
+
+    document.getElementById("editStudentId").value =
+        student.id;
+
+    document.getElementById("studentName").value =
+        student.name;
+
+    document.getElementById("studentBirthday").value =
+        student.birthday;
+
+    document.getElementById("studentNote").value =
+        student.note;
+
+    document.getElementById("studentModal")
+        .classList.add("show");
+
+}
+
+function closeModal() {
+
+    document.getElementById("studentModal")
+        .classList.remove("show");
+
+}
+
+function saveStudent() {
+
+    const id =
+        document.getElementById("editStudentId").value;
+
+    const name =
+        document.getElementById("studentName").value.trim();
+
+    const birthday =
+        document.getElementById("studentBirthday").value;
+
+    const note =
+        document.getElementById("studentNote").value;
+
+    if (!name) {
+
+        alert("Введите ФИО студента.");
+
+        return;
+
+    }
+
+    if (id) {
+
+        const student =
+            students.find(
+                s => s.id == id
+            );
+
+        if (student) {
+
+            student.name = name;
+            student.birthday = birthday;
+            student.note = note;
+
+        }
+
+    } else {
+
+        const newId =
+            students.length
+                ? Math.max(...students.map(s => s.id)) + 1
+                : 1;
+
+        students.push({
+            id: newId,
+            name: name,
+            birthday: birthday,
+            note: note
+        });
+
+    }
+
+    saveAll();
+
+    closeModal();
+
+    refreshAll();
+
+}
+
+function deleteStudent(id) {
+
+    const student =
+        students.find(s => s.id === id);
+
+    if (!student) {
+        return;
+    }
+
+    if (
+        !confirm(
+            `Удалить ${student.name}?`
+        )
+    ) {
+        return;
+    }
+
+    students =
+        students.filter(
+            s => s.id !== id
+        );
+
+    saveAll();
+
+    refreshAll();
+
+}
+
+
+/* =====================================================
+   STATISTICS
+===================================================== */
+
+function renderStatistics() {
+
+    let total = 0;
+    let present = 0;
+    let absent = 0;
+    let late = 0;
+    let critical = 0;
+
+    students.forEach(student => {
+
+        Object.values(attendance).forEach(day => {
+
+            const data =
+                day[student.id];
+
+            if (!data) {
+                return;
+            }
+
+            total++;
+
+            if (data.status === "present") {
+                present++;
+            }
+
+            if (data.status === "absent") {
+                absent++;
+            }
+
+            if (data.status === "late") {
+
+                late++;
+
+                const minutes =
+                    calculateLateMinutes(
+                        settings.lessonStart,
+                        data.arrival
+                    );
+
+                if (
+                    minutes >
+                    Number(settings.lateLimit)
+                ) {
+                    critical++;
+                }
+
+            }
+
+        });
+
+    });
+
+    document.getElementById("statTotal").textContent =
+        total;
+
+    document.getElementById("statPresent").textContent =
+        present;
+
+    document.getElementById("statAbsent").textContent =
+        absent;
+
+    document.getElementById("statLate").textContent =
+        late;
+
+    document.getElementById("statCritical").textContent =
+        critical;
+
+    const body =
+        document.getElementById("statisticsBody");
+
+    body.innerHTML = "";
+
+    students.forEach((student, index) => {
+
+        let p = 0;
+        let a = 0;
+        let l = 0;
+        let c = 0;
+
+        Object.values(attendance).forEach(day => {
+
+            const data =
+                day[student.id];
+
+            if (!data) {
+                return;
+            }
+
+            if (data.status === "present") {
+                p++;
+            }
+
+            if (data.status === "absent") {
+                a++;
+            }
+
+            if (data.status === "late") {
+
+                l++;
+
+                const minutes =
+                    calculateLateMinutes(
+                        settings.lessonStart,
+                        data.arrival
+                    );
+
+                if (
+                    minutes >
+                    Number(settings.lateLimit)
+                ) {
+                    c++;
+                }
+
+            }
+
+        });
+
+        body.innerHTML += `
+            <tr>
+                <td>${index + 1}</td>
+                <td style="text-align:left">${student.name}</td>
+                <td>${p}</td>
+                <td>${a}</td>
+                <td>${l}</td>
+                <td>${c}</td>
+            </tr>
+        `;
+
+    });
+
+}
+
+
+/* =====================================================
+   NOTES
+===================================================== */
+
+function addNote() {
+
+    const title =
+        document.getElementById("noteTitle").value.trim();
+
+    const text =
+        document.getElementById("noteText").value.trim();
+
+    if (!title && !text) {
+        return;
+    }
+
+    notes.unshift({
+        id: Date.now(),
+        title: title || "Без названия",
+        text: text,
+        date: dateKey()
+    });
+
+    document.getElementById("noteTitle").value = "";
+
+    document.getElementById("noteText").value = "";
+
+    saveAll();
+
+    renderNotes();
+
+}
+
+function renderNotes() {
+
+    const list =
+        document.getElementById("notesList");
+
+    if (!notes.length) {
+
+        list.innerHTML =
+            "<div class='panel'>Заметок пока нет.</div>";
+
+        return;
+
+    }
+
+    list.innerHTML =
+        notes.map(note => `
+
+            <div class="panel">
+
+                <h3>${note.title}</h3>
+
+                <p>${note.text}</p>
+
+                <small>
+                    ${formatDate(note.date)}
+                </small>
+
+                <br><br>
+
+                <button
+                    class="btn btn-danger"
+                    onclick="deleteNote(${note.id})"
+                >
+                    Удалить
+                </button>
+
+            </div>
+
+        `).join("");
+
+}
+
+function deleteNote(id) {
+
+    notes =
+        notes.filter(
+            n => n.id !== id
+        );
+
+    saveAll();
+
+    renderNotes();
+
+}
+
+
+/* =====================================================
+   CALENDAR
+===================================================== */
+
+function changeMonth(amount) {
+
+    calendarDate.setMonth(
+        calendarDate.getMonth() + amount
+    );
+
+    renderCalendar();
+
+}
+
+function goToday() {
+
+    calendarDate = new Date();
+
+    renderCalendar();
+
+}
+
+function renderCalendar() {
+
+    const year =
+        calendarDate.getFullYear();
+
+    const month =
+        calendarDate.getMonth();
+
+    const monthName =
+        calendarDate.toLocaleDateString(
+            "ru-RU",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+    document.getElementById("calendarTitle")
+        .textContent =
+        monthName.charAt(0).toUpperCase()
+        + monthName.slice(1);
+
+    const grid =
+        document.getElementById("calendarGrid");
+
+    grid.innerHTML = "";
+
+    const days = [
+        "Пн",
+        "Вт",
+        "Ср",
+        "Чт",
+        "Пт",
+        "Сб",
+        "Вс"
+    ];
+
+    days.forEach(day => {
+
+        grid.innerHTML += `
+            <div class="calendar-day-name">
+                ${day}
+            </div>
+        `;
+
+    });
+
+    const firstDay =
+        new Date(year, month, 1).getDay();
+
+    let start =
+        firstDay === 0
+            ? 6
+            : firstDay - 1;
+
+    const daysInMonth =
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
+    for (let i = 0; i < start; i++) {
+
+        grid.innerHTML += `
+            <div class="calendar-cell"></div>
+        `;
+
+    }
+
+    for (let day = 1; day <= daysInMonth; day++) {
+
+        const current =
+            new Date(year, month, day);
+
+        const key =
+            dateKey(current);
+
+        const today =
+            key === dateKey();
+
+        let events = "";
+
+        /* birthdays */
+
+        students.forEach(student => {
+
+            if (!student.birthday) {
+                return;
+            }
+
+            const birth =
+                new Date(student.birthday);
+
+            if (
+                birth.getMonth() === month &&
+                birth.getDate() === day
+            ) {
+
+                events += `
+                    <div
+                        class="calendar-event"
+                        title="День рождения"
+                    >
+                        🎂 ${student.name}
+                    </div>
+                `;
+
+            }
+
+        });
+
+        /* reminders */
+
+        reminders
+            .filter(r => r.date === key)
+            .forEach(reminder => {
+
+                events += `
+                    <div
+                        class="calendar-event"
+                        title="${reminder.description || ""}"
+                    >
+                        📝 ${reminder.title}
+                    </div>
+                `;
+
+            });
+
+        grid.innerHTML += `
+
+            <div
+                class="calendar-cell ${today ? "today" : ""}"
+            >
+
+                <div class="calendar-number">
+                    ${day}
+                </div>
+
+                ${events}
+
+            </div>
+
+        `;
+
+    }
+
+    renderBirthdays();
+
+}
+
+
+/* =====================================================
+   REMINDERS
+===================================================== */
+
+function addReminder() {
+
+    const title =
+        document.getElementById("reminderTitle")
+        .value.trim();
+
+    const date =
+        document.getElementById("reminderDate")
+        .value;
+
+    const time =
+        document.getElementById("reminderTime")
+        .value;
+
+    const description =
+        document.getElementById("reminderDescription")
+        .value.trim();
+
+    if (!title || !date) {
+
+        alert("Введите название и дату.");
+
+        return;
+
+    }
+
+    reminders.push({
+        id: Date.now(),
+        title,
+        date,
+        time,
+        description
+    });
+
+    document.getElementById("reminderTitle").value = "";
+
+    document.getElementById("reminderDate").value = "";
+
+    document.getElementById("reminderTime").value = "";
+
+    document.getElementById("reminderDescription").value = "";
+
+    saveAll();
+
+    renderCalendar();
+
+    renderUpcomingEvents();
+
+}
+
+
+/* =====================================================
+   BIRTHDAYS
+===================================================== */
+
+function renderBirthdays() {
+
+    const list =
+        document.getElementById("birthdaysList");
+
+    const birthdays =
+        students.filter(
+            student => student.birthday
+        );
+
+    if (!birthdays.length) {
+
+        list.innerHTML =
+            "<p>Даты рождения пока не добавлены.</p>";
+
+        return;
+
+    }
+
+    list.innerHTML =
+        birthdays
+        .sort(
+            (a,b) =>
+                new Date(a.birthday).getTime()
+                -
+                new Date(b.birthday).getTime()
+        )
+        .map(student => `
+
+            <div class="alert alert-success">
+
+                🎂 <strong>
+                    ${student.name}
+                </strong>
+
+                — ${formatDate(student.birthday)}
+
+            </div>
+
+        `)
+        .join("");
+
+}
+
+
+/* =====================================================
+   UPCOMING EVENTS
+===================================================== */
+
+function renderUpcomingEvents() {
+
+    const container =
+        document.getElementById("upcomingEvents");
+
+    const today =
+        new Date();
+
+    const events = [];
+
+    students.forEach(student => {
+
+        if (!student.birthday) {
+            return;
+        }
+
+        const birth =
+            new Date(student.birthday);
+
+        let next =
+            new Date(
+                today.getFullYear(),
+                birth.getMonth(),
+                birth.getDate()
+            );
+
+        if (next < today) {
+
+            next.setFullYear(
+                today.getFullYear() + 1
+            );
+
+        }
+
+        events.push({
+            date: next,
+            text: `🎂 День рождения — ${student.name}`
+        });
+
+    });
+
+    reminders.forEach(reminder => {
+
+        const date =
+            new Date(
+                reminder.date + "T00:00:00"
+            );
+
+        if (date >= today) {
+
+            events.push({
+                date: date,
+                text: `📝 ${reminder.title}`
+            });
+
+        }
+
+    });
+
+    events.sort(
+        (a,b) =>
+            a.date - b.date
+    );
+
+    if (!events.length) {
+
+        container.innerHTML =
+            "<p>Ближайших событий нет.</p>";
+
+        return;
+
+    }
+
+    container.innerHTML =
+        events
+        .slice(0, 5)
+        .map(event => `
+
+            <div class="alert alert-success">
+
+                <strong>
+                    ${event.date.toLocaleDateString(
+                        "ru-RU"
+                    )}
+                </strong>
+
+                — ${event.text}
+
+            </div>
+
+        `)
+        .join("");
+
+}
+
+
+/* =====================================================
+   SETTINGS
+===================================================== */
+
+function renderSettings() {
+
+    document.getElementById("groupName").value =
+        settings.groupName;
+
+    document.getElementById("lessonStart").value =
+        settings.lessonStart;
+
+    document.getElementById("lateLimit").value =
+        settings.lateLimit;
+
+}
+
+function saveSettings() {
+
+    settings.groupName =
+        document.getElementById("groupName").value;
+
+    settings.lessonStart =
+        document.getElementById("lessonStart").value;
+
+    settings.lateLimit =
+        Number(
+            document.getElementById("lateLimit").value
+        );
+
+    saveAll();
+
+    refreshAll();
+
+    alert("Настройки сохранены.");
+
+}
+
+
+/* =====================================================
+   EXPORT
+===================================================== */
+
+function exportData() {
+
+    const data = {
+        students,
+        attendance,
+        history,
+        notes,
+        reminders,
+        duties,
+        settings
+    };
+
+    const blob =
+        new Blob(
+            [
+                JSON.stringify(
+                    data,
+                    null,
+                    2
+                )
+            ],
+            {
+                type: "application/json"
+            }
+        );
+
+    const url =
+        URL.createObjectURL(blob);
+
+    const a =
+        document.createElement("a");
+
+    a.href = url;
+
+    a.download =
+        "journal-group-3-backup.json";
+
+    a.click();
+
+    URL.revokeObjectURL(url);
+
+}
+
+
+/* =====================================================
+   IMPORT
+===================================================== */
+
+function importData(event) {
+
+    const file =
+        event.target.files[0];
+
+    if (!file) {
+        return;
+    }
+
+    const reader =
+        new FileReader();
+
+    reader.onload = function(e) {
+
+        try {
+
+            const data =
+                JSON.parse(e.target.result);
+
+            if (
+                !confirm(
+                    "Заменить текущие данные резервной копией?"
+                )
+            ) {
+                return;
+            }
+
+            students =
+                data.students || [];
+
+            attendance =
+                data.attendance || {};
+
+            history =
+                data.history || [];
+
+            notes =
+                data.notes || [];
+
+            reminders =
+                data.reminders || [];
+
+            duties =
+                data.duties || {
+                    currentIndex: 0,
+                    completed: {},
+                    extra: []
+                };
+
+            settings =
+                data.settings || settings;
+
+            saveAll();
+
+            refreshAll();
+
+            alert("Данные восстановлены.");
+
+        }
+        catch {
+
+            alert(
+                "Ошибка: файл поврежден или имеет неправильный формат."
+            );
+
+        }
+
+    };
+
+    reader.readAsText(file);
+
+}
+
+
+/* =====================================================
+   HEADER
+===================================================== */
+
+function updateHeader() {
+
+    document.getElementById("headerDate")
+        .textContent =
+        new Date().toLocaleDateString(
+            "ru-RU",
+            {
+                weekday: "long",
+                day: "numeric",
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+}
+
+
+/* =====================================================
+   REFRESH
+===================================================== */
+
+function refreshAll() {
+
+    updateHeader();
+
+    renderHome();
+
+    renderJournal();
+
+    renderDuties();
+
+    renderStudents();
+
+    renderStatistics();
+
+    renderHistory();
+
+    renderNotes();
+
+    renderCalendar();
+
+    renderUpcomingEvents();
+
+    renderSettings();
+
+}
+
+
+/* =====================================================
+   START
+===================================================== */
+
+refreshAll();
+
 </script>
 
 </body>
