@@ -1,10 +1,11 @@
-```html
 <!DOCTYPE html>
 <html lang="ru">
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Электронный журнал — Группа 3</title>
+<title>📖 Электронный журнал — Группа 3</title>
+
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
 * {
@@ -15,70 +16,76 @@ body {
     margin: 0;
     font-family: Arial, sans-serif;
     background: #eef2f5;
-    color: #1f2933;
+    color: #263238;
 }
 
-/* ===== HEADER ===== */
-
 header {
-    background: #243447;
+    background: #263746;
     color: white;
     padding: 18px 25px;
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 10px rgba(0,0,0,.15);
+}
+
+.header-inner {
+    max-width: 1500px;
+    margin: auto;
     display: flex;
     justify-content: space-between;
     align-items: center;
-    position: sticky;
-    top: 0;
-    z-index: 100;
+    gap: 15px;
 }
 
-.logo {
-    font-size: 22px;
-    font-weight: bold;
+header h1 {
+    margin: 0;
+    font-size: 24px;
 }
 
-.logo span {
-    color: #8ecae6;
+.sync-status {
+    font-size: 13px;
+    padding: 7px 12px;
+    border-radius: 20px;
+    background: #607d8b;
 }
 
-.header-date {
-    font-size: 14px;
+.sync-online {
+    background: #2e7d32;
 }
 
-/* ===== NAVIGATION ===== */
+.sync-offline {
+    background: #c62828;
+}
 
 nav {
-    background: white;
-    border-bottom: 1px solid #d5dce2;
-    display: flex;
-    gap: 5px;
-    padding: 8px 15px;
-    overflow-x: auto;
+    background: #344955;
     position: sticky;
-    top: 66px;
-    z-index: 99;
+    top: 70px;
+    z-index: 999;
+    overflow-x: auto;
+}
+
+.nav-inner {
+    max-width: 1500px;
+    margin: auto;
+    display: flex;
 }
 
 nav button {
-    border: none;
+    border: 0;
     background: transparent;
-    padding: 11px 15px;
-    border-radius: 7px;
-    cursor: pointer;
-    font-size: 14px;
-    white-space: nowrap;
-}
-
-nav button:hover {
-    background: #edf2f7;
-}
-
-nav button.active {
-    background: #243447;
     color: white;
+    padding: 15px 18px;
+    cursor: pointer;
+    white-space: nowrap;
+    font-size: 14px;
 }
 
-/* ===== MAIN ===== */
+nav button:hover,
+nav button.active {
+    background: #607d8b;
+}
 
 main {
     max-width: 1500px;
@@ -94,463 +101,364 @@ main {
     display: block;
 }
 
-.page-title {
-    margin-bottom: 20px;
-}
-
-.page-title h1 {
-    margin: 0 0 5px;
-    font-size: 28px;
-}
-
-.page-title p {
-    margin: 0;
-    color: #6b7280;
-}
-
-/* ===== CARDS ===== */
-
-.cards {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
-    margin-bottom: 25px;
-}
-
 .card {
     background: white;
-    border-radius: 10px;
-    padding: 18px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.06);
-    border: 1px solid #e0e5ea;
-}
-
-.card-title {
-    font-size: 13px;
-    color: #6b7280;
-    margin-bottom: 8px;
-}
-
-.card-value {
-    font-size: 27px;
-    font-weight: bold;
-}
-
-.card small {
-    color: #6b7280;
-}
-
-/* ===== SECTION ===== */
-
-.panel {
-    background: white;
-    border-radius: 10px;
-    border: 1px solid #e0e5ea;
+    border-radius: 12px;
     padding: 20px;
     margin-bottom: 20px;
-    box-shadow: 0 2px 8px rgba(0,0,0,.04);
+    box-shadow: 0 2px 8px rgba(0,0,0,.08);
 }
 
-.panel h2 {
+.card h2,
+.card h3 {
     margin-top: 0;
 }
 
-/* ===== BUTTONS ===== */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 15px;
+}
+
+.stat {
+    background: #f5f7f9;
+    border-radius: 10px;
+    padding: 18px;
+    text-align: center;
+}
+
+.stat-number {
+    font-size: 30px;
+    font-weight: bold;
+    color: #263746;
+}
+
+.stat-label {
+    color: #607d8b;
+    margin-top: 5px;
+}
+
+button,
+input,
+select,
+textarea {
+    font: inherit;
+}
 
 .btn {
-    border: none;
-    border-radius: 6px;
-    padding: 9px 13px;
+    border: 0;
+    border-radius: 7px;
+    padding: 9px 14px;
     cursor: pointer;
-    font-size: 14px;
-    margin: 2px;
-}
-
-.btn-primary {
-    background: #243447;
+    background: #455a64;
     color: white;
-}
-
-.btn-success {
-    background: #2e8b57;
-    color: white;
-}
-
-.btn-danger {
-    background: #c0392b;
-    color: white;
-}
-
-.btn-warning {
-    background: #e0a11a;
-    color: white;
-}
-
-.btn-secondary {
-    background: #e5e7eb;
-    color: #1f2933;
+    margin: 3px;
 }
 
 .btn:hover {
-    opacity: .85;
+    opacity: .9;
 }
 
-/* ===== LESSON TABS ===== */
-
-.lesson-tabs {
-    display: flex;
-    gap: 8px;
-    flex-wrap: wrap;
-    margin-bottom: 18px;
+.btn-primary {
+    background: #1976d2;
 }
 
-.lesson-tab {
-    border: 1px solid #c7ced6;
-    background: #f5f7f9;
-    border-radius: 8px;
-    padding: 12px 18px;
-    cursor: pointer;
-    font-size: 14px;
+.btn-success {
+    background: #2e7d32;
 }
 
-.lesson-tab:hover {
-    background: #e9eef3;
+.btn-danger {
+    background: #c62828;
 }
 
-.lesson-tab.active {
-    background: #243447;
-    color: white;
-    border-color: #243447;
+.btn-warning {
+    background: #ef6c00;
 }
 
-.lesson-tab strong {
+.btn-light {
+    background: #eceff1;
+    color: #263238;
+}
+
+input,
+select,
+textarea {
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
+    padding: 8px;
+    width: 100%;
+    background: white;
+}
+
+textarea {
+    min-height: 90px;
+    resize: vertical;
+}
+
+.form-group {
+    margin-bottom: 12px;
+}
+
+.form-group label {
     display: block;
-    font-size: 15px;
+    font-weight: bold;
+    margin-bottom: 5px;
 }
 
-.lesson-tab small {
-    display: block;
-    margin-top: 3px;
-}
-
-/* ===== LESSON INFO ===== */
-
-.lesson-info {
-    background: #edf4f8;
-    border: 1px solid #d5e2ea;
-    border-radius: 8px;
-    padding: 13px 15px;
-    margin-bottom: 15px;
-}
-
-.lesson-info strong {
-    font-size: 16px;
-}
-
-/* ===== JOURNAL ===== */
-
-.table-wrapper {
+.table-wrap {
     overflow-x: auto;
 }
 
 table {
     width: 100%;
     border-collapse: collapse;
-    min-width: 1050px;
+    min-width: 900px;
 }
 
-th {
-    background: #e7edf3;
-    font-weight: bold;
-}
-
-th, td {
-    border: 1px solid #b9c2ca;
+th,
+td {
+    border: 1px solid #d7dee2;
     padding: 9px;
-    text-align: center;
     vertical-align: middle;
 }
 
-td.name {
-    text-align: left;
+th {
+    background: #37474f;
+    color: white;
+    position: sticky;
+    top: 0;
+    z-index: 2;
+}
+
+tbody tr:nth-child(even) {
+    background: #f8fafb;
+}
+
+.student-name {
     font-weight: bold;
-    min-width: 260px;
+    min-width: 240px;
 }
-
-input,
-select,
-textarea {
-    width: 100%;
-    padding: 8px;
-    border: 1px solid #c7ced6;
-    border-radius: 5px;
-    font-size: 14px;
-}
-
-textarea {
-    resize: vertical;
-}
-
-input[type="number"] {
-    text-align: center;
-}
-
-/* ===== STATUS ===== */
-
-.status-present {
-    color: #198754;
-    font-weight: bold;
-}
-
-.status-absent {
-    color: #c0392b;
-    font-weight: bold;
-}
-
-.status-late {
-    color: #d68910;
-    font-weight: bold;
-}
-
-/* ===== TOILET ===== */
-
-.toilet-input {
-    max-width: 80px;
-    margin: auto;
-    text-align: center;
-}
-
-/* ===== RED UNDERLINE ===== */
 
 .late-critical {
-    color: #c0392b !important;
-    text-decoration-line: underline;
-    text-decoration-color: #c0392b;
+    text-decoration: underline;
+    text-decoration-color: red;
     text-decoration-thickness: 3px;
-    text-underline-offset: 3px;
+    text-underline-offset: 4px;
 }
 
-/* ===== ALERT ===== */
+.critical-box {
+    color: #c62828;
+    font-weight: bold;
+    font-size: 12px;
+}
 
-.alert {
-    padding: 13px 15px;
-    border-radius: 7px;
+.lesson-box {
+    min-width: 300px;
+    background: #f7f9fa;
+    border-radius: 8px;
+    padding: 8px;
+}
+
+.lesson-title {
+    font-weight: bold;
+    background: #455a64;
+    color: white;
+    padding: 7px;
+    border-radius: 5px;
+    margin-bottom: 7px;
+    text-align: center;
+}
+
+.lesson-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 5px;
+}
+
+.lesson-grid label {
+    font-size: 11px;
+    color: #607d8b;
+}
+
+.lesson-grid .full {
+    grid-column: 1 / -1;
+}
+
+.lesson-status {
+    width: 100%;
+}
+
+.toilet-control {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+}
+
+.toilet-control input {
+    width: 65px;
+    text-align: center;
+}
+
+.duty-person {
+    border: 2px solid #cfd8dc;
+    border-radius: 10px;
+    padding: 15px;
     margin-bottom: 10px;
 }
 
-.alert-warning {
-    background: #fff3cd;
-    border: 1px solid #ffe69c;
+.duty-person.completed {
+    border-color: #2e7d32;
+    background: #f1f8f1;
 }
 
-.alert-danger {
-    background: #f8d7da;
-    border: 1px solid #f1aeb5;
+.duty-person.skipped {
+    border-color: #ef6c00;
+    background: #fff7ef;
 }
 
-.alert-success {
-    background: #d1e7dd;
-    border: 1px solid #a3cfbb;
+.duty-name {
+    font-size: 18px;
+    font-weight: bold;
 }
 
-/* ===== CALENDAR ===== */
-
-.calendar-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 15px;
+.badge {
+    display: inline-block;
+    padding: 4px 8px;
+    border-radius: 15px;
+    font-size: 12px;
+    background: #eceff1;
 }
 
-.calendar-header h2 {
-    margin: 0;
+.badge-green {
+    background: #c8e6c9;
+    color: #1b5e20;
 }
 
-.calendar-grid {
+.badge-red {
+    background: #ffcdd2;
+    color: #b71c1c;
+}
+
+.badge-orange {
+    background: #ffe0b2;
+    color: #e65100;
+}
+
+.student-card {
+    border: 1px solid #d7dee2;
+    border-radius: 10px;
+    padding: 15px;
+    margin-bottom: 10px;
+}
+
+.student-card h3 {
+    margin: 0 0 10px;
+}
+
+.alert {
+    border-left: 5px solid #c62828;
+    background: #ffebee;
+    padding: 12px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.success-message {
+    border-left: 5px solid #2e7d32;
+    background: #e8f5e9;
+    padding: 12px;
+    border-radius: 5px;
+}
+
+.empty {
+    color: #78909c;
+    text-align: center;
+    padding: 25px;
+}
+
+.calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
-    border-left: 1px solid #ccd3da;
-    border-top: 1px solid #ccd3da;
+    gap: 5px;
 }
 
-.calendar-day-name {
-    background: #e7edf3;
-    padding: 10px;
-    text-align: center;
-    font-weight: bold;
-    border-right: 1px solid #ccd3da;
-    border-bottom: 1px solid #ccd3da;
-}
-
-.calendar-cell {
-    min-height: 100px;
+.calendar-day {
+    min-height: 90px;
+    border: 1px solid #cfd8dc;
+    border-radius: 6px;
     padding: 7px;
     background: white;
-    border-right: 1px solid #ccd3da;
-    border-bottom: 1px solid #ccd3da;
-    cursor: pointer;
 }
 
-.calendar-cell:hover {
-    background: #f5f8fa;
+.calendar-day.today {
+    border: 2px solid #1976d2;
 }
 
-.calendar-cell.today {
-    background: #e8f4fb;
+.calendar-day.has-event {
+    background: #fff8e1;
 }
 
-.calendar-number {
+.calendar-head {
     font-weight: bold;
+    text-align: center;
+    padding: 8px;
 }
 
 .calendar-event {
     font-size: 11px;
     margin-top: 5px;
-    padding: 3px 5px;
+    padding: 4px;
+    background: #ffe082;
     border-radius: 4px;
-    background: #edf2f7;
 }
 
-/* ===== DUTIES ===== */
-
-.duty-current {
-    font-size: 22px;
-    font-weight: bold;
-    margin-bottom: 15px;
-}
-
-.duty-person {
-    display: inline-block;
-    background: #edf4f8;
-    border: 1px solid #d5e2ea;
-    padding: 12px 16px;
-    border-radius: 8px;
-    margin: 4px;
-    font-weight: bold;
-}
-
-.duty-person.completed {
-    background: #d1e7dd;
-    border-color: #a3cfbb;
-}
-
-.duty-person.not-completed {
-    background: #f8d7da;
-    border-color: #f1aeb5;
-}
-
-/* ===== STUDENTS ===== */
-
-.student-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
-    gap: 15px;
-}
-
-.student-card {
-    background: white;
-    border: 1px solid #dce2e7;
-    border-radius: 9px;
-    padding: 17px;
-}
-
-.student-card h3 {
-    margin-top: 0;
-}
-
-.student-info {
-    color: #667085;
-    font-size: 14px;
-    line-height: 1.8;
-}
-
-/* ===== SEARCH ===== */
-
-.search-box {
-    max-width: 400px;
-    margin-bottom: 15px;
-}
-
-/* ===== MODAL ===== */
-
-.modal {
-    display: none;
+.toast {
     position: fixed;
-    inset: 0;
-    background: rgba(0,0,0,.5);
-    z-index: 200;
-    align-items: center;
-    justify-content: center;
-    padding: 20px;
+    right: 20px;
+    bottom: 20px;
+    background: #263238;
+    color: white;
+    padding: 14px 18px;
+    border-radius: 8px;
+    z-index: 5000;
+    display: none;
+    box-shadow: 0 4px 15px rgba(0,0,0,.25);
 }
 
-.modal.show {
-    display: flex;
+.small {
+    font-size: 12px;
+    color: #607d8b;
 }
 
-.modal-content {
-    background: white;
-    width: 100%;
-    max-width: 550px;
-    max-height: 90vh;
-    overflow-y: auto;
-    border-radius: 10px;
-    padding: 22px;
+.danger-text {
+    color: #c62828;
+    font-weight: bold;
 }
 
-.modal-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-}
-
-.close {
-    border: none;
-    background: none;
-    font-size: 25px;
-    cursor: pointer;
-}
-
-/* ===== RESPONSIVE ===== */
-
-@media (max-width: 700px) {
-
-    header {
-        padding: 14px;
-    }
-
-    .header-date {
-        display: none;
-    }
-
-    nav {
-        top: 58px;
-    }
-
+@media(max-width:700px) {
     main {
         padding: 12px;
     }
 
-    .page-title h1 {
-        font-size: 23px;
+    header {
+        padding: 13px;
     }
 
-    .calendar-cell {
-        min-height: 70px;
-        font-size: 12px;
+    header h1 {
+        font-size: 18px;
     }
 
-    .calendar-event {
-        font-size: 9px;
+    .header-inner {
+        flex-direction: column;
+        align-items: flex-start;
     }
 
-    .lesson-tabs {
-        display: grid;
-        grid-template-columns: 1fr;
+    nav {
+        top: 105px;
     }
 
-    .lesson-tab {
-        width: 100%;
+    nav button {
+        padding: 12px;
     }
 }
 </style>
@@ -559,708 +467,463 @@ input[type="number"] {
 <body>
 
 <header>
-    <div class="logo">
-        📖 Электронный журнал <span>Группа 3</span>
+    <div class="header-inner">
+        <h1>📖 Электронный журнал — Группа 3</h1>
+        <div id="syncStatus" class="sync-status">Подключение...</div>
     </div>
-
-    <div class="header-date" id="headerDate"></div>
 </header>
 
 <nav>
-    <button class="nav-btn active" onclick="showPage('home', this)">Главная</button>
-    <button class="nav-btn" onclick="showPage('journal', this)">Журнал</button>
-    <button class="nav-btn" onclick="showPage('duties', this)">Дежурства</button>
-    <button class="nav-btn" onclick="showPage('students', this)">Студенты</button>
-    <button class="nav-btn" onclick="showPage('statistics', this)">Статистика</button>
-    <button class="nav-btn" onclick="showPage('history', this)">История</button>
-    <button class="nav-btn" onclick="showPage('notes', this)">Заметки</button>
-    <button class="nav-btn" onclick="showPage('calendar', this)">Календарь</button>
-    <button class="nav-btn" onclick="showPage('settings', this)">Настройки</button>
+    <div class="nav-inner">
+        <button onclick="showPage('home', this)" class="active">🏠 Главная</button>
+        <button onclick="showPage('journal', this)">📖 Журнал</button>
+        <button onclick="showPage('duties', this)">👮 Дежурства</button>
+        <button onclick="showPage('students', this)">👥 Студенты</button>
+        <button onclick="showPage('statistics', this)">📊 Статистика</button>
+        <button onclick="showPage('history', this)">📜 История</button>
+        <button onclick="showPage('notes', this)">📝 Заметки</button>
+        <button onclick="showPage('calendar', this)">📅 Календарь</button>
+        <button onclick="showPage('settings', this)">⚙️ Настройки</button>
+    </div>
 </nav>
 
 <main>
 
-<!-- ================================================= -->
-<!-- HOME -->
-<!-- ================================================= -->
-
+<!-- ГЛАВНАЯ -->
 <section id="home" class="page active">
 
-    <div class="page-title">
-        <h1>Главная</h1>
-        <p>Электронный журнал старосты — Группа 3</p>
+    <div class="card">
+        <h2>Добро пожаловать 👋</h2>
+        <p>
+            Общий электронный журнал группы.
+            Все изменения синхронизируются между компьютерами.
+        </p>
     </div>
 
-    <div id="homeAlerts"></div>
+    <div class="card">
+        <h2>📅 Сегодня: <span id="homeDate"></span></h2>
 
-    <div class="cards">
+        <div class="grid">
+            <div class="stat">
+                <div class="stat-number" id="homeStudents">18</div>
+                <div class="stat-label">Студентов</div>
+            </div>
 
-        <div class="card">
-            <div class="card-title">Всего студентов</div>
-            <div class="card-value" id="totalStudents">18</div>
+            <div class="stat">
+                <div class="stat-number" id="homePresent">0</div>
+                <div class="stat-label">Присутствуют</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="homeAbsent">0</div>
+                <div class="stat-label">Отсутствуют</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="homeLate">0</div>
+                <div class="stat-label">Опоздали</div>
+            </div>
         </div>
-
-        <div class="card">
-            <div class="card-title">Присутствуют сегодня</div>
-            <div class="card-value" id="homePresent">0</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Отсутствуют сегодня</div>
-            <div class="card-value" id="homeAbsent">0</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Опоздания сегодня</div>
-            <div class="card-value" id="homeLate">0</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Опоздания >20 мин</div>
-            <div class="card-value" id="homeCriticalLate">0</div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Дежурные сегодня</div>
-            <div class="card-value" id="homeDuty" style="font-size:16px">—</div>
-        </div>
-
     </div>
 
-    <div class="panel">
-
-        <h2>📚 Расписание на день</h2>
-
-        <div class="lesson-info">
-            <strong>1-я пара</strong> — 08:45–10:05
-        </div>
-
-        <div class="lesson-info">
-            <strong>2-я пара</strong> — 10:15–11:35
-        </div>
-
-        <div class="lesson-info">
-            <strong>3-я пара</strong> — 11:55–13:15
-        </div>
-
+    <div class="card">
+        <h2>👮 Дежурные сегодня</h2>
+        <div id="homeDuties"></div>
     </div>
 
-    <div class="panel">
-
-        <h2>⚡ Быстрая отметка</h2>
-
-        <button class="btn btn-success" onclick="markAllPresent()">
-            ✓ Все присутствуют
-        </button>
-
-        <button class="btn btn-secondary" onclick="showPageByName('journal')">
-            Открыть журнал
-        </button>
-
-    </div>
-
-    <div class="panel">
-
-        <h2>📅 Сегодня</h2>
-
-        <div id="todaySummary"></div>
-
-    </div>
-
-    <div class="panel">
-
-        <h2>🎂 Ближайшие события</h2>
-
-        <div id="upcomingEvents"></div>
-
+    <div class="card">
+        <h2>🔴 Важные уведомления</h2>
+        <div id="homeAlerts"></div>
     </div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- JOURNAL -->
-<!-- ================================================= -->
-
+<!-- ЖУРНАЛ -->
 <section id="journal" class="page">
 
-    <div class="page-title">
-        <h1>Журнал</h1>
-        <p id="journalDate"></p>
+    <div class="card">
+        <h2>📖 Журнал посещаемости</h2>
+
+        <div class="grid">
+            <div class="form-group">
+                <label>Дата</label>
+                <input type="date" id="journalDate" onchange="renderJournal()">
+            </div>
+
+            <div>
+                <label>&nbsp;</label>
+                <button class="btn btn-primary" onclick="setToday()">Сегодня</button>
+            </div>
+        </div>
+
+        <p class="small">
+            1-я пара: <b>08:45–10:05</b> |
+            2-я пара: <b>10:15–11:35</b> |
+            3-я пара: <b>11:55–13:15</b>
+        </p>
+
+        <p class="small">
+            Если опоздание больше 20 минут —
+            <span class="danger-text">ФИО подчёркивается красным</span>
+            и студент получает дежурство вне очереди.
+        </p>
     </div>
 
-    <div class="panel">
-
-        <div class="lesson-tabs">
-
-            <button
-                class="lesson-tab active"
-                id="lessonTab1"
-                onclick="selectLesson(1)"
-            >
-                <strong>1-я пара</strong>
-                <small>08:45 – 10:05</small>
-            </button>
-
-            <button
-                class="lesson-tab"
-                id="lessonTab2"
-                onclick="selectLesson(2)"
-            >
-                <strong>2-я пара</strong>
-                <small>10:15 – 11:35</small>
-            </button>
-
-            <button
-                class="lesson-tab"
-                id="lessonTab3"
-                onclick="selectLesson(3)"
-            >
-                <strong>3-я пара</strong>
-                <small>11:55 – 13:15</small>
-            </button>
-
-        </div>
-
-        <div class="lesson-info" id="currentLessonInfo"></div>
-
-        <button class="btn btn-success" onclick="markAllPresent()">
-            ✓ Все присутствуют на всех парах
-        </button>
-
-        <button class="btn btn-secondary" onclick="markLessonPresent()">
-            ✓ Все присутствуют на этой паре
-        </button>
-
-        <button class="btn btn-secondary" onclick="resetToday()">
-            Сбросить сегодняшний день
-        </button>
-
-        <div class="table-wrapper" style="margin-top:15px">
-
+    <div class="card">
+        <div class="table-wrap">
             <table>
-
                 <thead>
-
-                    <tr>
-                        <th>№</th>
-                        <th>ФИО студента</th>
-                        <th>Статус</th>
-                        <th>Время прихода</th>
-                        <th>Опоздание</th>
-                        <th>🚻 Туалет</th>
-                        <th>Причина</th>
-                        <th>Примечание</th>
-                    </tr>
-
+                <tr>
+                    <th>№</th>
+                    <th>ФИО</th>
+                    <th>1-я пара<br>08:45–10:05</th>
+                    <th>2-я пара<br>10:15–11:35</th>
+                    <th>3-я пара<br>11:55–13:15</th>
+                    <th>Причина / примечание</th>
+                </tr>
                 </thead>
-
                 <tbody id="journalBody"></tbody>
-
             </table>
-
         </div>
-
     </div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- DUTIES -->
-<!-- ================================================= -->
-
+<!-- ДЕЖУРСТВА -->
 <section id="duties" class="page">
 
-    <div class="page-title">
-        <h1>Дежурства</h1>
-        <p>Каждый день дежурят 2 человека</p>
-    </div>
-
-    <div class="panel">
-
-        <h2>🔵 Сегодня дежурят</h2>
-
-        <div id="currentDuty"></div>
-
-        <br>
-
-        <button class="btn btn-success" onclick="completeDuty()">
-            ✓ Оба выполнили дежурство
-        </button>
-
-        <button class="btn btn-danger" onclick="skipDuty()">
-            ✕ Кто-то не выполнил
-        </button>
-
-    </div>
-
-    <div class="panel">
-
-        <h2>📋 Очередь дежурств</h2>
-
+    <div class="card">
+        <h2>👮 Дежурства сегодня</h2>
         <p>
-            После каждого дня очередь автоматически переходит
-            к следующим двум студентам.
+            Каждый день назначаются <b>2 человека</b>.
+            Следующая пара начинается после того, как оба человека завершили
+            или пропустили своё дежурство.
         </p>
 
-        <div class="table-wrapper">
-
-            <table>
-
-                <thead>
-
-                    <tr>
-                        <th>№</th>
-                        <th>Студент 1</th>
-                        <th>Студент 2</th>
-                        <th>Статус</th>
-                    </tr>
-
-                </thead>
-
-                <tbody id="dutyBody"></tbody>
-
-            </table>
-
-        </div>
-
+        <div id="todayDuties"></div>
     </div>
 
-    <div class="panel">
+    <div class="card">
+        <h2>📋 Очередь дежурств</h2>
+        <div id="dutyQueue"></div>
+    </div>
 
-        <h2>⚠ Дополнительные дежурства</h2>
-
-        <div id="outsideQueue"></div>
-
+    <div class="card">
+        <h2>⚠️ Вне очереди</h2>
+        <div id="extraDuties"></div>
     </div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- STUDENTS -->
-<!-- ================================================= -->
-
+<!-- СТУДЕНТЫ -->
 <section id="students" class="page">
 
-    <div class="page-title">
-        <h1>Студенты</h1>
-        <p>Список группы</p>
+    <div class="card">
+        <h2>👥 Студенты</h2>
+
+        <div class="grid">
+            <div class="form-group">
+                <label>ФИО</label>
+                <input type="text" id="newStudentName" placeholder="Введите ФИО">
+            </div>
+
+            <div>
+                <label>&nbsp;</label>
+                <button class="btn btn-success" onclick="addStudent()">
+                    ➕ Добавить
+                </button>
+            </div>
+        </div>
     </div>
 
-    <div class="panel">
-
-        <input
-            class="search-box"
-            id="studentSearch"
-            placeholder="🔎 Поиск студента..."
-            oninput="renderStudents()"
-        >
-
-        <button class="btn btn-primary" onclick="openAddStudentModal()">
-            + Добавить студента
-        </button>
-
+    <div class="card">
+        <div id="studentsList"></div>
     </div>
-
-    <div class="student-grid" id="studentGrid"></div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- STATISTICS -->
-<!-- ================================================= -->
-
+<!-- СТАТИСТИКА -->
 <section id="statistics" class="page">
 
-    <div class="page-title">
-        <h1>Статистика</h1>
-        <p>Общая статистика группы</p>
+    <div class="card">
+        <h2>📊 Статистика</h2>
+
+        <div class="grid">
+            <div class="stat">
+                <div class="stat-number" id="statTotal">0</div>
+                <div class="stat-label">Всего отметок</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="statPresent">0</div>
+                <div class="stat-label">Присутствие</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="statAbsent">0</div>
+                <div class="stat-label">Отсутствия</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="statLate">0</div>
+                <div class="stat-label">Опоздания</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="statCritical">0</div>
+                <div class="stat-label">Опоздание >20 мин</div>
+            </div>
+
+            <div class="stat">
+                <div class="stat-number" id="statToilet">0</div>
+                <div class="stat-label">Выходы в туалет</div>
+            </div>
+        </div>
     </div>
 
-    <div class="cards">
-
-        <div class="card">
-            <div class="card-title">Всего отметок</div>
-            <div class="card-value" id="statTotal"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Присутствия</div>
-            <div class="card-value" id="statPresent"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Пропуски</div>
-            <div class="card-value" id="statAbsent"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Опоздания</div>
-            <div class="card-value" id="statLate"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Опоздания >20 мин</div>
-            <div class="card-value" id="statCritical"></div>
-        </div>
-
-        <div class="card">
-            <div class="card-title">Выходы в туалет</div>
-            <div class="card-value" id="statToilet"></div>
-        </div>
-
-    </div>
-
-    <div class="panel">
-
-        <h2>Статистика студентов</h2>
-
-        <div class="table-wrapper">
-
+    <div class="card">
+        <h2>Статистика по студентам</h2>
+        <div class="table-wrap">
             <table>
-
                 <thead>
-
-                    <tr>
-                        <th>№</th>
-                        <th>ФИО</th>
-                        <th>Присутствия</th>
-                        <th>Пропуски</th>
-                        <th>Опоздания</th>
-                        <th>>20 минут</th>
-                        <th>🚻 Туалет</th>
-                    </tr>
-
+                <tr>
+                    <th>№</th>
+                    <th>ФИО</th>
+                    <th>Присутствий</th>
+                    <th>Отсутствий</th>
+                    <th>Опозданий</th>
+                    <th>>20 минут</th>
+                    <th>Туалет</th>
+                </tr>
                 </thead>
-
                 <tbody id="statisticsBody"></tbody>
-
             </table>
-
         </div>
-
     </div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- HISTORY -->
-<!-- ================================================= -->
-
+<!-- ИСТОРИЯ -->
 <section id="history" class="page">
 
-    <div class="page-title">
-        <h1>История</h1>
-        <p>История посещаемости и событий</p>
-    </div>
-
-    <div class="panel">
-
-        <button class="btn btn-danger" onclick="clearHistory()">
-            Очистить историю
-        </button>
-
-    </div>
-
-    <div class="panel">
-
+    <div class="card">
+        <h2>📜 История</h2>
         <div id="historyList"></div>
-
     </div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- NOTES -->
-<!-- ================================================= -->
-
+<!-- ЗАМЕТКИ -->
 <section id="notes" class="page">
 
-    <div class="page-title">
-        <h1>Заметки</h1>
-        <p>Личные заметки старосты</p>
+    <div class="card">
+        <h2>📝 Заметки</h2>
+
+        <div class="form-group">
+            <label>Новая заметка</label>
+            <textarea id="newNoteText" placeholder="Введите заметку..."></textarea>
+        </div>
+
+        <button class="btn btn-primary" onclick="addNote()">Добавить заметку</button>
     </div>
 
-    <div class="panel">
-
-        <input id="noteTitle" placeholder="Название заметки">
-
-        <textarea
-            id="noteText"
-            placeholder="Текст заметки..."
-            style="margin-top:10px"
-            rows="4"
-        ></textarea>
-
-        <button
-            class="btn btn-primary"
-            onclick="addNote()"
-            style="margin-top:10px"
-        >
-            + Добавить заметку
-        </button>
-
+    <div class="card">
+        <div id="notesList"></div>
     </div>
-
-    <div id="notesList"></div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- CALENDAR -->
-<!-- ================================================= -->
-
+<!-- КАЛЕНДАРЬ -->
 <section id="calendar" class="page">
 
-    <div class="page-title">
-        <h1>Календарь</h1>
-        <p>Дни рождения, события и напоминания</p>
-    </div>
+    <div class="card">
+        <h2>📅 Календарь</h2>
 
-    <div class="panel">
-
-        <div class="calendar-header">
-
-            <button class="btn btn-secondary" onclick="changeMonth(-1)">
-                ‹ Предыдущий
-            </button>
-
-            <h2 id="calendarTitle"></h2>
-
-            <button class="btn btn-secondary" onclick="changeMonth(1)">
-                Следующий ›
-            </button>
-
+        <div class="grid">
+            <button class="btn" onclick="changeMonth(-1)">← Предыдущий</button>
+            <h3 id="calendarTitle" style="text-align:center;"></h3>
+            <button class="btn" onclick="changeMonth(1)">Следующий →</button>
         </div>
 
-        <button class="btn btn-primary" onclick="goToday()">
-            Сегодня
-        </button>
+        <div class="calendar" id="calendarGrid"></div>
+    </div>
 
-        <div style="margin-top:15px">
+    <div class="card">
+        <h2>🎂 Добавить день рождения / напоминание</h2>
 
-            <div class="calendar-grid" id="calendarGrid"></div>
+        <div class="grid">
+            <div class="form-group">
+                <label>Дата</label>
+                <input type="date" id="reminderDate">
+            </div>
 
+            <div class="form-group">
+                <label>Текст</label>
+                <input type="text" id="reminderText" placeholder="Например: День рождения Алихана">
+            </div>
         </div>
 
+        <button class="btn btn-primary" onclick="addReminder()">Добавить</button>
     </div>
 
-    <div class="panel">
-
-        <h2>📝 Добавить напоминание</h2>
-
-        <input id="reminderTitle" placeholder="Название">
-
-        <input
-            id="reminderDate"
-            type="date"
-            style="margin-top:8px"
-        >
-
-        <input
-            id="reminderTime"
-            type="time"
-            style="margin-top:8px"
-        >
-
-        <textarea
-            id="reminderDescription"
-            placeholder="Описание"
-            rows="3"
-            style="margin-top:8px"
-        ></textarea>
-
-        <button
-            class="btn btn-primary"
-            onclick="addReminder()"
-            style="margin-top:8px"
-        >
-            Добавить напоминание
-        </button>
-
-    </div>
-
-    <div class="panel">
-
-        <h2>🎂 Дни рождения</h2>
-
-        <div id="birthdaysList"></div>
-
+    <div class="card">
+        <h2>🔔 Напоминания</h2>
+        <div id="remindersList"></div>
     </div>
 
 </section>
 
 
-<!-- ================================================= -->
-<!-- SETTINGS -->
-<!-- ================================================= -->
-
+<!-- НАСТРОЙКИ -->
 <section id="settings" class="page">
 
-    <div class="page-title">
-        <h1>Настройки</h1>
-        <p>Настройки группы и журнала</p>
+    <div class="card">
+        <h2>⚙️ Настройки</h2>
+
+        <div class="form-group">
+            <label>Название группы</label>
+            <input id="settingGroupName">
+        </div>
+
+        <div class="form-group">
+            <label>Порог опоздания для дежурства вне очереди</label>
+            <input type="number" id="settingLateLimit" min="1">
+        </div>
+
+        <button class="btn btn-success" onclick="saveSettings()">
+            💾 Сохранить настройки
+        </button>
     </div>
 
-    <div class="panel">
+    <div class="card">
+        <h2>☁️ Синхронизация</h2>
 
-        <h2>Группа</h2>
-
-        <label>Название группы</label>
-
-        <input id="groupName" style="margin-top:7px">
-
-        <label style="display:block;margin-top:12px">
-            Максимальное допустимое опоздание
-        </label>
-
-        <input
-            id="lateLimit"
-            type="number"
-            min="0"
-            style="margin-top:7px"
-        >
-
-        <p style="margin-top:15px;color:#667085">
-            Сейчас установлен лимит: более
-            <strong id="settingsLateText">20</strong> минут.
+        <p>
+            Данные этого журнала хранятся в общей облачной базе.
+            Поэтому один и тот же журнал можно открыть на нескольких компьютерах.
         </p>
 
-        <button
-            class="btn btn-primary"
-            onclick="saveSettings()"
-            style="margin-top:12px"
-        >
-            Сохранить настройки
+        <button class="btn btn-primary" onclick="loadFromCloud()">
+            ☁️ Загрузить данные из облака
         </button>
 
+        <button class="btn btn-success" onclick="saveToCloud(true)">
+            ☁️ Принудительно сохранить
+        </button>
     </div>
 
-    <div class="panel">
-
-        <h2>📚 Расписание пар</h2>
-
-        <div class="lesson-info">
-            <strong>1-я пара:</strong> 08:45 – 10:05
-        </div>
-
-        <div class="lesson-info">
-            <strong>2-я пара:</strong> 10:15 – 11:35
-        </div>
-
-        <div class="lesson-info">
-            <strong>3-я пара:</strong> 11:55 – 13:15
-        </div>
-
-        <p style="color:#667085">
-            Время пар фиксировано согласно расписанию группы.
-        </p>
-
-    </div>
-
-    <div class="panel">
-
+    <div class="card">
         <h2>💾 Резервная копия</h2>
 
         <button class="btn btn-primary" onclick="exportData()">
-            Скачать резервную копию
+            📤 Экспорт
         </button>
 
-        <button
-            class="btn btn-secondary"
-            onclick="document.getElementById('importFile').click()"
-        >
-            Восстановить данные
+        <button class="btn btn-warning" onclick="document.getElementById('importFile').click()">
+            📥 Импорт
         </button>
 
-        <input
-            id="importFile"
-            type="file"
-            accept=".json"
-            style="display:none"
-            onchange="importData(event)"
-        >
-
+        <input type="file" id="importFile" accept=".json" style="display:none"
+               onchange="importData(event)">
     </div>
 
 </section>
 
 </main>
 
-
-<!-- ================================================= -->
-<!-- MODAL STUDENT -->
-<!-- ================================================= -->
-
-<div class="modal" id="studentModal">
-
-    <div class="modal-content">
-
-        <div class="modal-header">
-
-            <h2 id="studentModalTitle">
-                Добавить студента
-            </h2>
-
-            <button class="close" onclick="closeModal()">
-                ×
-            </button>
-
-        </div>
-
-        <input type="hidden" id="editStudentId">
-
-        <label>ФИО</label>
-
-        <input
-            id="studentName"
-            style="margin-top:7px"
-        >
-
-        <label style="display:block;margin-top:12px">
-            Дата рождения
-        </label>
-
-        <input
-            id="studentBirthday"
-            type="date"
-            style="margin-top:7px"
-        >
-
-        <label style="display:block;margin-top:12px">
-            Примечание
-        </label>
-
-        <textarea
-            id="studentNote"
-            rows="3"
-            style="margin-top:7px"
-        ></textarea>
-
-        <button
-            class="btn btn-primary"
-            onclick="saveStudent()"
-            style="margin-top:12px"
-        >
-            Сохранить
-        </button>
-
-    </div>
-
-</div>
+<div id="toast" class="toast"></div>
 
 
 <script>
+/* =========================================================
+   SUPABASE
+   =========================================================
 
-/* =====================================================
-   INITIAL DATA
-===================================================== */
+   ВСТАВЬ СЮДА ДАННЫЕ ИЗ СВОЕГО SUPABASE ПРОЕКТА.
+
+   SUPABASE_URL:
+   Project Settings → API → Project URL
+
+   SUPABASE_ANON_KEY:
+   Project Settings → API → anon public key
+   ========================================================= */
+
+const SUPABASE_URL = "ВСТАВЬ_СЮДА_PROJECT_URL";
+const SUPABASE_ANON_KEY = "ВСТАВЬ_СЮДА_ANON_KEY";
+
+let supabaseClient = null;
+
+if (
+    SUPABASE_URL &&
+    SUPABASE_ANON_KEY &&
+    !SUPABASE_URL.includes("ВСТАВЬ") &&
+    !SUPABASE_ANON_KEY.includes("ВСТАВЬ")
+) {
+    supabaseClient = window.supabase.createClient(
+        SUPABASE_URL,
+        SUPABASE_ANON_KEY
+    );
+}
+
+
+/* =========================================================
+   НАСТРОЙКИ
+   ========================================================= */
+
+const LESSONS = [
+    {
+        id: 1,
+        name: "1-я пара",
+        start: "08:45",
+        end: "10:05"
+    },
+    {
+        id: 2,
+        name: "2-я пара",
+        start: "10:15",
+        end: "11:35"
+    },
+    {
+        id: 3,
+        name: "3-я пара",
+        start: "11:55",
+        end: "13:15"
+    }
+];
+
+const STORAGE_KEY = "group3_journal_cloud_backup";
+
+let state = {
+    students: [],
+    attendance: {},
+    history: [],
+    notes: [],
+    reminders: [],
+    duties: {
+        currentIndex: 0,
+        dailyAssignments: {},
+        dailyStatus: {},
+        extra: []
+    },
+    settings: {
+        groupName: "Группа 3",
+        lateLimit: 20
+    }
+};
+
+let calendarDate = new Date();
+
+
+/* =========================================================
+   СТУДЕНТЫ
+   ========================================================= */
 
 const defaultStudents = [
     "Абдужапаров Ибрагим Кубанычбекович",
@@ -1274,7 +937,7 @@ const defaultStudents = [
     "Курманбеков Хамза Мунарбекович",
     "Курманбеков Эмиль Баатырбекович",
     "Миршакиров Азирет Нурланович",
-    "Муктaров Арген Афтандилович",
+    "Муктаpов Арген Афтандилович",
     "Мурзаpаимов Алинуp Нуртилекович",
     "Сулаиманов Улан Уланбекович",
     "Таласбеков Абдуллах Таласбекович",
@@ -1283,164 +946,222 @@ const defaultStudents = [
     "Хакимов Санжар Рахимжанович"
 ];
 
-/* =====================================================
-   LESSONS
-===================================================== */
 
-const lessons = {
-    1: {
-        name: "1-я пара",
-        start: "08:45",
-        end: "10:05"
-    },
-    2: {
-        name: "2-я пара",
-        start: "10:15",
-        end: "11:35"
-    },
-    3: {
-        name: "3-я пара",
-        start: "11:55",
-        end: "13:15"
+/* =========================================================
+   ВСПОМОГАТЕЛЬНЫЕ ФУНКЦИИ
+   ========================================================= */
+
+function uid(prefix = "id") {
+    return prefix + "_" +
+        Date.now().toString(36) +
+        Math.random().toString(36).slice(2, 8);
+}
+
+function todayKey() {
+    const d = new Date();
+
+    const y = d.getFullYear();
+    const m = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+
+    return `${y}-${m}-${day}`;
+}
+
+function escapeHtml(value) {
+    return String(value ?? "")
+        .replace(/&/g, "&amp;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;")
+        .replace(/"/g, "&quot;")
+        .replace(/'/g, "&#039;");
+}
+
+function showToast(text) {
+    const el = document.getElementById("toast");
+
+    el.textContent = text;
+    el.style.display = "block";
+
+    clearTimeout(window.toastTimer);
+
+    window.toastTimer = setTimeout(() => {
+        el.style.display = "none";
+    }, 2500);
+}
+
+function getStudentById(id) {
+    return state.students.find(s => s.id === id);
+}
+
+
+/* =========================================================
+   НОРМАЛИЗАЦИЯ
+   ========================================================= */
+
+function normalizeState(data) {
+
+    if (!data || typeof data !== "object") {
+        data = {};
     }
-};
 
-let selectedLesson = 1;
+    if (!Array.isArray(data.students)) {
+        data.students = [];
+    }
 
+    data.students = data.students.map((s, index) => {
 
-/* =====================================================
-   STUDENTS
-===================================================== */
-
-function createStudents() {
-
-    return defaultStudents.map((name, index) => ({
-        id: index + 1,
-        name: name,
-        birthday: "",
-        note: ""
-    }));
-
-}
-
-let students =
-    JSON.parse(localStorage.getItem("group3_students"))
-    || createStudents();
-
-
-/* =====================================================
-   DATA
-===================================================== */
-
-let attendance =
-    JSON.parse(localStorage.getItem("group3_attendance"))
-    || {};
-
-let history =
-    JSON.parse(localStorage.getItem("group3_history"))
-    || [];
-
-let notes =
-    JSON.parse(localStorage.getItem("group3_notes"))
-    || [];
-
-let reminders =
-    JSON.parse(localStorage.getItem("group3_reminders"))
-    || [];
-
-let duties =
-    JSON.parse(localStorage.getItem("group3_duties"))
-    || {
-        currentIndex: 0,
-        completed: {},
-        extra: []
-    };
-
-let settings =
-    JSON.parse(localStorage.getItem("group3_settings"))
-    || {
-        groupName: "Группа 3",
-        lateLimit: 20
-    };
-
-let calendarDate = new Date();
-
-
-/* =====================================================
-   SAVE
-===================================================== */
-
-function saveAll() {
-
-    localStorage.setItem(
-        "group3_students",
-        JSON.stringify(students)
-    );
-
-    localStorage.setItem(
-        "group3_attendance",
-        JSON.stringify(attendance)
-    );
-
-    localStorage.setItem(
-        "group3_history",
-        JSON.stringify(history)
-    );
-
-    localStorage.setItem(
-        "group3_notes",
-        JSON.stringify(notes)
-    );
-
-    localStorage.setItem(
-        "group3_reminders",
-        JSON.stringify(reminders)
-    );
-
-    localStorage.setItem(
-        "group3_duties",
-        JSON.stringify(duties)
-    );
-
-    localStorage.setItem(
-        "group3_settings",
-        JSON.stringify(settings)
-    );
-
-}
-
-
-/* =====================================================
-   DATE
-===================================================== */
-
-function dateKey(date = new Date()) {
-
-    const y = date.getFullYear();
-    const m = String(date.getMonth() + 1).padStart(2, "0");
-    const d = String(date.getDate()).padStart(2, "0");
-
-    return `${y}-${m}-${d}`;
-
-}
-
-function formatDate(date) {
-
-    return new Date(date).toLocaleDateString(
-        "ru-RU",
-        {
-            day: "2-digit",
-            month: "2-digit",
-            year: "numeric"
+        if (typeof s === "string") {
+            return {
+                id: uid("student"),
+                name: s
+            };
         }
-    );
 
+        return {
+            id: s.id || uid("student"),
+            name: s.name || `Студент ${index + 1}`
+        };
+    });
+
+    if (!data.attendance || typeof data.attendance !== "object") {
+        data.attendance = {};
+    }
+
+    if (!Array.isArray(data.history)) {
+        data.history = [];
+    }
+
+    if (!Array.isArray(data.notes)) {
+        data.notes = [];
+    }
+
+    if (!Array.isArray(data.reminders)) {
+        data.reminders = [];
+    }
+
+    if (!data.duties || typeof data.duties !== "object") {
+        data.duties = {};
+    }
+
+    data.duties.currentIndex =
+        Number.isInteger(data.duties.currentIndex)
+            ? data.duties.currentIndex
+            : 0;
+
+    if (!data.duties.dailyAssignments) {
+        data.duties.dailyAssignments = {};
+    }
+
+    if (!data.duties.dailyStatus) {
+        data.duties.dailyStatus = {};
+    }
+
+    if (!Array.isArray(data.duties.extra)) {
+        data.duties.extra = [];
+    }
+
+    if (!data.settings) {
+        data.settings = {};
+    }
+
+    data.settings.groupName =
+        data.settings.groupName || "Группа 3";
+
+    data.settings.lateLimit =
+        Number(data.settings.lateLimit) || 20;
+
+    return data;
 }
 
 
-/* =====================================================
-   LATE CALCULATION
-===================================================== */
+function createLessonRecord() {
+    return {
+        status: "present",
+        arrival: "",
+        toilet: 0
+    };
+}
+
+
+function normalizeDayRecord(record) {
+
+    if (!record) {
+        return {
+            lessons: {
+                1: createLessonRecord(),
+                2: createLessonRecord(),
+                3: createLessonRecord()
+            },
+            reason: "",
+            note: ""
+        };
+    }
+
+    /*
+       Совместимость со старой версией журнала.
+       Старые данные сохраняются в 1-й паре.
+    */
+
+    if (!record.lessons) {
+
+        const oldLesson = {
+            status: record.status || "present",
+            arrival: record.arrival || "",
+            toilet: Number(record.toilet || 0)
+        };
+
+        return {
+            lessons: {
+                1: oldLesson,
+                2: createLessonRecord(),
+                3: createLessonRecord()
+            },
+            reason: record.reason || "",
+            note: record.note || ""
+        };
+    }
+
+    for (const lesson of LESSONS) {
+
+        if (!record.lessons[lesson.id]) {
+            record.lessons[lesson.id] = createLessonRecord();
+        }
+
+        record.lessons[lesson.id].status =
+            record.lessons[lesson.id].status || "present";
+
+        record.lessons[lesson.id].arrival =
+            record.lessons[lesson.id].arrival || "";
+
+        record.lessons[lesson.id].toilet =
+            Number(record.lessons[lesson.id].toilet || 0);
+    }
+
+    record.reason = record.reason || "";
+    record.note = record.note || "";
+
+    return record;
+}
+
+
+function getDayRecord(date, studentId) {
+
+    if (!state.attendance[date]) {
+        state.attendance[date] = {};
+    }
+
+    state.attendance[date][studentId] =
+        normalizeDayRecord(
+            state.attendance[date][studentId]
+        );
+
+    return state.attendance[date][studentId];
+}
+
+
+/* =========================================================
+   ОПАЗДАНИЕ
+   ========================================================= */
 
 function calculateLateMinutes(startTime, arrivalTime) {
 
@@ -1448,2342 +1169,1348 @@ function calculateLateMinutes(startTime, arrivalTime) {
         return 0;
     }
 
-    const [sh, sm] =
-        startTime.split(":").map(Number);
+    const [sh, sm] = startTime.split(":").map(Number);
+    const [ah, am] = arrivalTime.split(":").map(Number);
 
-    const [ah, am] =
-        arrivalTime.split(":").map(Number);
+    const start = sh * 60 + sm;
+    const arrival = ah * 60 + am;
 
-    const start =
-        sh * 60 + sm;
-
-    const arrival =
-        ah * 60 + am;
-
-    return Math.max(
-        0,
-        arrival - start
-    );
-
+    return Math.max(0, arrival - start);
 }
 
 
-/* =====================================================
-   ATTENDANCE STRUCTURE
-===================================================== */
+function isCriticalLate(date, studentId) {
 
-function createLessonRecord() {
+    const record = getDayRecord(date, studentId);
 
-    return {
-        status: "present",
-        arrival: "",
-        toilet: 0,
-        reason: "",
-        note: ""
-    };
+    return LESSONS.some(lesson => {
 
-}
+        const l = record.lessons[lesson.id];
 
-function createDayRecord() {
-
-    return {
-        lessons: {
-            1: createLessonRecord(),
-            2: createLessonRecord(),
-            3: createLessonRecord()
-        }
-    };
-
-}
-
-function ensureStudentDay(studentId, day) {
-
-    if (!attendance[day]) {
-        attendance[day] = {};
-    }
-
-    if (!attendance[day][studentId]) {
-
-        attendance[day][studentId] =
-            createDayRecord();
-
-    }
-
-    /*
-       Поддержка старого формата журнала.
-       Если раньше были status/arrival напрямую,
-       переносим их в 1-ю пару.
-    */
-
-    const oldData =
-        attendance[day][studentId];
-
-    if (!oldData.lessons) {
-
-        attendance[day][studentId] = {
-            lessons: {
-                1: {
-                    status: oldData.status || "present",
-                    arrival: oldData.arrival || "",
-                    toilet: 0,
-                    reason: oldData.reason || "",
-                    note: oldData.note || ""
-                },
-                2: createLessonRecord(),
-                3: createLessonRecord()
-            }
-        };
-
-    }
-
-    for (let i = 1; i <= 3; i++) {
-
-        if (!attendance[day][studentId].lessons[i]) {
-
-            attendance[day][studentId].lessons[i] =
-                createLessonRecord();
-
-        }
-
-    }
-
-    return attendance[day][studentId];
-
-}
-
-
-/* =====================================================
-   NAVIGATION
-===================================================== */
-
-function showPage(pageId, button) {
-
-    document.querySelectorAll(".page").forEach(page => {
-        page.classList.remove("active");
+        return (
+            l.status === "late" &&
+            calculateLateMinutes(
+                lesson.start,
+                l.arrival
+            ) > Number(state.settings.lateLimit)
+        );
     });
-
-    document.getElementById(pageId).classList.add("active");
-
-    document.querySelectorAll(".nav-btn").forEach(btn => {
-        btn.classList.remove("active");
-    });
-
-    if (button) {
-        button.classList.add("active");
-    }
-
-    refreshAll();
-
 }
 
-function showPageByName(pageId) {
 
-    const button =
-        [...document.querySelectorAll(".nav-btn")]
-        .find(btn =>
-            btn.getAttribute("onclick")?.includes(`'${pageId}'`)
+function getCriticalLessons(date, studentId) {
+
+    const record = getDayRecord(date, studentId);
+
+    return LESSONS.filter(lesson => {
+
+        const l = record.lessons[lesson.id];
+
+        return (
+            l.status === "late" &&
+            calculateLateMinutes(
+                lesson.start,
+                l.arrival
+            ) > Number(state.settings.lateLimit)
+        );
+    });
+}
+
+
+/* =========================================================
+   ДЕЖУРСТВА ВНЕ ОЧЕРЕДИ
+   ========================================================= */
+
+function syncCriticalLateDuty(studentId, date) {
+
+    const criticalLessons =
+        getCriticalLessons(date, studentId);
+
+    const existing =
+        state.duties.extra.find(
+            d =>
+                d.source === "late" &&
+                d.studentId === studentId &&
+                d.date === date &&
+                !d.completed
         );
 
-    showPage(pageId, button);
+    if (criticalLessons.length > 0) {
 
-}
+        const lessonNames =
+            criticalLessons
+                .map(l => l.name)
+                .join(", ");
 
+        const student = getStudentById(studentId);
 
-/* =====================================================
-   SELECT LESSON
-===================================================== */
+        if (existing) {
 
-function selectLesson(number) {
+            existing.reason =
+                `Опоздание более ${state.settings.lateLimit} минут: ${lessonNames}`;
 
-    selectedLesson = number;
+        } else {
 
-    document.querySelectorAll(".lesson-tab")
-        .forEach(tab => {
-            tab.classList.remove("active");
-        });
+            state.duties.extra.push({
+                id: uid("extra"),
+                studentId,
+                date,
+                reason:
+                    `Опоздание более ${state.settings.lateLimit} минут: ${lessonNames}`,
+                source: "late",
+                completed: false,
+                createdAt: new Date().toISOString()
+            });
 
-    const tab =
-        document.getElementById(
-            `lessonTab${number}`
-        );
+            addHistory(
+                date,
+                `${student?.name || "Студент"} — вне очереди: ${lessonNames}`
+            );
+        }
 
-    if (tab) {
-        tab.classList.add("active");
+    } else {
+
+        /*
+          Удаляем только невыполненное автоматическое
+          дежурство за опоздание.
+        */
+
+        state.duties.extra =
+            state.duties.extra.filter(
+                d =>
+                    !(
+                        d.source === "late" &&
+                        d.studentId === studentId &&
+                        d.date === date &&
+                        !d.completed
+                    )
+            );
     }
-
-    renderJournal();
-
 }
 
 
-/* =====================================================
-   JOURNAL
-===================================================== */
+/* =========================================================
+   ЖУРНАЛ
+   ========================================================= */
 
 function renderJournal() {
 
-    const today = dateKey();
+    const date =
+        document.getElementById("journalDate").value ||
+        todayKey();
 
-    document.getElementById("journalDate").textContent =
-        "Дата: " + formatDate(today);
+    document.getElementById("journalDate").value = date;
 
-    const lesson =
-        lessons[selectedLesson];
-
-    document.getElementById("currentLessonInfo").innerHTML = `
-        <strong>📚 ${lesson.name}</strong>
-        — ${lesson.start}–${lesson.end}
-        <br>
-        <small>
-            Опоздание более ${settings.lateLimit} минут
-            автоматически считается критическим.
-        </small>
-    `;
-
-    const body =
+    const tbody =
         document.getElementById("journalBody");
 
-    body.innerHTML = "";
+    tbody.innerHTML = "";
 
-    students.forEach((student, index) => {
+    state.students.forEach((student, index) => {
 
-        const dayData =
-            ensureStudentDay(
-                student.id,
-                today
-            );
-
-        const data =
-            dayData.lessons[selectedLesson];
-
-        const late =
-            data.status === "late"
-                ? calculateLateMinutes(
-                    lesson.start,
-                    data.arrival
-                )
-                : 0;
+        const record =
+            getDayRecord(date, student.id);
 
         const critical =
-            late > Number(settings.lateLimit);
+            isCriticalLate(date, student.id);
 
-        let nameClass = "name";
+        const row = document.createElement("tr");
 
-        if (critical) {
-            nameClass += " late-critical";
-        }
+        row.innerHTML = `
+            <td>${index + 1}</td>
 
-        body.innerHTML += `
-            <tr>
+            <td class="student-name ${critical ? "late-critical" : ""}">
+                ${escapeHtml(student.name)}
+                ${
+                    critical
+                    ? `<div class="critical-box">⚠️ ВНЕ ОЧЕРЕДИ</div>`
+                    : ""
+                }
+            </td>
 
-                <td>${index + 1}</td>
+            ${LESSONS.map(lesson =>
+                renderLessonCell(
+                    date,
+                    student,
+                    lesson,
+                    record.lessons[lesson.id]
+                )
+            ).join("")}
 
-                <td class="${nameClass}">
-                    ${student.name}
-                    ${critical ? " ⚠" : ""}
-                </td>
+            <td style="min-width:220px;">
+                <input
+                    type="text"
+                    value="${escapeHtml(record.reason)}"
+                    placeholder="Причина"
+                    onchange="setDayField('${date}','${student.id}','reason',this.value)"
+                >
 
-                <td>
+                <br><br>
 
-                    <select
-                        onchange="
-                            changeStatus(
-                                ${student.id},
-                                this.value
-                            )
-                        "
-                    >
+                <input
+                    type="text"
+                    value="${escapeHtml(record.note)}"
+                    placeholder="Примечание"
+                    onchange="setDayField('${date}','${student.id}','note',this.value)"
+                >
+            </td>
+        `;
 
-                        <option
-                            value="present"
-                            ${data.status === "present" ? "selected" : ""}
+        tbody.appendChild(row);
+    });
+}
+
+
+function renderLessonCell(date, student, lesson, data) {
+
+    const late =
+        calculateLateMinutes(
+            lesson.start,
+            data.arrival
+        );
+
+    const critical =
+        data.status === "late" &&
+        late > Number(state.settings.lateLimit);
+
+    return `
+        <td>
+            <div class="lesson-box">
+
+                <div class="lesson-title">
+                    ${lesson.name}
+                </div>
+
+                <div class="lesson-grid">
+
+                    <div class="full">
+                        <label>Статус</label>
+
+                        <select
+                            class="lesson-status"
+                            onchange="
+                                setLessonStatus(
+                                    '${date}',
+                                    '${student.id}',
+                                    ${lesson.id},
+                                    this.value
+                                )
+                            "
                         >
-                            🟢 Был
-                        </option>
 
-                        <option
-                            value="absent"
-                            ${data.status === "absent" ? "selected" : ""}
+                            <option value="present"
+                                ${data.status === "present" ? "selected" : ""}>
+                                ✅ Присутствует
+                            </option>
+
+                            <option value="late"
+                                ${data.status === "late" ? "selected" : ""}>
+                                ⏰ Опоздал
+                            </option>
+
+                            <option value="absent"
+                                ${data.status === "absent" ? "selected" : ""}>
+                                ❌ Отсутствует
+                            </option>
+
+                        </select>
+                    </div>
+
+                    <div>
+                        <label>Время прихода</label>
+
+                        <input
+                            type="time"
+                            value="${escapeHtml(data.arrival)}"
+                            onchange="
+                                setLessonArrival(
+                                    '${date}',
+                                    '${student.id}',
+                                    ${lesson.id},
+                                    this.value
+                                )
+                            "
                         >
-                            🔴 Отсутствует
-                        </option>
+                    </div>
 
-                        <option
-                            value="late"
-                            ${data.status === "late" ? "selected" : ""}
-                        >
-                            🟡 Опоздал
-                        </option>
+                    <div>
+                        <label>Опоздание</label>
 
-                    </select>
-
-                </td>
-
-                <td>
-
-                    <input
-                        type="time"
-                        value="${data.arrival || ""}"
-                        onchange="
-                            setArrival(
-                                ${student.id},
-                                this.value
-                            )
-                        "
-                    >
-
-                </td>
-
-                <td>
-
-                    ${
-                        data.arrival
-                        ? `<strong class="${
-                            critical
-                                ? "late-critical"
-                                : late > 0
-                                    ? "status-late"
-                                    : "status-present"
-                        }">
+                        <div style="padding-top:8px;">
                             ${
                                 late > 0
-                                    ? late + " мин."
-                                    : "Вовремя"
+                                ? `<b class="${critical ? "danger-text" : ""}">
+                                    ${late} мин.
+                                  </b>`
+                                : "—"
                             }
-                           </strong>`
-                        : "—"
-                    }
+                        </div>
+                    </div>
+
+                    <div class="full">
+                        <label>🚻 Выходы в туалет</label>
+
+                        <div class="toilet-control">
+                            <button
+                                class="btn btn-light"
+                                onclick="
+                                    changeToilet(
+                                        '${date}',
+                                        '${student.id}',
+                                        ${lesson.id},
+                                        -1
+                                    )
+                                "
+                            >−</button>
+
+                            <input
+                                type="number"
+                                min="0"
+                                value="${Number(data.toilet || 0)}"
+                                onchange="
+                                    setToilet(
+                                        '${date}',
+                                        '${student.id}',
+                                        ${lesson.id},
+                                        this.value
+                                    )
+                                "
+                            >
+
+                            <button
+                                class="btn btn-light"
+                                onclick="
+                                    changeToilet(
+                                        '${date}',
+                                        '${student.id}',
+                                        ${lesson.id},
+                                        1
+                                    )
+                                "
+                            >+</button>
+                        </div>
+                    </div>
 
                     ${
                         critical
-                        ? `<br>
-                           <small style="color:#c0392b">
-                               ⚠ ВНЕ ОЧЕРЕДИ
-                           </small>`
+                        ? `
+                        <div class="full critical-box">
+                            🔴 Опоздание больше
+                            ${state.settings.lateLimit} минут
+                        </div>
+                        `
                         : ""
                     }
 
-                </td>
-
-                <td>
-
-                    <input
-                        class="toilet-input"
-                        type="number"
-                        min="0"
-                        value="${Number(data.toilet) || 0}"
-                        onchange="
-                            setToilet(
-                                ${student.id},
-                                this.value
-                            )
-                        "
-                    >
-
-                </td>
-
-                <td>
-
-                    <input
-                        value="${escapeHtml(data.reason || "")}"
-                        placeholder="Причина"
-                        onchange="
-                            setReason(
-                                ${student.id},
-                                this.value
-                            )
-                        "
-                    >
-
-                </td>
-
-                <td>
-
-                    <input
-                        value="${escapeHtml(data.note || "")}"
-                        placeholder="Примечание"
-                        onchange="
-                            setNote(
-                                ${student.id},
-                                this.value
-                            )
-                        "
-                    >
-
-                </td>
-
-            </tr>
-        `;
-
-    });
-
-    saveAll();
-
+                </div>
+            </div>
+        </td>
+    `;
 }
 
 
-/* =====================================================
-   CHANGE STATUS
-===================================================== */
+async function setLessonStatus(
+    date,
+    studentId,
+    lessonId,
+    status
+) {
 
-function changeStatus(studentId, status) {
+    const record =
+        getDayRecord(date, studentId);
 
-    const today = dateKey();
-
-    const dayData =
-        ensureStudentDay(
-            studentId,
-            today
-        );
-
-    const data =
-        dayData.lessons[selectedLesson];
-
-    const previousStatus =
-        data.status;
-
-    data.status = status;
+    record.lessons[lessonId].status = status;
 
     if (status === "absent") {
-        data.arrival = "";
+        record.lessons[lessonId].arrival = "";
     }
 
+    syncCriticalLateDuty(studentId, date);
+
     addHistory(
-        today,
-        studentId,
-        `${lessons[selectedLesson].name}: ${
-            status === "present"
-                ? "Присутствовал"
-                : status === "absent"
-                    ? "Отсутствовал"
-                    : "Опоздал"
-        }`
+        date,
+        `${getStudentById(studentId)?.name || "Студент"} — ${LESSONS[lessonId - 1].name}: ${statusText(status)}`
     );
 
-    saveAll();
-
-    checkCriticalLate(
-        studentId,
-        selectedLesson
-    );
-
+    await saveToCloud();
     refreshAll();
-
 }
 
 
-/* =====================================================
-   ARRIVAL
-===================================================== */
+async function setLessonArrival(
+    date,
+    studentId,
+    lessonId,
+    arrival
+) {
 
-function setArrival(studentId, arrival) {
+    const record =
+        getDayRecord(date, studentId);
 
-    const today = dateKey();
+    const lesson =
+        LESSONS.find(l => l.id === lessonId);
 
-    const dayData =
-        ensureStudentDay(
-            studentId,
-            today
-        );
-
-    const data =
-        dayData.lessons[selectedLesson];
-
-    data.arrival = arrival;
+    record.lessons[lessonId].arrival = arrival;
 
     if (arrival) {
 
         const late =
             calculateLateMinutes(
-                lessons[selectedLesson].start,
+                lesson.start,
                 arrival
             );
 
-        /*
-           Если студент пришёл позже начала,
-           автоматически ставим "Опоздал".
-        */
-
         if (late > 0) {
-            data.status = "late";
-        } else if (data.status !== "absent") {
-            data.status = "present";
+            record.lessons[lessonId].status = "late";
+        } else {
+            record.lessons[lessonId].status = "present";
         }
-
-        if (
-            late >
-            Number(settings.lateLimit)
-        ) {
-
-            addExtraDuty(
-                studentId,
-                `Критическое опоздание: ${lessons[selectedLesson].name}, ${late} минут`,
-                selectedLesson
-            );
-
-            addHistory(
-                today,
-                studentId,
-                `${lessons[selectedLesson].name}: опоздание на ${late} минут — дополнительное дежурство`
-            );
-
-        }
-
     }
 
-    saveAll();
+    syncCriticalLateDuty(studentId, date);
 
+    await saveToCloud();
     refreshAll();
-
 }
 
 
-/* =====================================================
-   TOILET
-===================================================== */
-
-function setToilet(studentId, value) {
-
-    const today = dateKey();
-
-    const dayData =
-        ensureStudentDay(
-            studentId,
-            today
-        );
-
-    const number =
-        Math.max(
-            0,
-            Number(value) || 0
-        );
-
-    dayData.lessons[selectedLesson].toilet =
-        number;
-
-    saveAll();
-
-}
-
-
-/* =====================================================
-   REASON
-===================================================== */
-
-function setReason(studentId, value) {
-
-    const today = dateKey();
-
-    const dayData =
-        ensureStudentDay(
-            studentId,
-            today
-        );
-
-    dayData.lessons[selectedLesson].reason =
-        value;
-
-    saveAll();
-
-}
-
-
-/* =====================================================
-   NOTE
-===================================================== */
-
-function setNote(studentId, value) {
-
-    const today = dateKey();
-
-    const dayData =
-        ensureStudentDay(
-            studentId,
-            today
-        );
-
-    dayData.lessons[selectedLesson].note =
-        value;
-
-    saveAll();
-
-}
-
-
-/* =====================================================
-   CRITICAL LATE
-===================================================== */
-
-function checkCriticalLate(
-    studentId,
-    lessonNumber
-) {
-
-    const today = dateKey();
-
-    const dayData =
-        attendance[today]?.[studentId];
-
-    if (!dayData || !dayData.lessons) {
-        return;
-    }
-
-    const data =
-        dayData.lessons[lessonNumber];
-
-    if (!data || !data.arrival) {
-        return;
-    }
-
-    const late =
-        calculateLateMinutes(
-            lessons[lessonNumber].start,
-            data.arrival
-        );
-
-    if (
-        data.status === "late" &&
-        late > Number(settings.lateLimit)
-    ) {
-
-        addExtraDuty(
-            studentId,
-            `Критическое опоздание: ${lessons[lessonNumber].name}, ${late} минут`,
-            lessonNumber
-        );
-
-    }
-
-}
-
-
-/* =====================================================
-   EXTRA DUTY
-===================================================== */
-
-function addExtraDuty(
-    studentId,
-    reason,
-    lessonNumber = null
-) {
-
-    const today = dateKey();
-
-    const exists =
-        duties.extra.find(
-            d =>
-                d.studentId === studentId &&
-                d.date === today &&
-                d.lesson === lessonNumber &&
-                !d.completed
-        );
-
-    if (exists) {
-        return;
-    }
-
-    duties.extra.push({
-
-        id:
-            Date.now() +
-            Math.random(),
-
-        studentId:
-            studentId,
-
-        date:
-            today,
-
-        lesson:
-            lessonNumber,
-
-        reason:
-            reason,
-
-        completed:
-            false
-
-    });
-
-    saveAll();
-
-}
-
-
-/* =====================================================
-   MARK ALL PRESENT
-===================================================== */
-
-function markAllPresent() {
-
-    const today = dateKey();
-
-    if (!attendance[today]) {
-        attendance[today] = {};
-    }
-
-    students.forEach(student => {
-
-        const dayData =
-            ensureStudentDay(
-                student.id,
-                today
-            );
-
-        for (let i = 1; i <= 3; i++) {
-
-            dayData.lessons[i] = {
-                status: "present",
-                arrival: lessons[i].start,
-                toilet:
-                    dayData.lessons[i].toilet || 0,
-                reason:
-                    dayData.lessons[i].reason || "",
-                note:
-                    dayData.lessons[i].note || ""
-            };
-
-        }
-
-    });
-
-    addHistory(
-        today,
-        null,
-        "Староста отметил всю группу как присутствующую на всех трёх парах"
-    );
-
-    saveAll();
-
-    refreshAll();
-
-}
-
-
-/* =====================================================
-   MARK CURRENT LESSON PRESENT
-===================================================== */
-
-function markLessonPresent() {
-
-    const today = dateKey();
-
-    if (!attendance[today]) {
-        attendance[today] = {};
-    }
-
-    students.forEach(student => {
-
-        const dayData =
-            ensureStudentDay(
-                student.id,
-                today
-            );
-
-        const old =
-            dayData.lessons[selectedLesson];
-
-        dayData.lessons[selectedLesson] = {
-
-            status: "present",
-
-            arrival:
-                lessons[selectedLesson].start,
-
-            toilet:
-                old.toilet || 0,
-
-            reason:
-                old.reason || "",
-
-            note:
-                old.note || ""
-
-        };
-
-    });
-
-    addHistory(
-        today,
-        null,
-        `${lessons[selectedLesson].name}: вся группа отмечена как присутствующая`
-    );
-
-    saveAll();
-
-    refreshAll();
-
-}
-
-
-/* =====================================================
-   RESET DAY
-===================================================== */
-
-function resetToday() {
-
-    if (
-        !confirm(
-            "Сбросить сегодняшний журнал по всем трём парам?"
-        )
-    ) {
-        return;
-    }
-
-    delete attendance[dateKey()];
-
-    /*
-       Удаляем незавершённые дополнительные
-       дежурства, созданные за сегодняшний день.
-    */
-
-    duties.extra =
-        duties.extra.filter(
-            item =>
-                item.date !== dateKey()
-                || item.completed
-        );
-
-    saveAll();
-
-    refreshAll();
-
-}
-
-
-/* =====================================================
-   HISTORY
-===================================================== */
-
-function addHistory(
+async function setToilet(
     date,
     studentId,
-    text
+    lessonId,
+    value
 ) {
 
-    const student =
-        students.find(
-            s => s.id == studentId
-        );
+    const record =
+        getDayRecord(date, studentId);
 
-    history.unshift({
+    record.lessons[lessonId].toilet =
+        Math.max(0, Number(value) || 0);
 
-        id:
-            Date.now() +
-            Math.random(),
-
-        date:
-            date,
-
-        student:
-            student
-                ? student.name
-                : "Группа",
-
-        text:
-            text
-
-    });
-
-    saveAll();
-
+    await saveToCloud();
+    refreshAll();
 }
 
-function renderHistory() {
 
-    const container =
-        document.getElementById(
-            "historyList"
+async function changeToilet(
+    date,
+    studentId,
+    lessonId,
+    amount
+) {
+
+    const record =
+        getDayRecord(date, studentId);
+
+    record.lessons[lessonId].toilet =
+        Math.max(
+            0,
+            Number(record.lessons[lessonId].toilet || 0) + amount
         );
 
-    if (!history.length) {
+    await saveToCloud();
+    refreshAll();
+}
 
-        container.innerHTML =
-            "<p>История пока пустая.</p>";
 
-        return;
+async function setDayField(
+    date,
+    studentId,
+    field,
+    value
+) {
 
+    const record =
+        getDayRecord(date, studentId);
+
+    record[field] = value;
+
+    await saveToCloud();
+}
+
+
+/* =========================================================
+   ДЕЖУРСТВА
+   ========================================================= */
+
+function ensureTodayDuty() {
+
+    const date = todayKey();
+
+    if (!state.duties.dailyAssignments[date]) {
+
+        const count = state.students.length;
+
+        if (count === 0) {
+            return [];
+        }
+
+        const first =
+            state.duties.currentIndex % count;
+
+        const second =
+            (first + 1) % count;
+
+        state.duties.dailyAssignments[date] = [
+            state.students[first].id,
+            state.students[second].id
+        ];
+
+        state.duties.dailyStatus[date] = {};
     }
 
-    container.innerHTML =
-        history.map(item => `
-
-            <div class="alert alert-success">
-
-                <strong>
-                    ${formatDate(item.date)}
-                </strong>
-
-                <br>
-
-                ${item.student}
-                — ${item.text}
-
-            </div>
-
-        `).join("");
-
-}
-
-function clearHistory() {
-
-    if (
-        !confirm(
-            "Удалить всю историю?"
-        )
-    ) {
-        return;
+    if (!state.duties.dailyStatus[date]) {
+        state.duties.dailyStatus[date] = {};
     }
 
-    history = [];
-
-    saveAll();
-
-    renderHistory();
-
+    return state.duties.dailyAssignments[date];
 }
 
-
-/* =====================================================
-   HOME
-===================================================== */
-
-function renderHome() {
-
-    const today = dateKey();
-
-    const records =
-        attendance[today] || {};
-
-    let present = 0;
-    let absent = 0;
-    let late = 0;
-    let critical = 0;
-
-    students.forEach(student => {
-
-        const dayData =
-            records[student.id];
-
-        if (!dayData) {
-            return;
-        }
-
-        if (!dayData.lessons) {
-            return;
-        }
-
-        for (let i = 1; i <= 3; i++) {
-
-            const data =
-                dayData.lessons[i];
-
-            if (!data) {
-                continue;
-            }
-
-            if (data.status === "present") {
-                present++;
-            }
-
-            if (data.status === "absent") {
-                absent++;
-            }
-
-            if (data.status === "late") {
-
-                late++;
-
-                const minutes =
-                    calculateLateMinutes(
-                        lessons[i].start,
-                        data.arrival
-                    );
-
-                if (
-                    minutes >
-                    Number(settings.lateLimit)
-                ) {
-                    critical++;
-                }
-
-            }
-
-        }
-
-    });
-
-    document.getElementById(
-        "totalStudents"
-    ).textContent =
-        students.length;
-
-    document.getElementById(
-        "homePresent"
-    ).textContent =
-        present;
-
-    document.getElementById(
-        "homeAbsent"
-    ).textContent =
-        absent;
-
-    document.getElementById(
-        "homeLate"
-    ).textContent =
-        late;
-
-    document.getElementById(
-        "homeCriticalLate"
-    ).textContent =
-        critical;
-
-    const dutyStudents =
-        getTodayDutyStudents();
-
-    document.getElementById(
-        "homeDuty"
-    ).textContent =
-        dutyStudents.length
-            ? dutyStudents
-                .map(s => s.name.split(" ")[0])
-                .join(" + ")
-            : "—";
-
-    document.getElementById(
-        "todaySummary"
-    ).innerHTML = `
-
-        <p>
-            👥 Всего студентов:
-            <strong>${students.length}</strong>
-        </p>
-
-        <p>
-            📚 Всего пар сегодня:
-            <strong>3</strong>
-        </p>
-
-        <p>
-            🟢 Отметок "Был":
-            <strong>${present}</strong>
-        </p>
-
-        <p>
-            🔴 Отметок "Отсутствует":
-            <strong>${absent}</strong>
-        </p>
-
-        <p>
-            🟡 Опозданий:
-            <strong>${late}</strong>
-        </p>
-
-        <p>
-            ⚠ Опозданий более ${settings.lateLimit} минут:
-            <strong>${critical}</strong>
-        </p>
-
-    `;
-
-    renderAlerts();
-
-}
-
-
-/* =====================================================
-   ALERTS
-===================================================== */
-
-function renderAlerts() {
-
-    const today = dateKey();
-
-    const alerts =
-        document.getElementById(
-            "homeAlerts"
-        );
-
-    let html = "";
-
-    const records =
-        attendance[today] || {};
-
-    students.forEach(student => {
-
-        const dayData =
-            records[student.id];
-
-        if (!dayData || !dayData.lessons) {
-            return;
-        }
-
-        for (let i = 1; i <= 3; i++) {
-
-            const data =
-                dayData.lessons[i];
-
-            if (
-                !data ||
-                data.status !== "late"
-            ) {
-                continue;
-            }
-
-            const late =
-                calculateLateMinutes(
-                    lessons[i].start,
-                    data.arrival
-                );
-
-            if (
-                late >
-                Number(settings.lateLimit)
-            ) {
-
-                html += `
-
-                    <div class="alert alert-danger">
-
-                        ⚠ <strong>${student.name}</strong>
-
-                        <br>
-
-                        ${lessons[i].name}:
-                        опоздание на
-                        <strong>${late} минут</strong>.
-
-                        <br>
-
-                        Студент получил
-                        <strong>
-                            дополнительное дежурство
-                        </strong>.
-
-                    </div>
-
-                `;
-
-            }
-
-        }
-
-    });
-
-    const extra =
-        duties.extra.filter(
-            d => !d.completed
-        );
-
-    extra.forEach(item => {
-
-        const student =
-            students.find(
-                s =>
-                    s.id === item.studentId
-            );
-
-        if (!student) {
-            return;
-        }
-
-        html += `
-
-            <div class="alert alert-warning">
-
-                ⚠ <strong>${student.name}</strong>
-
-                должен выполнить
-                <strong>
-                    дополнительное дежурство
-                </strong>.
-
-                <br>
-
-                Причина:
-                ${item.reason}
-
-            </div>
-
-        `;
-
-    });
-
-    alerts.innerHTML = html;
-
-}
-
-
-/* =====================================================
-   GET TODAY DUTY
-===================================================== */
 
 function getTodayDutyStudents() {
 
-    const result = [];
+    const ids = ensureTodayDuty();
 
-    if (!students.length) {
-        return result;
-    }
+    return ids
+        .map(id => getStudentById(id))
+        .filter(Boolean);
+}
 
-    const start =
-        duties.currentIndex % students.length;
 
-    result.push(
-        students[start]
+function dutyStatus(date, studentId) {
+
+    return state.duties.dailyStatus?.[date]?.[studentId] || "pending";
+}
+
+
+async function completeDuty(studentId) {
+
+    const date = todayKey();
+
+    ensureTodayDuty();
+
+    state.duties.dailyStatus[date][studentId] =
+        "completed";
+
+    addHistory(
+        date,
+        `${getStudentById(studentId)?.name || "Студент"} — дежурство выполнено`
     );
 
-    if (students.length > 1) {
+    advanceDutyIfResolved();
 
-        const second =
-            (start + 1) %
-            students.length;
+    await saveToCloud();
 
-        result.push(
-            students[second]
+    refreshAll();
+}
+
+
+async function skipDuty(studentId) {
+
+    const date = todayKey();
+
+    ensureTodayDuty();
+
+    state.duties.dailyStatus[date][studentId] =
+        "skipped";
+
+    const student =
+        getStudentById(studentId);
+
+    const exists =
+        state.duties.extra.some(
+            d =>
+                d.source === "missed-duty" &&
+                d.studentId === studentId &&
+                d.date === date &&
+                !d.completed
         );
 
-    }
+    if (!exists) {
 
-    return result;
-
-}
-
-
-/* =====================================================
-   DUTIES
-===================================================== */
-
-function getDutyPairs() {
-
-    const pairs = [];
-
-    if (!students.length) {
-        return pairs;
-    }
-
-    for (
-        let i = 0;
-        i < students.length;
-        i += 2
-    ) {
-
-        const first =
-            students[i];
-
-        const second =
-            students[
-                (i + 1) %
-                students.length
-            ];
-
-        pairs.push({
-            first,
-            second
+        state.duties.extra.push({
+            id: uid("extra"),
+            studentId,
+            date,
+            reason: "Не выполнил дежурство",
+            source: "missed-duty",
+            completed: false,
+            createdAt: new Date().toISOString()
         });
-
     }
 
-    return pairs;
+    addHistory(
+        date,
+        `${student?.name || "Студент"} — дежурство не выполнено, добавлено вне очереди`
+    );
 
+    advanceDutyIfResolved();
+
+    await saveToCloud();
+
+    refreshAll();
 }
+
+
+function advanceDutyIfResolved() {
+
+    const date = todayKey();
+
+    const ids =
+        state.duties.dailyAssignments[date] || [];
+
+    if (ids.length !== 2) {
+        return;
+    }
+
+    const resolved =
+        ids.every(
+            id =>
+                ["completed", "skipped"]
+                    .includes(
+                        dutyStatus(date, id)
+                    )
+        );
+
+    if (resolved) {
+
+        state.duties.currentIndex =
+            (
+                state.duties.currentIndex + 2
+            ) % Math.max(state.students.length, 1);
+    }
+}
+
 
 function renderDuties() {
 
-    const current =
+    const todayContainer =
+        document.getElementById("todayDuties");
+
+    const people =
         getTodayDutyStudents();
 
-    const container =
-        document.getElementById(
-            "currentDuty"
-        );
+    if (!people.length) {
 
-    if (!current.length) {
-
-        container.innerHTML =
-            "—";
+        todayContainer.innerHTML =
+            `<div class="empty">Нет студентов</div>`;
 
     } else {
 
-        container.innerHTML =
-            current.map(student => `
+        todayContainer.innerHTML =
+            people.map(student => {
 
-                <div class="duty-person">
-                    👤 ${student.name}
-                </div>
+                const status =
+                    dutyStatus(
+                        todayKey(),
+                        student.id
+                    );
 
-            `).join("");
+                return `
+                    <div class="duty-person ${status}">
 
+                        <div class="duty-name">
+                            ${escapeHtml(student.name)}
+                        </div>
+
+                        <p>
+                            ${
+                                status === "completed"
+                                ? `<span class="badge badge-green">
+                                    ✅ Выполнено
+                                   </span>`
+                                : status === "skipped"
+                                ? `<span class="badge badge-orange">
+                                    ⚠️ Не выполнил
+                                   </span>`
+                                : `<span class="badge">
+                                    ⏳ Ожидает
+                                   </span>`
+                            }
+                        </p>
+
+                        ${
+                            status === "pending"
+                            ? `
+                            <button
+                                class="btn btn-success"
+                                onclick="completeDuty('${student.id}')"
+                            >
+                                ✅ Выполнил
+                            </button>
+
+                            <button
+                                class="btn btn-warning"
+                                onclick="skipDuty('${student.id}')"
+                            >
+                                ❌ Не выполнил
+                            </button>
+                            `
+                            : ""
+                        }
+
+                    </div>
+                `;
+
+            }).join("");
     }
 
-    const body =
-        document.getElementById(
-            "dutyBody"
-        );
+    renderDutyQueue();
+    renderExtraDuties();
+}
 
-    body.innerHTML = "";
 
-    const pairs =
-        getDutyPairs();
+function renderDutyQueue() {
 
-    pairs.forEach((pair, index) => {
+    const container =
+        document.getElementById("dutyQueue");
 
-        const firstIndex =
-            index * 2;
+    if (!state.students.length) {
+        container.innerHTML =
+            `<div class="empty">Нет студентов</div>`;
+        return;
+    }
 
-        const isCurrent =
-            firstIndex ===
-            duties.currentIndex;
+    const todayIds =
+        state.duties.dailyAssignments[todayKey()] || [];
 
-        body.innerHTML += `
+    let html = `
+        <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>№</th>
+                    <th>Студент</th>
+                    <th>Статус</th>
+                </tr>
+            </thead>
+            <tbody>
+    `;
 
-            <tr>
+    state.students.forEach((student, index) => {
 
+        const today =
+            todayIds.includes(student.id);
+
+        html += `
+            <tr ${today ? 'style="background:#e3f2fd"' : ""}>
                 <td>${index + 1}</td>
-
-                <td style="text-align:left">
-                    ${pair.first.name}
+                <td>
+                    ${escapeHtml(student.name)}
+                    ${today ? `<span class="badge badge-green">
+                        Сегодня
+                    </span>` : ""}
                 </td>
-
-                <td style="text-align:left">
-                    ${pair.second.name}
-                </td>
-
                 <td>
                     ${
-                        isCurrent
-                            ? "🔵 Сегодня"
-                            : "В очереди"
+                        today
+                        ? "👮 Дежурный сегодня"
+                        : "Ожидает очереди"
                     }
                 </td>
-
             </tr>
-
         `;
-
     });
 
-    const outside =
-        document.getElementById(
-            "outsideQueue"
-        );
+    html += `
+            </tbody>
+        </table>
+        </div>
+    `;
 
-    const extra =
-        duties.extra.filter(
-            d => !d.completed
-        );
+    container.innerHTML = html;
+}
 
-    if (!extra.length) {
 
-        outside.innerHTML =
-            "<p>Нет дополнительных дежурств.</p>";
+function renderExtraDuties() {
+
+    const container =
+        document.getElementById("extraDuties");
+
+    const active =
+        state.duties.extra
+            .filter(d => !d.completed)
+            .sort(
+                (a,b) =>
+                    b.createdAt.localeCompare(a.createdAt)
+            );
+
+    if (!active.length) {
+
+        container.innerHTML =
+            `<div class="success-message">
+                Нет невыполненных дежурств вне очереди.
+             </div>`;
 
         return;
-
     }
 
-    outside.innerHTML =
-        extra.map(item => {
+    container.innerHTML =
+        active.map(duty => {
 
             const student =
-                students.find(
-                    s =>
-                        s.id ===
-                        item.studentId
-                );
-
-            if (!student) {
-                return "";
-            }
+                getStudentById(duty.studentId);
 
             return `
+                <div class="alert">
 
-                <div class="alert alert-warning">
-
-                    <strong>
-                        ${student.name}
-                    </strong>
+                    <b>
+                        ${escapeHtml(student?.name || "Неизвестный студент")}
+                    </b>
 
                     <br>
 
-                    Причина:
-                    ${item.reason}
+                    ${escapeHtml(duty.reason)}
+
+                    <br>
+
+                    <span class="small">
+                        Дата: ${escapeHtml(duty.date)}
+                    </span>
 
                     <br><br>
 
                     <button
                         class="btn btn-success"
-                        onclick="
-                            completeExtraDuty(
-                                ${item.id}
-                            )
-                        "
+                        onclick="completeExtraDuty('${duty.id}')"
                     >
-                        ✓ Выполнено
+                        ✅ Выполнено
                     </button>
 
                 </div>
-
             `;
 
         }).join("");
-
 }
 
 
-/* =====================================================
-   DUTY ACTIONS
-===================================================== */
+async function completeExtraDuty(id) {
 
-function completeDuty() {
+    const duty =
+        state.duties.extra.find(d => d.id === id);
 
-    const current =
-        getTodayDutyStudents();
+    if (!duty) return;
 
-    if (current.length < 2) {
+    duty.completed = true;
+    duty.completedAt = new Date().toISOString();
+
+    addHistory(
+        todayKey(),
+        `${getStudentById(duty.studentId)?.name || "Студент"} — внеочередное дежурство выполнено`
+    );
+
+    await saveToCloud();
+
+    refreshAll();
+}
+
+
+/* =========================================================
+   СТУДЕНТЫ
+   ========================================================= */
+
+async function addStudent() {
+
+    const input =
+        document.getElementById("newStudentName");
+
+    const name =
+        input.value.trim();
+
+    if (!name) {
+        alert("Введите ФИО.");
         return;
     }
 
-    const today =
-        dateKey();
-
-    duties.completed[today] = {
-
-        studentIds:
-            current.map(
-                s => s.id
-            ),
-
-        completed:
-            true
-
-    };
-
-    current.forEach(student => {
-
-        addHistory(
-            today,
-            student.id,
-            "Дежурство выполнено"
-        );
-
+    state.students.push({
+        id: uid("student"),
+        name
     });
 
-    /*
-       Переходим сразу на следующих 2 человек.
-    */
+    input.value = "";
 
-    duties.currentIndex =
-        (
-            duties.currentIndex +
-            2
-        ) %
-        students.length;
-
-    saveAll();
-
-    refreshAll();
-
-}
-
-function skipDuty() {
-
-    const current =
-        getTodayDutyStudents();
-
-    if (!current.length) {
-        return;
-    }
-
-    /*
-       Показываем выбор, кто именно
-       не выполнил дежурство.
-    */
-
-    let message =
-        "Кто не выполнил дежурство?\n\n";
-
-    current.forEach(
-        (student, index) => {
-
-            message +=
-                `${index + 1}. ${student.name}\n`;
-
-        }
+    addHistory(
+        todayKey(),
+        `Добавлен студент: ${name}`
     );
 
-    const choice =
-        prompt(
-            message +
-            "\nВведите номер студента:"
-        );
+    await saveToCloud();
 
-    const number =
-        Number(choice);
+    refreshAll();
+}
 
-    if (
-        number < 1 ||
-        number > current.length ||
-        !Number.isInteger(number)
-    ) {
 
-        return;
-
-    }
+async function deleteStudent(id) {
 
     const student =
-        current[number - 1];
+        getStudentById(id);
 
-    addExtraDuty(
-        student.id,
-        "Не выполнил обычное дежурство"
-    );
+    if (!student) return;
 
-    addHistory(
-        dateKey(),
-        student.id,
-        "Не выполнил обычное дежурство"
-    );
-
-    /*
-       После дня очередь всё равно
-       переходит к следующим двум.
-    */
-
-    duties.currentIndex =
-        (
-            duties.currentIndex +
-            2
-        ) %
-        students.length;
-
-    saveAll();
-
-    refreshAll();
-
-}
-
-function completeExtraDuty(id) {
-
-    const item =
-        duties.extra.find(
-            d => d.id === id
-        );
-
-    if (!item) {
+    if (
+        !confirm(
+            `Удалить студента "${student.name}"?`
+        )
+    ) {
         return;
     }
 
-    item.completed = true;
+    state.students =
+        state.students.filter(
+            s => s.id !== id
+        );
 
     addHistory(
-        dateKey(),
-        item.studentId,
-        "Дополнительное дежурство выполнено"
+        todayKey(),
+        `Удалён студент: ${student.name}`
     );
 
-    saveAll();
+    await saveToCloud();
 
     refreshAll();
-
 }
 
 
-/* =====================================================
-   STUDENTS
-===================================================== */
+async function renameStudent(id) {
+
+    const student =
+        getStudentById(id);
+
+    if (!student) return;
+
+    const name =
+        prompt(
+            "Новое ФИО:",
+            student.name
+        );
+
+    if (!name || !name.trim()) {
+        return;
+    }
+
+    student.name = name.trim();
+
+    addHistory(
+        todayKey(),
+        `Изменено ФИО студента: ${student.name}`
+    );
+
+    await saveToCloud();
+
+    refreshAll();
+}
+
 
 function renderStudents() {
 
-    const query =
-        document.getElementById(
-            "studentSearch"
-        )
-        ?.value
-        .toLowerCase()
-        || "";
+    const container =
+        document.getElementById("studentsList");
 
-    const grid =
-        document.getElementById(
-            "studentGrid"
-        );
+    if (!state.students.length) {
 
-    grid.innerHTML = "";
+        container.innerHTML =
+            `<div class="empty">Нет студентов</div>`;
 
-    students
-        .filter(student =>
-            student.name
-                .toLowerCase()
-                .includes(query)
-        )
-        .forEach((student, index) => {
+        return;
+    }
+
+    container.innerHTML =
+        state.students.map((student, index) => {
 
             let present = 0;
             let absent = 0;
             let late = 0;
-            let critical = 0;
             let toilet = 0;
 
-            Object.values(
-                attendance
-            ).forEach(day => {
+            Object.values(state.attendance)
+                .forEach(day => {
 
-                const dayData =
-                    day[student.id];
+                    const record =
+                        day[student.id];
 
-                if (
-                    !dayData ||
-                    !dayData.lessons
-                ) {
-                    return;
-                }
+                    if (!record) return;
 
-                for (let i = 1; i <= 3; i++) {
+                    const normalized =
+                        normalizeDayRecord(record);
 
-                    const data =
-                        dayData.lessons[i];
+                    LESSONS.forEach(lesson => {
 
-                    if (!data) {
-                        continue;
-                    }
+                        const l =
+                            normalized.lessons[lesson.id];
 
-                    if (
-                        data.status ===
-                        "present"
-                    ) {
-                        present++;
-                    }
+                        if (l.status === "present")
+                            present++;
 
-                    if (
-                        data.status ===
-                        "absent"
-                    ) {
-                        absent++;
-                    }
+                        if (l.status === "absent")
+                            absent++;
 
-                    if (
-                        data.status ===
-                        "late"
-                    ) {
+                        if (l.status === "late")
+                            late++;
 
-                        late++;
+                        toilet += Number(l.toilet || 0);
+                    });
+                });
 
-                        const minutes =
-                            calculateLateMinutes(
-                                lessons[i].start,
-                                data.arrival
-                            );
-
-                        if (
-                            minutes >
-                            Number(
-                                settings.lateLimit
-                            )
-                        ) {
-                            critical++;
-                        }
-
-                    }
-
-                    toilet +=
-                        Number(
-                            data.toilet
-                        ) || 0;
-
-                }
-
-            });
-
-            grid.innerHTML += `
-
+            return `
                 <div class="student-card">
 
                     <h3>
                         ${index + 1}.
-                        ${student.name}
+                        ${escapeHtml(student.name)}
                     </h3>
 
-                    <div class="student-info">
+                    <p>
+                        <span class="badge badge-green">
+                            Присутствий: ${present}
+                        </span>
 
-                        🎂 Дата рождения:
-                        ${
-                            student.birthday
-                                ? formatDate(
-                                    student.birthday
-                                )
-                                : "не указана"
-                        }
+                        <span class="badge badge-red">
+                            Отсутствий: ${absent}
+                        </span>
 
-                        <br>
+                        <span class="badge badge-orange">
+                            Опозданий: ${late}
+                        </span>
 
-                        🟢 Посещений:
-                        ${present}
-
-                        <br>
-
-                        🔴 Пропусков:
-                        ${absent}
-
-                        <br>
-
-                        🟡 Опозданий:
-                        ${late}
-
-                        <br>
-
-                        ⚠ Опозданий >20 мин:
-                        ${critical}
-
-                        <br>
-
-                        🚻 Выходов в туалет:
-                        ${toilet}
-
-                    </div>
-
-                    <br>
+                        <span class="badge">
+                            🚻 Туалет: ${toilet}
+                        </span>
+                    </p>
 
                     <button
                         class="btn btn-primary"
-                        onclick="
-                            editStudent(
-                                ${student.id}
-                            )
-                        "
+                        onclick="renameStudent('${student.id}')"
                     >
-                        Изменить
+                        ✏️ Переименовать
                     </button>
 
                     <button
                         class="btn btn-danger"
-                        onclick="
-                            deleteStudent(
-                                ${student.id}
-                            )
-                        "
+                        onclick="deleteStudent('${student.id}')"
                     >
-                        Удалить
+                        🗑 Удалить
                     </button>
 
                 </div>
-
             `;
 
+        }).join("");
+}
+
+
+/* =========================================================
+   СТАТИСТИКА
+   ========================================================= */
+
+function getAllStatistics() {
+
+    const result = {
+        total: 0,
+        present: 0,
+        absent: 0,
+        late: 0,
+        critical: 0,
+        toilet: 0
+    };
+
+    const students = {};
+
+    state.students.forEach(student => {
+
+        students[student.id] = {
+            present: 0,
+            absent: 0,
+            late: 0,
+            critical: 0,
+            toilet: 0
+        };
+    });
+
+    Object.entries(state.attendance)
+        .forEach(([date, day]) => {
+
+            Object.entries(day)
+                .forEach(([studentId, rawRecord]) => {
+
+                    const record =
+                        normalizeDayRecord(rawRecord);
+
+                    if (!students[studentId]) return;
+
+                    LESSONS.forEach(lesson => {
+
+                        const l =
+                            record.lessons[lesson.id];
+
+                        result.total++;
+
+                        if (l.status === "present") {
+                            result.present++;
+                            students[studentId].present++;
+                        }
+
+                        if (l.status === "absent") {
+                            result.absent++;
+                            students[studentId].absent++;
+                        }
+
+                        if (l.status === "late") {
+
+                            result.late++;
+                            students[studentId].late++;
+
+                            const minutes =
+                                calculateLateMinutes(
+                                    lesson.start,
+                                    l.arrival
+                                );
+
+                            if (
+                                minutes >
+                                Number(state.settings.lateLimit)
+                            ) {
+
+                                result.critical++;
+                                students[studentId].critical++;
+                            }
+                        }
+
+                        result.toilet +=
+                            Number(l.toilet || 0);
+
+                        students[studentId].toilet +=
+                            Number(l.toilet || 0);
+                    });
+                });
         });
 
+    return {
+        total: result,
+        students
+    };
 }
 
-
-/* =====================================================
-   STUDENT MODAL
-===================================================== */
-
-function openAddStudentModal() {
-
-    document.getElementById(
-        "studentModalTitle"
-    ).textContent =
-        "Добавить студента";
-
-    document.getElementById(
-        "editStudentId"
-    ).value = "";
-
-    document.getElementById(
-        "studentName"
-    ).value = "";
-
-    document.getElementById(
-        "studentBirthday"
-    ).value = "";
-
-    document.getElementById(
-        "studentNote"
-    ).value = "";
-
-    document.getElementById(
-        "studentModal"
-    ).classList.add("show");
-
-}
-
-function editStudent(id) {
-
-    const student =
-        students.find(
-            s => s.id === id
-        );
-
-    if (!student) {
-        return;
-    }
-
-    document.getElementById(
-        "studentModalTitle"
-    ).textContent =
-        "Редактировать студента";
-
-    document.getElementById(
-        "editStudentId"
-    ).value =
-        student.id;
-
-    document.getElementById(
-        "studentName"
-    ).value =
-        student.name;
-
-    document.getElementById(
-        "studentBirthday"
-    ).value =
-        student.birthday;
-
-    document.getElementById(
-        "studentNote"
-    ).value =
-        student.note;
-
-    document.getElementById(
-        "studentModal"
-    ).classList.add("show");
-
-}
-
-function closeModal() {
-
-    document.getElementById(
-        "studentModal"
-    ).classList.remove("show");
-
-}
-
-function saveStudent() {
-
-    const id =
-        document.getElementById(
-            "editStudentId"
-        ).value;
-
-    const name =
-        document.getElementById(
-            "studentName"
-        ).value.trim();
-
-    const birthday =
-        document.getElementById(
-            "studentBirthday"
-        ).value;
-
-    const note =
-        document.getElementById(
-            "studentNote"
-        ).value;
-
-    if (!name) {
-
-        alert(
-            "Введите ФИО студента."
-        );
-
-        return;
-
-    }
-
-    if (id) {
-
-        const student =
-            students.find(
-                s => s.id == id
-            );
-
-        if (student) {
-
-            student.name =
-                name;
-
-            student.birthday =
-                birthday;
-
-            student.note =
-                note;
-
-        }
-
-    } else {
-
-        const newId =
-            students.length
-                ? Math.max(
-                    ...students.map(
-                        s => s.id
-                    )
-                ) + 1
-                : 1;
-
-        students.push({
-
-            id:
-                newId,
-
-            name:
-                name,
-
-            birthday:
-                birthday,
-
-            note:
-                note
-
-        });
-
-    }
-
-    saveAll();
-
-    closeModal();
-
-    refreshAll();
-
-}
-
-function deleteStudent(id) {
-
-    const student =
-        students.find(
-            s => s.id === id
-        );
-
-    if (!student) {
-        return;
-    }
-
-    if (
-        !confirm(
-            `Удалить ${student.name}?`
-        )
-    ) {
-        return;
-    }
-
-    students =
-        students.filter(
-            s => s.id !== id
-        );
-
-    /*
-       Если удалили студента,
-       корректируем индекс очереди.
-    */
-
-    if (
-        students.length > 0
-    ) {
-
-        duties.currentIndex =
-            duties.currentIndex %
-            students.length;
-
-    } else {
-
-        duties.currentIndex = 0;
-
-    }
-
-    saveAll();
-
-    refreshAll();
-
-}
-
-
-/* =====================================================
-   STATISTICS
-===================================================== */
 
 function renderStatistics() {
 
-    let total = 0;
-    let present = 0;
-    let absent = 0;
-    let late = 0;
-    let critical = 0;
-    let totalToilet = 0;
+    const data =
+        getAllStatistics();
 
-    students.forEach(student => {
+    document.getElementById("statTotal").textContent =
+        data.total.total;
 
-        Object.values(
-            attendance
-        ).forEach(day => {
+    document.getElementById("statPresent").textContent =
+        data.total.present;
 
-            const dayData =
-                day[student.id];
+    document.getElementById("statAbsent").textContent =
+        data.total.absent;
 
-            if (
-                !dayData ||
-                !dayData.lessons
-            ) {
-                return;
-            }
+    document.getElementById("statLate").textContent =
+        data.total.late;
 
-            for (let i = 1; i <= 3; i++) {
+    document.getElementById("statCritical").textContent =
+        data.total.critical;
 
-                const data =
-                    dayData.lessons[i];
+    document.getElementById("statToilet").textContent =
+        data.total.toilet;
 
-                if (!data) {
-                    continue;
-                }
+    const tbody =
+        document.getElementById("statisticsBody");
 
-                total++;
+    tbody.innerHTML =
+        state.students.map((student, index) => {
 
-                if (
-                    data.status ===
-                    "present"
-                ) {
-                    present++;
-                }
+            const s =
+                data.students[student.id] || {
+                    present: 0,
+                    absent: 0,
+                    late: 0,
+                    critical: 0,
+                    toilet: 0
+                };
 
-                if (
-                    data.status ===
-                    "absent"
-                ) {
-                    absent++;
-                }
-
-                if (
-                    data.status ===
-                    "late"
-                ) {
-
-                    late++;
-
-                    const minutes =
-                        calculateLateMinutes(
-                            lessons[i].start,
-                            data.arrival
-                        );
-
-                    if (
-                        minutes >
-                        Number(
-                            settings.lateLimit
-                        )
-                    ) {
-                        critical++;
-                    }
-
-                }
-
-                totalToilet +=
-                    Number(
-                        data.toilet
-                    ) || 0;
-
-            }
-
-        });
-
-    });
-
-    document.getElementById(
-        "statTotal"
-    ).textContent =
-        total;
-
-    document.getElementById(
-        "statPresent"
-    ).textContent =
-        present;
-
-    document.getElementById(
-        "statAbsent"
-    ).textContent =
-        absent;
-
-    document.getElementById(
-        "statLate"
-    ).textContent =
-        late;
-
-    document.getElementById(
-        "statCritical"
-    ).textContent =
-        critical;
-
-    document.getElementById(
-        "statToilet"
-    ).textContent =
-        totalToilet;
-
-    const body =
-        document.getElementById(
-            "statisticsBody"
-        );
-
-    body.innerHTML = "";
-
-    students.forEach(
-        (student, index) => {
-
-            let p = 0;
-            let a = 0;
-            let l = 0;
-            let c = 0;
-            let t = 0;
-
-            Object.values(
-                attendance
-            ).forEach(day => {
-
-                const dayData =
-                    day[student.id];
-
-                if (
-                    !dayData ||
-                    !dayData.lessons
-                ) {
-                    return;
-                }
-
-                for (let i = 1; i <= 3; i++) {
-
-                    const data =
-                        dayData.lessons[i];
-
-                    if (!data) {
-                        continue;
-                    }
-
-                    if (
-                        data.status ===
-                        "present"
-                    ) {
-                        p++;
-                    }
-
-                    if (
-                        data.status ===
-                        "absent"
-                    ) {
-                        a++;
-                    }
-
-                    if (
-                        data.status ===
-                        "late"
-                    ) {
-
-                        l++;
-
-                        const minutes =
-                            calculateLateMinutes(
-                                lessons[i].start,
-                                data.arrival
-                            );
-
-                        if (
-                            minutes >
-                            Number(
-                                settings.lateLimit
-                            )
-                        ) {
-                            c++;
-                        }
-
-                    }
-
-                    t +=
-                        Number(
-                            data.toilet
-                        ) || 0;
-
-                }
-
-            });
-
-            body.innerHTML += `
-
+            return `
                 <tr>
-
-                    <td>
-                        ${index + 1}
+                    <td>${index + 1}</td>
+                    <td>${escapeHtml(student.name)}</td>
+                    <td>${s.present}</td>
+                    <td>${s.absent}</td>
+                    <td>${s.late}</td>
+                    <td class="${s.critical ? "danger-text" : ""}">
+                        ${s.critical}
                     </td>
-
-                    <td style="text-align:left">
-                        ${student.name}
-                    </td>
-
-                    <td>
-                        ${p}
-                    </td>
-
-                    <td>
-                        ${a}
-                    </td>
-
-                    <td>
-                        ${l}
-                    </td>
-
-                    <td>
-                        ${c}
-                    </td>
-
-                    <td>
-                        ${t}
-                    </td>
-
+                    <td>${s.toilet}</td>
                 </tr>
-
             `;
 
-        }
-    );
-
+        }).join("");
 }
 
 
-/* =====================================================
-   NOTES
-===================================================== */
+/* =========================================================
+   ИСТОРИЯ
+   ========================================================= */
 
-function addNote() {
+function addHistory(date, text) {
 
-    const title =
-        document.getElementById(
-            "noteTitle"
-        ).value.trim();
+    state.history.unshift({
+        id: uid("history"),
+        date,
+        text,
+        createdAt: new Date().toISOString()
+    });
 
-    const text =
-        document.getElementById(
-            "noteText"
-        ).value.trim();
+    if (state.history.length > 1000) {
+        state.history =
+            state.history.slice(0, 1000);
+    }
+}
 
-    if (!title && !text) {
+
+function renderHistory() {
+
+    const container =
+        document.getElementById("historyList");
+
+    if (!state.history.length) {
+
+        container.innerHTML =
+            `<div class="empty">История пока пуста.</div>`;
+
         return;
     }
 
-    notes.unshift({
+    container.innerHTML =
+        state.history.map(item => {
 
-        id:
-            Date.now(),
+            return `
+                <div class="student-card">
 
-        title:
-            title || "Без названия",
+                    <b>${escapeHtml(item.date)}</b>
 
-        text:
-            text,
+                    <p>
+                        ${escapeHtml(item.text)}
+                    </p>
 
-        date:
-            dateKey()
+                    <span class="small">
+                        ${new Date(item.createdAt).toLocaleString("ru-RU")}
+                    </span>
 
+                </div>
+            `;
+
+        }).join("");
+}
+
+
+/* =========================================================
+   ЗАМЕТКИ
+   ========================================================= */
+
+async function addNote() {
+
+    const input =
+        document.getElementById("newNoteText");
+
+    const text =
+        input.value.trim();
+
+    if (!text) {
+        alert("Введите текст заметки.");
+        return;
+    }
+
+    state.notes.unshift({
+        id: uid("note"),
+        text,
+        createdAt: new Date().toISOString()
     });
 
-    document.getElementById(
-        "noteTitle"
-    ).value = "";
+    input.value = "";
 
-    document.getElementById(
-        "noteText"
-    ).value = "";
+    await saveToCloud();
 
-    saveAll();
-
-    renderNotes();
-
+    refreshAll();
 }
+
+
+async function deleteNote(id) {
+
+    state.notes =
+        state.notes.filter(
+            note => note.id !== id
+        );
+
+    await saveToCloud();
+
+    refreshAll();
+}
+
 
 function renderNotes() {
 
-    const list =
-        document.getElementById(
-            "notesList"
-        );
+    const container =
+        document.getElementById("notesList");
 
-    if (!notes.length) {
+    if (!state.notes.length) {
 
-        list.innerHTML =
-            "<div class='panel'>Заметок пока нет.</div>";
+        container.innerHTML =
+            `<div class="empty">Заметок пока нет.</div>`;
 
         return;
-
     }
 
-    list.innerHTML =
-        notes.map(note => `
+    container.innerHTML =
+        state.notes.map(note => {
 
-            <div class="panel">
+            return `
+                <div class="student-card">
 
-                <h3>
-                    ${note.title}
-                </h3>
+                    <p>
+                        ${escapeHtml(note.text)}
+                    </p>
 
-                <p>
-                    ${note.text}
-                </p>
+                    <span class="small">
+                        ${new Date(note.createdAt).toLocaleString("ru-RU")}
+                    </span>
 
-                <small>
-                    ${formatDate(note.date)}
-                </small>
+                    <br><br>
 
-                <br><br>
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteNote('${note.id}')"
+                    >
+                        🗑 Удалить
+                    </button>
 
-                <button
-                    class="btn btn-danger"
-                    onclick="
-                        deleteNote(
-                            ${note.id}
-                        )
-                    "
-                >
-                    Удалить
-                </button>
+                </div>
+            `;
 
-            </div>
-
-        `).join("");
-
-}
-
-function deleteNote(id) {
-
-    notes =
-        notes.filter(
-            n => n.id !== id
-        );
-
-    saveAll();
-
-    renderNotes();
-
+        }).join("");
 }
 
 
-/* =====================================================
-   CALENDAR
-===================================================== */
+/* =========================================================
+   КАЛЕНДАРЬ
+   ========================================================= */
 
 function changeMonth(amount) {
 
     calendarDate.setMonth(
-        calendarDate.getMonth() +
-        amount
+        calendarDate.getMonth() + amount
     );
 
     renderCalendar();
-
 }
 
-function goToday() {
-
-    calendarDate =
-        new Date();
-
-    renderCalendar();
-
-}
 
 function renderCalendar() {
+
+    const grid =
+        document.getElementById("calendarGrid");
+
+    const title =
+        document.getElementById("calendarTitle");
 
     const year =
         calendarDate.getFullYear();
@@ -3800,739 +2527,844 @@ function renderCalendar() {
             }
         );
 
-    document.getElementById(
-        "calendarTitle"
-    ).textContent =
-        monthName.charAt(0).toUpperCase()
-        +
+    title.textContent =
+        monthName.charAt(0).toUpperCase() +
         monthName.slice(1);
 
-    const grid =
-        document.getElementById(
-            "calendarGrid"
-        );
-
-    grid.innerHTML = "";
-
-    const days = [
-        "Пн",
-        "Вт",
-        "Ср",
-        "Чт",
-        "Пт",
-        "Сб",
-        "Вс"
-    ];
-
-    days.forEach(day => {
-
-        grid.innerHTML += `
-
-            <div class="calendar-day-name">
-                ${day}
-            </div>
-
-        `;
-
-    });
-
     const firstDay =
-        new Date(
-            year,
-            month,
-            1
-        ).getDay();
+        new Date(year, month, 1);
 
     let start =
-        firstDay === 0
-            ? 6
-            : firstDay - 1;
+        firstDay.getDay();
 
-    const daysInMonth =
-        new Date(
-            year,
-            month + 1,
-            0
-        ).getDate();
+    start = start === 0 ? 6 : start - 1;
 
-    for (
-        let i = 0;
-        i < start;
-        i++
-    ) {
+    const days =
+        new Date(year, month + 1, 0).getDate();
 
-        grid.innerHTML += `
-            <div class="calendar-cell"></div>
-        `;
+    const weekNames = [
+        "Пн","Вт","Ср","Чт","Пт","Сб","Вс"
+    ];
 
+    let html =
+        weekNames.map(
+            d => `<div class="calendar-head">${d}</div>`
+        ).join("");
+
+    for (let i = 0; i < start; i++) {
+        html += `<div></div>`;
     }
 
-    for (
-        let day = 1;
-        day <= daysInMonth;
-        day++
-    ) {
-
-        const current =
-            new Date(
-                year,
-                month,
-                day
-            );
+    for (let day = 1; day <= days; day++) {
 
         const key =
-            dateKey(current);
+            `${year}-${String(month + 1).padStart(2,"0")}-${String(day).padStart(2,"0")}`;
+
+        const reminders =
+            state.reminders.filter(
+                r => r.date === key
+            );
 
         const today =
-            key === dateKey();
+            key === todayKey();
 
-        let events = "";
+        html += `
+            <div class="calendar-day
+                ${today ? "today" : ""}
+                ${reminders.length ? "has-event" : ""}
+            ">
 
-        students.forEach(student => {
+                <b>${day}</b>
 
-            if (!student.birthday) {
-                return;
-            }
-
-            const birth =
-                new Date(
-                    student.birthday
-                );
-
-            if (
-                birth.getMonth() === month &&
-                birth.getDate() === day
-            ) {
-
-                events += `
-
-                    <div
-                        class="calendar-event"
-                        title="День рождения"
-                    >
-                        🎂 ${student.name}
-                    </div>
-
-                `;
-
-            }
-
-        });
-
-        reminders
-            .filter(
-                r => r.date === key
-            )
-            .forEach(
-                reminder => {
-
-                    events += `
-
-                        <div
-                            class="calendar-event"
-                            title="${
-                                escapeHtml(
-                                    reminder.description || ""
-                                )
-                            }"
-                        >
-                            📝
-                            ${escapeHtml(
-                                reminder.title
-                            )}
-                        </div>
-
-                    `;
-
+                ${
+                    reminders.map(
+                        r =>
+                        `<div class="calendar-event">
+                            🎂 ${escapeHtml(r.text)}
+                         </div>`
+                    ).join("")
                 }
-            );
-
-        grid.innerHTML += `
-
-            <div
-                class="calendar-cell
-                    ${today ? "today" : ""}"
-            >
-
-                <div class="calendar-number">
-                    ${day}
-                </div>
-
-                ${events}
 
             </div>
-
         `;
-
     }
 
-    renderBirthdays();
-
+    grid.innerHTML = html;
 }
 
 
-/* =====================================================
-   REMINDERS
-===================================================== */
-
-function addReminder() {
-
-    const title =
-        document.getElementById(
-            "reminderTitle"
-        ).value.trim();
+async function addReminder() {
 
     const date =
-        document.getElementById(
-            "reminderDate"
-        ).value;
+        document.getElementById("reminderDate").value;
 
-    const time =
-        document.getElementById(
-            "reminderTime"
-        ).value;
+    const text =
+        document.getElementById("reminderText").value.trim();
 
-    const description =
-        document.getElementById(
-            "reminderDescription"
-        ).value.trim();
+    if (!date || !text) {
 
-    if (!title || !date) {
-
-        alert(
-            "Введите название и дату."
-        );
-
+        alert("Укажите дату и текст.");
         return;
-
     }
 
-    reminders.push({
-
-        id:
-            Date.now(),
-
-        title,
+    state.reminders.push({
+        id: uid("reminder"),
         date,
-        time,
-        description
-
+        text
     });
 
-    document.getElementById(
-        "reminderTitle"
-    ).value = "";
+    document.getElementById("reminderText").value = "";
 
-    document.getElementById(
-        "reminderDate"
-    ).value = "";
+    await saveToCloud();
 
-    document.getElementById(
-        "reminderTime"
-    ).value = "";
-
-    document.getElementById(
-        "reminderDescription"
-    ).value = "";
-
-    saveAll();
-
-    renderCalendar();
-
-    renderUpcomingEvents();
-
+    refreshAll();
 }
 
 
-/* =====================================================
-   BIRTHDAYS
-===================================================== */
+async function deleteReminder(id) {
 
-function renderBirthdays() {
-
-    const list =
-        document.getElementById(
-            "birthdaysList"
+    state.reminders =
+        state.reminders.filter(
+            r => r.id !== id
         );
 
-    const birthdays =
-        students.filter(
-            student =>
-                student.birthday
-        );
+    await saveToCloud();
 
-    if (!birthdays.length) {
-
-        list.innerHTML =
-            "<p>Даты рождения пока не добавлены.</p>";
-
-        return;
-
-    }
-
-    list.innerHTML =
-        birthdays
-        .sort(
-            (a,b) =>
-                new Date(
-                    a.birthday
-                ).getTime()
-                -
-                new Date(
-                    b.birthday
-                ).getTime()
-        )
-        .map(
-            student => `
-
-                <div class="alert alert-success">
-
-                    🎂 <strong>
-                        ${student.name}
-                    </strong>
-
-                    —
-                    ${formatDate(
-                        student.birthday
-                    )}
-
-                </div>
-
-            `
-        )
-        .join("");
-
+    refreshAll();
 }
 
 
-/* =====================================================
-   UPCOMING EVENTS
-===================================================== */
-
-function renderUpcomingEvents() {
+function renderReminders() {
 
     const container =
-        document.getElementById(
-            "upcomingEvents"
-        );
+        document.getElementById("remindersList");
 
-    const today =
-        new Date();
-
-    const events = [];
-
-    students.forEach(student => {
-
-        if (!student.birthday) {
-            return;
-        }
-
-        const birth =
-            new Date(
-                student.birthday
+    const list =
+        [...state.reminders]
+            .sort(
+                (a,b) =>
+                    a.date.localeCompare(b.date)
             );
 
-        let next =
-            new Date(
-                today.getFullYear(),
-                birth.getMonth(),
-                birth.getDate()
-            );
-
-        if (next < today) {
-
-            next.setFullYear(
-                today.getFullYear() +
-                1
-            );
-
-        }
-
-        events.push({
-
-            date:
-                next,
-
-            text:
-                `🎂 День рождения — ${student.name}`
-
-        });
-
-    });
-
-    reminders.forEach(reminder => {
-
-        const date =
-            new Date(
-                reminder.date +
-                "T00:00:00"
-            );
-
-        if (date >= today) {
-
-            events.push({
-
-                date:
-                    date,
-
-                text:
-                    `📝 ${reminder.title}`
-
-            });
-
-        }
-
-    });
-
-    events.sort(
-        (a,b) =>
-            a.date - b.date
-    );
-
-    if (!events.length) {
+    if (!list.length) {
 
         container.innerHTML =
-            "<p>Ближайших событий нет.</p>";
+            `<div class="empty">Напоминаний нет.</div>`;
 
         return;
-
     }
 
     container.innerHTML =
-        events
-        .slice(0, 5)
-        .map(
-            event => `
+        list.map(r => {
 
-                <div class="alert alert-success">
+            return `
+                <div class="student-card">
 
-                    <strong>
-                        ${event.date.toLocaleDateString(
-                            "ru-RU"
-                        )}
-                    </strong>
+                    <b>📅 ${escapeHtml(r.date)}</b>
 
-                    —
-                    ${event.text}
+                    <p>
+                        ${escapeHtml(r.text)}
+                    </p>
+
+                    <button
+                        class="btn btn-danger"
+                        onclick="deleteReminder('${r.id}')"
+                    >
+                        🗑 Удалить
+                    </button>
 
                 </div>
+            `;
 
-            `
-        )
-        .join("");
-
+        }).join("");
 }
 
 
-/* =====================================================
-   SETTINGS
-===================================================== */
+/* =========================================================
+   ГЛАВНАЯ
+   ========================================================= */
+
+function renderHome() {
+
+    document.getElementById("homeDate").textContent =
+        new Date().toLocaleDateString(
+            "ru-RU",
+            {
+                weekday: "long",
+                year: "numeric",
+                month: "long",
+                day: "numeric"
+            }
+        );
+
+    document.getElementById("homeStudents").textContent =
+        state.students.length;
+
+    const date = todayKey();
+
+    let present = 0;
+    let absent = 0;
+    let late = 0;
+
+    state.students.forEach(student => {
+
+        const record =
+            getDayRecord(date, student.id);
+
+        LESSONS.forEach(lesson => {
+
+            const l =
+                record.lessons[lesson.id];
+
+            if (l.status === "present")
+                present++;
+
+            if (l.status === "absent")
+                absent++;
+
+            if (l.status === "late")
+                late++;
+        });
+    });
+
+    document.getElementById("homePresent").textContent =
+        present;
+
+    document.getElementById("homeAbsent").textContent =
+        absent;
+
+    document.getElementById("homeLate").textContent =
+        late;
+
+    const duties =
+        getTodayDutyStudents();
+
+    document.getElementById("homeDuties").innerHTML =
+        duties.length
+        ? duties.map(student => `
+            <div class="duty-person">
+                👮 <b>${escapeHtml(student.name)}</b>
+            </div>
+          `).join("")
+        : `<div class="empty">Нет дежурных.</div>`;
+
+    renderHomeAlerts();
+}
+
+
+function renderHomeAlerts() {
+
+    const container =
+        document.getElementById("homeAlerts");
+
+    const alerts = [];
+
+    const date = todayKey();
+
+    state.students.forEach(student => {
+
+        const critical =
+            getCriticalLessons(
+                date,
+                student.id
+            );
+
+        if (critical.length) {
+
+            alerts.push(`
+                <div class="alert">
+
+                    🔴 <b>${escapeHtml(student.name)}</b>
+
+                    <br>
+
+                    Опоздание более
+                    ${state.settings.lateLimit} минут:
+
+                    ${critical.map(
+                        l => l.name
+                    ).join(", ")}
+
+                    <br>
+
+                    <b>ВНЕ ОЧЕРЕДИ</b>
+
+                </div>
+            `);
+        }
+    });
+
+    if (!alerts.length) {
+
+        container.innerHTML =
+            `<div class="success-message">
+                👍 Критических опозданий сегодня нет.
+             </div>`;
+
+    } else {
+
+        container.innerHTML =
+            alerts.join("");
+    }
+}
+
+
+/* =========================================================
+   НАСТРОЙКИ
+   ========================================================= */
 
 function renderSettings() {
 
-    document.getElementById(
-        "groupName"
-    ).value =
-        settings.groupName;
+    document.getElementById("settingGroupName").value =
+        state.settings.groupName;
 
-    document.getElementById(
-        "lateLimit"
-    ).value =
-        settings.lateLimit;
-
-    document.getElementById(
-        "settingsLateText"
-    ).textContent =
-        settings.lateLimit;
-
+    document.getElementById("settingLateLimit").value =
+        state.settings.lateLimit;
 }
 
-function saveSettings() {
 
-    settings.groupName =
-        document.getElementById(
-            "groupName"
-        ).value;
+async function saveSettings() {
 
-    settings.lateLimit =
+    state.settings.groupName =
+        document.getElementById("settingGroupName").value.trim()
+        || "Группа 3";
+
+    state.settings.lateLimit =
         Number(
-            document.getElementById(
-                "lateLimit"
-            ).value
-        );
+            document.getElementById("settingLateLimit").value
+        ) || 20;
 
-    if (
-        isNaN(settings.lateLimit) ||
-        settings.lateLimit < 0
-    ) {
+    /*
+       Повторно проверяем критические опоздания.
+    */
 
-        settings.lateLimit = 20;
+    Object.entries(state.attendance)
+        .forEach(([date, day]) => {
 
-    }
+            Object.keys(day).forEach(studentId => {
 
-    saveAll();
+                syncCriticalLateDuty(
+                    studentId,
+                    date
+                );
+            });
+        });
+
+    await saveToCloud();
 
     refreshAll();
 
-    alert(
-        "Настройки сохранены."
-    );
-
+    showToast("Настройки сохранены.");
 }
 
 
-/* =====================================================
-   EXPORT
-===================================================== */
+/* =========================================================
+   ЭКСПОРТ / ИМПОРТ
+   ========================================================= */
 
 function exportData() {
-
-    const data = {
-
-        students,
-        attendance,
-        history,
-        notes,
-        reminders,
-        duties,
-        settings
-
-    };
 
     const blob =
         new Blob(
             [
                 JSON.stringify(
-                    data,
+                    state,
                     null,
                     2
                 )
             ],
             {
-                type:
-                    "application/json"
+                type: "application/json"
             }
         );
 
     const url =
-        URL.createObjectURL(
-            blob
-        );
+        URL.createObjectURL(blob);
 
     const a =
-        document.createElement(
-            "a"
-        );
+        document.createElement("a");
 
-    a.href =
-        url;
-
+    a.href = url;
     a.download =
-        "journal-group-3-backup.json";
+        `group3-journal-${todayKey()}.json`;
 
     a.click();
 
-    URL.revokeObjectURL(
-        url
-    );
-
+    URL.revokeObjectURL(url);
 }
 
 
-/* =====================================================
-   IMPORT
-===================================================== */
-
-function importData(event) {
+async function importData(event) {
 
     const file =
         event.target.files[0];
 
-    if (!file) {
+    if (!file) return;
+
+    try {
+
+        const text =
+            await file.text();
+
+        const imported =
+            JSON.parse(text);
+
+        state =
+            normalizeState(imported);
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(state)
+        );
+
+        await saveToCloud(true);
+
+        refreshAll();
+
+        alert("Данные успешно импортированы.");
+
+    } catch (error) {
+
+        console.error(error);
+
+        alert("Ошибка импорта файла.");
+    }
+
+    event.target.value = "";
+}
+
+
+/* =========================================================
+   LOCAL BACKUP
+   ========================================================= */
+
+function saveLocalBackup() {
+
+    try {
+
+        localStorage.setItem(
+            STORAGE_KEY,
+            JSON.stringify(state)
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Ошибка localStorage:",
+            error
+        );
+    }
+}
+
+
+function loadLocalBackup() {
+
+    try {
+
+        const raw =
+            localStorage.getItem(
+                STORAGE_KEY
+            );
+
+        if (!raw) return false;
+
+        state =
+            normalizeState(
+                JSON.parse(raw)
+            );
+
+        return true;
+
+    } catch (error) {
+
+        console.error(error);
+
+        return false;
+    }
+}
+
+
+/* =========================================================
+   SUPABASE
+   ========================================================= */
+
+async function saveToCloud(force = false) {
+
+    saveLocalBackup();
+
+    if (!supabaseClient) {
+
+        updateSyncStatus(
+            "Локально — подключи Supabase",
+            false
+        );
+
         return;
     }
 
-    const reader =
-        new FileReader();
+    try {
 
-    reader.onload =
-        function(e) {
+        updateSyncStatus(
+            "Сохранение...",
+            false
+        );
 
-            try {
-
-                const data =
-                    JSON.parse(
-                        e.target.result
-                    );
-
-                if (
-                    !confirm(
-                        "Заменить текущие данные резервной копией?"
-                    )
-                ) {
-                    return;
-                }
-
-                students =
-                    data.students ||
-                    createStudents();
-
-                attendance =
-                    data.attendance ||
-                    {};
-
-                history =
-                    data.history ||
-                    [];
-
-                notes =
-                    data.notes ||
-                    [];
-
-                reminders =
-                    data.reminders ||
-                    [];
-
-                duties =
-                    data.duties ||
-                    {
-                        currentIndex: 0,
-                        completed: {},
-                        extra: []
-                    };
-
-                settings =
-                    data.settings ||
-                    {
-                        groupName:
-                            "Группа 3",
-                        lateLimit:
-                            20
-                    };
-
-                saveAll();
-
-                refreshAll();
-
-                alert(
-                    "Данные восстановлены."
-                );
-
-            }
-            catch {
-
-                alert(
-                    "Ошибка: файл поврежден или имеет неправильный формат."
-                );
-
-            }
-
+        const payload = {
+            id: "main",
+            data: state,
+            updated_at: new Date().toISOString()
         };
 
-    reader.readAsText(file);
+        const { error } =
+            await supabaseClient
+                .from("group3_journal")
+                .upsert(
+                    payload,
+                    {
+                        onConflict: "id"
+                    }
+                );
 
+        if (error) {
+            throw error;
+        }
+
+        updateSyncStatus(
+            "☁️ Синхронизировано",
+            true
+        );
+
+    } catch (error) {
+
+        console.error(
+            "Ошибка Supabase:",
+            error
+        );
+
+        updateSyncStatus(
+            "⚠️ Ошибка синхронизации",
+            false
+        );
+    }
 }
 
 
-/* =====================================================
-   HEADER
-===================================================== */
+async function loadFromCloud() {
 
-function updateHeader() {
+    if (!supabaseClient) {
 
-    document.getElementById(
-        "headerDate"
-    ).textContent =
-        new Date().toLocaleDateString(
-            "ru-RU",
+        alert(
+            "Сначала укажи SUPABASE_URL и SUPABASE_ANON_KEY в коде."
+        );
+
+        return;
+    }
+
+    try {
+
+        updateSyncStatus(
+            "Загрузка...",
+            false
+        );
+
+        const { data, error } =
+            await supabaseClient
+                .from("group3_journal")
+                .select("*")
+                .eq("id", "main")
+                .maybeSingle();
+
+        if (error) {
+            throw error;
+        }
+
+        if (data && data.data) {
+
+            state =
+                normalizeState(data.data);
+
+            saveLocalBackup();
+
+            refreshAll();
+
+            updateSyncStatus(
+                "☁️ Синхронизировано",
+                true
+            );
+
+            showToast(
+                "Данные загружены из облака."
+            );
+
+        } else {
+
+            await saveToCloud(true);
+
+            showToast(
+                "Создана первая запись в облаке."
+            );
+        }
+
+    } catch (error) {
+
+        console.error(
+            "Ошибка загрузки:",
+            error
+        );
+
+        updateSyncStatus(
+            "⚠️ Нет связи с облаком",
+            false
+        );
+    }
+}
+
+
+function updateSyncStatus(text, online) {
+
+    const el =
+        document.getElementById("syncStatus");
+
+    el.textContent = text;
+
+    el.classList.toggle(
+        "sync-online",
+        online
+    );
+
+    el.classList.toggle(
+        "sync-offline",
+        !online
+    );
+}
+
+
+/* =========================================================
+   REALTIME СИНХРОНИЗАЦИЯ
+   ========================================================= */
+
+function startRealtime() {
+
+    if (!supabaseClient) {
+        return;
+    }
+
+    supabaseClient
+        .channel("group3-journal-realtime")
+        .on(
+            "postgres_changes",
             {
-                weekday:
-                    "long",
+                event: "*",
+                schema: "public",
+                table: "group3_journal",
+                filter: "id=eq.main"
+            },
+            payload => {
 
-                day:
-                    "numeric",
+                /*
+                   Не перезаписываем данные во время
+                   нашего собственного сохранения.
+                */
 
-                month:
-                    "long",
+                if (
+                    payload.new &&
+                    payload.new.data
+                ) {
 
-                year:
-                    "numeric"
+                    state =
+                        normalizeState(
+                            payload.new.data
+                        );
+
+                    saveLocalBackup();
+
+                    refreshAll();
+
+                    updateSyncStatus(
+                        "☁️ Синхронизировано",
+                        true
+                    );
+                }
+            }
+        )
+        .subscribe(
+            status => {
+
+                if (
+                    status === "SUBSCRIBED"
+                ) {
+
+                    updateSyncStatus(
+                        "☁️ Онлайн",
+                        true
+                    );
+
+                } else if (
+                    status === "CHANNEL_ERROR"
+                ) {
+
+                    updateSyncStatus(
+                        "⚠️ Ошибка realtime",
+                        false
+                    );
+                }
             }
         );
-
 }
 
 
-/* =====================================================
-   ESCAPE HTML
-===================================================== */
+/* =========================================================
+   НАВИГАЦИЯ
+   ========================================================= */
 
-function escapeHtml(value) {
+function showPage(pageId, button) {
 
-    return String(value)
-        .replace(
-            /&/g,
-            "&amp;"
-        )
-        .replace(
-            /</g,
-            "&lt;"
-        )
-        .replace(
-            />/g,
-            "&gt;"
-        )
-        .replace(
-            /"/g,
-            "&quot;"
-        )
-        .replace(
-            /'/g,
-            "&#039;"
-        );
+    document.querySelectorAll(".page")
+        .forEach(page => {
+            page.classList.remove("active");
+        });
 
+    const page =
+        document.getElementById(pageId);
+
+    if (page) {
+        page.classList.add("active");
+    }
+
+    document.querySelectorAll("nav button")
+        .forEach(btn => {
+            btn.classList.remove("active");
+        });
+
+    if (button) {
+        button.classList.add("active");
+    }
+
+    refreshAll();
 }
 
 
-/* =====================================================
-   REFRESH
-===================================================== */
+/* =========================================================
+   ПРОЧЕЕ
+   ========================================================= */
+
+function statusText(status) {
+
+    if (status === "present")
+        return "присутствует";
+
+    if (status === "late")
+        return "опоздал";
+
+    if (status === "absent")
+        return "отсутствует";
+
+    return status;
+}
+
+
+function setToday() {
+
+    document.getElementById("journalDate").value =
+        todayKey();
+
+    renderJournal();
+}
+
+
+/* =========================================================
+   ОБНОВЛЕНИЕ ВСЕГО ИНТЕРФЕЙСА
+   ========================================================= */
 
 function refreshAll() {
 
-    updateHeader();
-
     renderHome();
-
     renderJournal();
-
     renderDuties();
-
     renderStudents();
-
     renderStatistics();
-
     renderHistory();
-
     renderNotes();
-
     renderCalendar();
-
-    renderUpcomingEvents();
-
+    renderReminders();
     renderSettings();
-
 }
 
 
-/* =====================================================
-   START
-===================================================== */
+/* =========================================================
+   ИНИЦИАЛИЗАЦИЯ
+   ========================================================= */
 
-refreshAll();
+async function init() {
+
+    /*
+       Создаём 18 студентов,
+       если данных ещё нет.
+    */
+
+    if (!loadLocalBackup()) {
+
+        state.students =
+            defaultStudents.map(
+                name => ({
+                    id: uid("student"),
+                    name
+                })
+            );
+
+        state =
+            normalizeState(state);
+
+        saveLocalBackup();
+    }
+
+    document.getElementById("journalDate").value =
+        todayKey();
+
+    ensureTodayDuty();
+
+    refreshAll();
+
+    /*
+       Если Supabase подключён —
+       загружаем общие данные.
+    */
+
+    if (supabaseClient) {
+
+        await loadFromCloud();
+
+        startRealtime();
+
+    } else {
+
+        updateSyncStatus(
+            "💾 Локальный режим",
+            false
+        );
+    }
+
+    /*
+       Автоматически проверяем облако
+       каждые 10 секунд.
+    */
+
+    setInterval(
+        async () => {
+
+            if (supabaseClient) {
+                await loadFromCloud();
+            }
+
+        },
+        10000
+    );
+}
+
+
+init();
 
 </script>
 
 </body>
 </html>
-```
