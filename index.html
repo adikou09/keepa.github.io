@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📖 Электронный журнал — Группа 3</title>
+<title>📖 Электронный журнал — Колледж</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -462,6 +462,21 @@ tbody tr:nth-child(even) {
         padding: 12px;
     }
 }
+
+.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#263746,#455a64);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
+.login-card{width:min(460px,100%);background:#fff;border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
+.login-card h2{margin-top:0}.login-logo{font-size:42px;text-align:center}.hidden{display:none!important}
+.user-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.user-info{font-size:13px}
+.role-badge{padding:5px 9px;border-radius:12px;background:#e3f2fd;color:#1565c0;font-size:12px;font-weight:bold}
+.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
+.modal-backdrop.show{display:flex}.modal-card{background:white;border-radius:14px;width:min(760px,100%);max-height:90vh;overflow:auto;padding:24px}
+.emergency-overlay{position:fixed;inset:0;background:#b71c1c;color:#fff;z-index:10000;display:none;align-items:center;justify-content:center;text-align:center;padding:30px}
+.emergency-overlay.show{display:flex}.emergency-box{max-width:900px}.emergency-box h1{font-size:clamp(32px,7vw,76px);margin:0 0 20px}.emergency-box p{font-size:clamp(20px,3vw,34px)}
+.notice{padding:12px 15px;border-radius:8px;background:#e3f2fd;margin:10px 0}.notice-danger{background:#ffebee;color:#b71c1c}.notice-warning{background:#fff3e0;color:#e65100}
+.schedule-card{border-left:5px solid #1976d2}.override-row{background:#fff8e1}.cancelled-row{text-decoration:line-through;opacity:.55}
+.grade-input{width:90px}.muted{color:#78909c}.pill{display:inline-block;padding:3px 8px;border-radius:10px;background:#eceff1;font-size:12px}
+@media(max-width:700px){.modal-card{padding:16px}.login-card{padding:22px}}
+
 </style>
 </head>
 
@@ -469,7 +484,7 @@ tbody tr:nth-child(even) {
 
 <header>
     <div class="header-inner">
-        <h1>📖 Электронный журнал — Группа 3</h1>
+        <h1 id="appTitle">📖 Электронный журнал — Колледж</h1>
         <div id="syncStatus" class="sync-status">
             Подключение...
         </div>
@@ -511,13 +526,41 @@ tbody tr:nth-child(even) {
             📅 Календарь
         </button>
 
-        <button onclick="showPage('settings', this)">
-            ⚙️ Настройки
-        </button>
+        <button onclick="showPage('schedule', this)">🗓️ Расписание</button>
+        <button onclick="showPage('grades', this)">🎓 Оценки</button>
+        <button onclick="showPage('events', this)">🚨 События</button>
+        <button onclick="showPage('settings', this)">⚙️ Настройки</button>
+        <button onclick="showPage('profile', this)">👤 Профиль</button>
 
     </div>
 </nav>
 
+
+<div id="loginScreen" class="login-screen">
+  <div class="login-card">
+    <div class="login-logo">📖</div>
+    <h2>Электронный журнал колледжа</h2>
+    <p class="small">Вход выполняется по ФИО. Email вводить не нужно.</p>
+    <div class="form-group"><label>ФИО / имя администратора</label><input id="loginName" autocomplete="username" placeholder="Введите ФИО"></div>
+    <div class="form-group"><label>Пароль</label><input id="loginPassword" type="password" autocomplete="current-password" value="1234"></div>
+    <button class="btn btn-primary" style="width:100%;margin:0" onclick="login()">🔐 Войти</button>
+    <div id="loginError" class="alert hidden" style="margin-top:12px"></div>
+    <p class="small" style="margin-bottom:0">Первичный пароль для созданных аккаунтов: <b>1234</b>. После входа пароль можно изменить.</p>
+  </div>
+</div>
+
+<div id="emergencyOverlay" class="emergency-overlay">
+  <div class="emergency-box">
+    <h1>🚨 СРОЧНОЕ ОБЪЯВЛЕНИЕ</h1>
+    <p id="emergencyTitle"></p>
+    <p id="emergencyBody"></p>
+    <button class="btn btn-light" onclick="closeEmergency()">Закрыть</button>
+  </div>
+</div>
+
+<div id="modal" class="modal-backdrop" onclick="if(event.target===this)closeModal()">
+  <div class="modal-card"><div id="modalContent"></div></div>
+</div>
 <main>
 
 <section id="home" class="page active">
@@ -526,6 +569,7 @@ tbody tr:nth-child(even) {
 
         <h2>Добро пожаловать 👋</h2>
 
+        <div id="currentUserBar" class="user-bar"></div>
         <p>
             Общий электронный журнал группы.
             Все изменения синхронизируются между компьютерами.
@@ -630,18 +674,10 @@ tbody tr:nth-child(even) {
 
         <p class="small">
 
-            1-я пара:
-            <b>08:45–10:05</b>
-
-            |
-
-            2-я пара:
-            <b>10:15–11:35</b>
-
-            |
-
-            3-я пара:
-            <b>11:55–13:15</b>
+            1-я пара: <b>08:00–09:20</b> |
+            2-я пара: <b>09:30–10:50</b> |
+            3-я пара: <b>11:00–12:20</b> |
+            4-я пара: <b>13:25–14:45</b>
 
         </p>
 
@@ -670,21 +706,11 @@ tbody tr:nth-child(even) {
                     <th>№</th>
 
                     <th>ФИО</th>
+                    <th>1-я пара<br>08:00–09:20</th>
 
-                    <th>
-                        1-я пара<br>
-                        08:45–10:05
-                    </th>
-
-                    <th>
-                        2-я пара<br>
-                        10:15–11:35
-                    </th>
-
-                    <th>
-                        3-я пара<br>
-                        11:55–13:15
-                    </th>
+                    <th>2-я пара<br>09:30–10:50</th>
+                    <th>3-я пара<br>11:00–12:20</th>
+                    <th>4-я пара<br>13:25–14:45</th>
 
                     <th>
                         Причина / примечание
@@ -1013,11 +1039,90 @@ tbody tr:nth-child(even) {
 </section>
 
 
+
+<section id="schedule" class="page">
+  <div class="card">
+    <h2>🗓️ Расписание</h2>
+    <div class="grid">
+      <div class="form-group"><label>Дата</label><input type="date" id="scheduleDate" onchange="renderSchedule()"></div>
+      <div class="form-group"><label>Группа</label><select id="scheduleGroup" onchange="changeSelectedGroup(this.value)"></select></div>
+    </div>
+    <div id="scheduleHoliday"></div>
+  </div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>№</th><th>Время</th><th>Предмет</th><th>Преподаватель</th><th>Кабинет</th><th>Статус</th><th>Действие</th></tr></thead><tbody id="scheduleBody"></tbody></table></div></div>
+  <div id="overrideAdminCard" class="card hidden">
+    <h3>🔁 Замена пары на один день</h3>
+    <div class="grid">
+      <div class="form-group"><label>Дата</label><input type="date" id="overrideDate"></div>
+      <div class="form-group"><label>№ пары</label><select id="overrideLesson"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
+      <div class="form-group"><label>Новый предмет</label><input id="overrideSubject" placeholder="Например: Алгебра"></div>
+      <div class="form-group"><label>Преподаватель</label><input id="overrideTeacher" placeholder="ФИО преподавателя"></div>
+      <div class="form-group"><label>Кабинет</label><input id="overrideRoom" placeholder="101"></div>
+      <div class="form-group"><label>Причина</label><input id="overrideReason" placeholder="Замена преподавателя"></div>
+    </div>
+    <label><input type="checkbox" id="overrideCancelled" style="width:auto"> Отменить пару</label>
+    <br><button class="btn btn-primary" onclick="saveScheduleOverride()">🔁 Применить замену</button>
+  </div>
+</section>
+
+<section id="grades" class="page">
+  <div class="card">
+    <h2>🎓 Оценки</h2>
+    <div class="grid">
+      <div class="form-group"><label>Группа</label><select id="gradesGroup" onchange="loadGrades()"></select></div>
+      <div class="form-group"><label>Предмет</label><input id="gradeSubject" placeholder="Например: Алгебра"></div>
+      <div class="form-group"><label>Название работы</label><input id="gradeTitle" placeholder="Контрольная / ответ"></div>
+      <div class="form-group"><label>Дата</label><input type="date" id="gradeDate"></div>
+    </div>
+    <p class="small">Для студентов оценки отображаются только для просмотра. Для преподавателя/администратора ввод оценки сохраняется в облако автоматически.</p>
+  </div>
+  <div class="card"><div class="table-wrap"><table><thead><tr><th>№</th><th>Студент</th><th>Предмет</th><th>Работа</th><th>Оценка</th><th>Дата</th><th>Средняя</th></tr></thead><tbody id="gradesBody"></tbody></table></div></div>
+</section>
+
+<section id="events" class="page">
+  <div class="card">
+    <h2>🚨 Срочные объявления</h2>
+    <div id="eventsList"></div>
+  </div>
+  <div id="eventAdminCard" class="card hidden">
+    <h3>📢 Создать объявление</h3>
+    <div class="grid">
+      <div class="form-group"><label>Заголовок</label><input id="eventTitle" placeholder="Срочный сбор"></div>
+      <div class="form-group"><label>Когда</label><input type="datetime-local" id="eventStartsAt"></div>
+      <div class="form-group"><label>До</label><input type="datetime-local" id="eventEndsAt"></div>
+      <div class="form-group"><label>Группа</label><select id="eventGroup"></select></div>
+    </div>
+    <div class="form-group"><label>Текст</label><textarea id="eventBody" placeholder="В 15:00 сбор в актовом зале"></textarea></div>
+    <label><input type="checkbox" id="eventEmergency" style="width:auto"> Показать как срочное полноэкранное сообщение</label>
+    <br><button class="btn btn-danger" onclick="createEvent()">🚨 Опубликовать</button>
+  </div>
+</section>
+
+<section id="profile" class="page">
+  <div class="card"><h2>👤 Профиль</h2><div id="profileInfo"></div></div>
+  <div class="card">
+    <h3>🔑 Сменить пароль</h3>
+    <div class="grid">
+      <div class="form-group"><label>Текущий пароль</label><input type="password" id="oldPassword"></div>
+      <div class="form-group"><label>Новый пароль</label><input type="password" id="newPassword"></div>
+      <div class="form-group"><label>Повтор нового пароля</label><input type="password" id="newPassword2"></div>
+    </div>
+    <button class="btn btn-primary" onclick="changePassword()">🔑 Сменить пароль</button>
+  </div>
+  <div id="adminPanel" class="card hidden">
+    <h3>🛡️ Администрирование пользователей</h3>
+    <p class="small">Администратор может сбросить пароль любого аккаунта на 1234 или задать новый пароль.</p>
+    <div class="grid"><div class="form-group"><label>Пользователь</label><select id="adminUser"></select></div><div class="form-group"><label>Новый пароль</label><input id="adminNewPassword" placeholder="Оставьте пустым для 1234"></div></div>
+    <button class="btn btn-warning" onclick="adminResetPassword()">🔄 Сбросить пароль</button>
+  </div>
+</section>
+
 <section id="settings" class="page">
 
     <div class="card">
 
         <h2>⚙️ Настройки</h2>
+        <div class="form-group"><label>Активная группа</label><select id="settingsGroup" onchange="changeSelectedGroup(this.value)"></select></div>
 
         <div class="form-group">
 
@@ -1167,6 +1272,31 @@ const LESSONS = [
 
 ];
 
+
+/* Расписание колледжа: 4 пары, 4-я заканчивается ровно в 14:45. */
+LESSONS.splice(0, LESSONS.length,
+    { id: 1, name: "1-я пара", start: "08:00", end: "09:20" },
+    { id: 2, name: "2-я пара", start: "09:30", end: "10:50" },
+    { id: 3, name: "3-я пара", start: "11:00", end: "12:20" },
+    { id: 4, name: "4-я пара", start: "13:25", end: "14:45" }
+);
+
+const COLLEGE_GROUPS = {
+    G1: {
+        code: "G1", name: "Группа 1", specialty: "Менеджмент",
+        students: ["Абдылдаева Айназик Калыгуловна","Адилов Абдулла Холназвич","Айдаралиева Арууке Улановна","Акжолбеков Бакай Айманбекович","Акылбеков Мирзат Русланович","Алапаев Умар Айбекович","Алмазов Амир Алмазович","Алымбеков Алим Алымбекович","Асанакунов Раззак Каныбекович","Базарбаева Асема Белековна","Байышбекова Сабина Талгатовна","Бекматбекова Айбийке Уланбековна","Бирюкова Ксения Владиславовна","Ботоканов Эмир Адылбекович","Джумакеев Марсел Мирбекович","Дильмухамедов Мухаммад Амин Дильмухамедович","Кабылбеков Алинур Бактыбекович","Казбекова Айдай Урматовна"]
+    },
+    G2: {
+        code: "G2", name: "Группа 2", specialty: "Менеджмент",
+        students: ["Абасов Шерзатбек Тургуналиевич","Асаналиев Асланбек Ажыбекович","Камчыбекова Бегимай Суюмкуловна","Каныбеков Абдурахим Курсанбекович","Керималиев Умар Жуман Казбекович","Консулбекова Айдана Айтбековна","Курманов Амаль Ильясович","Марсова Аделя Нурлановна","Пазылов Нурсултан Абдыразакович","Рысбек Кызы Раяна","Суванкулов Азат Суванкулович","Суйналиева Айлин Уланбековна","Султанбеков Амантур Миржанович","Таабалдиева Мээримай Дамирбековна","Талантбекова Тумар Рустамовна","Шавкетов Измир Лучезарович","Шаршекеев Рыспек Телекович","Эркинбеков Абдулазиз Эркинбекович"]
+    },
+    G3: {
+        code: "G3", name: "Группа 3", specialty: "ПОВТАС",
+        students: ["Абдужапаров Ибрагим Кубанычбекович","Абдыкадыров Алихан Чыныбекович","Джумагулов Тимур Алмазбекович","Жаркынбаев Тимурлан Кубанычбекович","Закиров Камиль Шамилевич","Икболиддинов Бехруз Икболиддинович","Казбеков Адилет Урматович","Крамаренко Руслан Дмитриевич","Курманбеков Хамза Мунарбекович","Курманбеков Эмиль Баатырбекович","Миршакиров Азирет Нурланович","Муктаров Арген Афтандилович","Мурзараимов Алинур Нуртилекович","Сулайманов Улар Уланбекович","Таласбеков Абдуллах Таласбекович","Таласбеков Абдурахман Таласбекович","Тороев Амир Уланбекович","Хакимов Санжар Рахимжанович"]
+    }
+};
+
+const ROLE_LABELS = { student: "Студент", teacher: "Преподаватель", admin: "Администратор", group_leader: "Староста" };
 
 const STORAGE_KEY =
     "group3_journal_cloud_backup";
@@ -1537,6 +1667,11 @@ function normalizeDayRecord(record) {
 
     }
 
+
+    /*
+       Старый формат сохраняем
+       в первую пару.
+    */
 
     if (!record.lessons) {
 
@@ -5576,6 +5711,11 @@ function refreshAll() {
 
 async function init() {
 
+    /*
+       Сначала загружаем
+       локальную копию.
+    */
+
     if (!loadLocalBackup()) {
 
         state.students =
@@ -5615,6 +5755,11 @@ async function init() {
     refreshAll();
 
 
+    /*
+       Затем загружаем
+       общие данные.
+    */
+
     if (supabaseClient) {
 
         await loadFromCloud();
@@ -5630,6 +5775,11 @@ async function init() {
 
     }
 
+
+    /*
+       Резервная проверка
+       каждые 10 секунд.
+    */
 
     setInterval(
         async () => {
@@ -5649,8 +5799,430 @@ async function init() {
 }
 
 
-init();
+/* legacy init disabled: new authenticated init runs below */
 
+</script>
+
+<script>
+/* =========================================================
+   НОВАЯ КОЛЛЕДЖНАЯ ЛОГИКА: AUTH + GROUPS + SCHEDULE + GRADES + EVENTS
+   ========================================================= */
+
+const DEFAULT_ADMIN_NAME = "Администратор";
+const DEFAULT_TEACHER_NAME = "Преподаватель";
+let currentUser = null;
+let currentProfile = null;
+let currentGroupId = null;
+let groupsById = {};
+let groupsByCode = {};
+let scheduleCache = [];
+let overrideCache = [];
+let holidaysCache = [];
+let gradesCache = [];
+let eventsCache = [];
+let authBootstrapped = false;
+let newRealtimeChannel = null;
+
+function isAdmin(){ return ["admin"].includes(currentProfile?.role); }
+function isTeacher(){ return ["teacher","admin","group_leader"].includes(currentProfile?.role); }
+function canEdit(){ return isTeacher(); }
+function selectedGroup(){ return currentGroupId || currentProfile?.group_id || null; }
+function groupNameById(id){ return groupsById[id]?.name || "Группа"; }
+function localDateISO(d=new Date()){ return d.toLocaleDateString("en-CA"); }
+function roleLabel(r){ return ROLE_LABELS[r] || r || ""; }
+async function syntheticEmail(name){
+  const bytes=new TextEncoder().encode(name.trim().toLowerCase());
+  const hash=await crypto.subtle.digest("SHA-256",bytes);
+  const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
+  return "u_"+hex.slice(0,32)+"@college.local";
+}
+
+function showLoginError(message){
+  const e=document.getElementById("loginError"); e.textContent=message; e.classList.remove("hidden");
+}
+function clearLoginError(){ document.getElementById("loginError")?.classList.add("hidden"); }
+
+async function ensureInitialSeed(){
+  if(!supabaseClient || authBootstrapped) return;
+  try{
+    const {data,error}=await supabaseClient.functions.invoke("bootstrap-users",{body:{}});
+    if(error) console.warn("bootstrap-users:",error);
+    else if(data?.created) showToast("Созданы начальные аккаунты. Пароль: 1234");
+    authBootstrapped=true;
+  }catch(e){ console.warn(e); }
+}
+
+async function login(){
+  clearLoginError();
+  const name=document.getElementById("loginName").value.trim();
+  const password=document.getElementById("loginPassword").value;
+  if(!name || !password){ showLoginError("Введите ФИО и пароль."); return; }
+  if(!supabaseClient){ showLoginError("Supabase не подключён."); return; }
+  try{
+    await ensureInitialSeed();
+    const email=await syntheticEmail(name);
+    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
+    if(error) throw error;
+    currentUser=data.user;
+    await loadProfile();
+    document.getElementById("loginScreen").classList.add("hidden");
+    updateHeaderUser();
+    await loadGroups();
+    await loadGroupData();
+    await loadNewCloudData();
+    startNewRealtime();
+    if(currentProfile.must_change_password){
+      showPage("profile",document.querySelector('nav button[onclick*="profile"]'));
+      showToast("Сначала смените стандартный пароль 1234.");
+    }
+    refreshAll();
+  }catch(e){
+    console.error(e);
+    showLoginError("Не удалось войти. Проверьте ФИО и пароль.");
+  }
+}
+
+async function logout(){
+  if(supabaseClient) await supabaseClient.auth.signOut();
+  currentUser=null; currentProfile=null; currentGroupId=null;
+  document.getElementById("loginScreen").classList.remove("hidden");
+  document.getElementById("loginPassword").value="1234";
+}
+
+async function loadProfile(){
+  const {data,error}=await supabaseClient.from("profiles").select("*").eq("id",currentUser.id).single();
+  if(error) throw error;
+  currentProfile=data;
+  currentGroupId=data.group_id || null;
+}
+
+async function loadGroups(){
+  const {data,error}=await supabaseClient.from("groups").select("*").order("code");
+  if(error) throw error;
+  groupsById={}; groupsByCode={};
+  (data||[]).forEach(g=>{groupsById[g.id]=g;groupsByCode[g.code]=g;});
+  renderGroupSelects();
+}
+function renderGroupSelects(){
+  ["scheduleGroup","gradesGroup","eventGroup","settingsGroup"].forEach(id=>{
+    const el=document.getElementById(id); if(!el) return;
+    const allowAll=isTeacher();
+    el.innerHTML=(allowAll?'<option value="">Все группы</option>':"")+
+      Object.values(groupsById).map(g=>`<option value="${g.id}">${escapeHtml(g.name)} — ${escapeHtml(g.specialty||"")}</option>`).join("");
+    if(currentGroupId) el.value=currentGroupId;
+  });
+  if(isTeacher()){
+    document.getElementById("scheduleGroup")?.removeAttribute("disabled");
+    document.getElementById("gradesGroup")?.removeAttribute("disabled");
+    document.getElementById("eventGroup")?.removeAttribute("disabled");
+    document.getElementById("settingsGroup")?.removeAttribute("disabled");
+  }else{
+    ["scheduleGroup","gradesGroup","eventGroup","settingsGroup"].forEach(id=>{const el=document.getElementById(id);if(el){el.value=currentGroupId||"";el.disabled=true;}});
+  }
+}
+async function changeSelectedGroup(id){
+  if(!isTeacher()) return;
+  currentGroupId=id||null;
+  await loadGroupData();
+  await loadNewCloudData();
+  renderGroupSelects();
+  refreshAll();
+}
+async function loadGroupData(){
+  const gid=selectedGroup();
+  if(!gid){state.students=[];return;}
+  let q=supabaseClient.from("profiles").select("id,full_name,role,group_id,is_active").eq("role","student").eq("is_active",true).order("full_name");
+  if(gid) q=q.eq("group_id",gid);
+  const {data,error}=await q;
+  if(error){console.error(error);return;}
+  state.students=(data||[]).map(p=>({id:p.id,name:p.full_name}));
+  if(!state.students.length && groupsById[gid]){
+    const fallback=Object.values(COLLEGE_GROUPS).find(x=>x.name===groupsById[gid].name);
+    if(fallback) state.students=fallback.students.map(name=>({id:uid("local"),name}));
+  }
+}
+
+async function loadNewCloudData(){
+  if(!supabaseClient || !currentUser) return;
+  const gid=selectedGroup();
+  try{
+    let aq=supabaseClient.from("attendance").select("*").order("lesson_date");
+    if(gid) aq=aq.eq("group_id",gid);
+    const {data:att,error:ae}=await aq;
+    if(ae) throw ae;
+    state.attendance={};
+    (att||[]).forEach(r=>{
+      if(!state.attendance[r.lesson_date]) state.attendance[r.lesson_date]={};
+      if(!state.attendance[r.lesson_date][r.student_id]) state.attendance[r.lesson_date][r.student_id]={lessons:{},reason:"",note:""};
+      state.attendance[r.lesson_date][r.student_id].lessons[r.lesson_no]={
+        status:r.status||"present",arrival:r.arrival_time||"",toilet:Number(r.toilet||0),reason:r.reason||""
+      };
+    });
+    const {data:gr,error:ge}=await supabaseClient.from("grades").select("*").order("grade_date",{ascending:false});
+    if(ge) console.warn(ge); else gradesCache=gr||[];
+    const {data:ev,error:ee}=await supabaseClient.from("events").select("*").order("starts_at",{ascending:false});
+    if(ee) console.warn(ee); else eventsCache=ev||[];
+    const {data:ov,error:oe}=await supabaseClient.from("schedule_overrides").select("*").order("lesson_date");
+    if(oe) console.warn(oe); else overrideCache=ov||[];
+    const {data:hol,error:he}=await supabaseClient.from("holidays").select("*").order("holiday_date");
+    if(he) console.warn(he); else holidaysCache=hol||[];
+    await loadSchedule();
+    renderGrades(); renderEvents(); renderSchedule();
+  }catch(e){console.error("loadNewCloudData",e);}
+}
+
+function buildDefaultSchedule(){
+  const gid=selectedGroup();
+  const g=groupsById[gid];
+  const prefix=g?.specialty==="ПОВТАС" ? ["Технология","Математика","Информатика","Физика"] : ["Менеджмент","Экономика","Алгебра","Право"];
+  return LESSONS.map((l,i)=>({group_id:gid,lesson_no:l.id,starts_at:l.start,ends_at:l.end,subject:prefix[i],teacher_name:"",room:""}));
+}
+async function loadSchedule(){
+  const gid=selectedGroup();
+  if(!gid){scheduleCache=[];return;}
+  const {data,error}=await supabaseClient.from("schedule").select("*").eq("group_id",gid).order("lesson_no");
+  if(error){console.warn(error);scheduleCache=buildDefaultSchedule();return;}
+  scheduleCache=data||[];
+  if(!scheduleCache.length) scheduleCache=buildDefaultSchedule();
+}
+function getOverride(date,no){return overrideCache.find(x=>x.group_id===selectedGroup()&&x.lesson_date===date&&x.lesson_no===no);}
+function effectiveLesson(date,no){
+  const base=scheduleCache.find(x=>Number(x.lesson_no)===Number(no))||buildDefaultSchedule().find(x=>Number(x.lesson_no)===Number(no))||{};
+  const ov=getOverride(date,no);
+  return ov ? {...base,...ov,subject:ov.is_cancelled?"Отменено":(ov.subject||base.subject)} : base;
+}
+function renderSchedule(){
+  const date=document.getElementById("scheduleDate")?.value||todayKey();
+  const body=document.getElementById("scheduleBody"); if(!body)return;
+  const holiday=holidaysCache.find(h=>h.holiday_date===date);
+  document.getElementById("scheduleHoliday").innerHTML=holiday?`<div class="notice notice-warning">🏖️ ${escapeHtml(holiday.title||"Выходной")} — занятия отменены.</div>`:"";
+  body.innerHTML=LESSONS.map(l=>{
+    const x=effectiveLesson(date,l.id), cancelled=holiday||x.is_cancelled;
+    return `<tr class="${x.id?'':''} ${x.is_cancelled?'cancelled-row':''}">
+      <td>${l.id}</td><td>${escapeHtml(x.starts_at||l.start)}–${escapeHtml(x.ends_at||l.end)}</td>
+      <td><b>${escapeHtml(x.subject||"—")}</b></td><td>${escapeHtml(x.teacher_name||"—")}</td><td>${escapeHtml(x.room||"—")}</td>
+      <td>${cancelled?'<span class="pill">Не проводится</span>':getOverride(date,l.id)?'<span class="pill">Замена на сегодня</span>':'По расписанию'}</td>
+      <td>${canEdit()&&!holiday?`<button class="btn btn-light" onclick="editOverride(${l.id})">🔁 Замена</button>`:""}</td>
+    </tr>`;
+  }).join("");
+  const d=document.getElementById("scheduleDate"); if(d&&!d.value)d.value=todayKey();
+  document.getElementById("overrideAdminCard")?.classList.toggle("hidden",!canEdit());
+}
+function editOverride(no){
+  document.getElementById("overrideDate").value=document.getElementById("scheduleDate").value||todayKey();
+  document.getElementById("overrideLesson").value=String(no);
+  const x=effectiveLesson(document.getElementById("overrideDate").value,no);
+  document.getElementById("overrideSubject").value=x.subject||"";
+  document.getElementById("overrideTeacher").value=x.teacher_name||"";
+  document.getElementById("overrideRoom").value=x.room||"";
+  document.getElementById("overrideReason").value=x.reason||"";
+  document.getElementById("overrideCancelled").checked=!!x.is_cancelled;
+  showPage("schedule",document.querySelector('nav button[onclick*="schedule"]'));
+}
+async function saveScheduleOverride(){
+  if(!canEdit())return;
+  const row={group_id:selectedGroup(),lesson_date:document.getElementById("overrideDate").value,lesson_no:Number(document.getElementById("overrideLesson").value),subject:document.getElementById("overrideSubject").value.trim(),teacher_name:document.getElementById("overrideTeacher").value.trim(),room:document.getElementById("overrideRoom").value.trim(),reason:document.getElementById("overrideReason").value.trim(),is_cancelled:document.getElementById("overrideCancelled").checked,created_by:currentUser.id};
+  const {error}=await supabaseClient.from("schedule_overrides").upsert(row,{onConflict:"group_id,lesson_date,lesson_no"});
+  if(error){showToast("Ошибка замены: "+error.message);return;}
+  showToast("Замена пары сохранена в облако.");
+  await loadNewCloudData(); renderSchedule();
+}
+function gradeAverage(studentId,subject){
+  const a=gradesCache.filter(g=>g.student_id===studentId&&(!subject||g.subject===subject));
+  if(!a.length)return "—";
+  return (a.reduce((s,g)=>s+Number(g.grade||0),0)/a.length).toFixed(2);
+}
+function renderGrades(){
+  const body=document.getElementById("gradesBody"); if(!body)return;
+  const gid=selectedGroup(), subj=document.getElementById("gradeSubject")?.value.trim();
+  const students=state.students;
+  body.innerHTML=students.map((s,i)=>{
+    const studentGrades=gradesCache.filter(g=>g.student_id===s.id && (!subj || g.subject.toLowerCase().includes(subj.toLowerCase())));
+    const latest=studentGrades[0]||{};
+    return `<tr>
+      <td>${i+1}</td>
+      <td><b>${escapeHtml(s.name)}</b></td>
+      <td>${escapeHtml(latest.subject||subj||"—")}</td>
+      <td>${escapeHtml(latest.title||"Ответ на уроке")}</td>
+      <td>
+        ${canEdit()?`<input class="grade-input" type="number" min="1" max="5" value="${latest.grade\vert{}\vert{}""}" onchange="saveGrade('${s.id}', this.value)">`:`<b>${latest.grade||"—"}</b>`}
+      </td>
+      <td>${latest.grade_date||localDateISO()}</td>
+      <td><b>${gradeAverage(s.id,subj)}</b></td>
+    </tr>`;
+  }).join("");
+  const d=document.getElementById("gradeDate"); if(d&&!d.value)d.value=localDateISO();
+}
+
+async function saveGrade(studentId, val){
+  if(!canEdit())return;
+  const num=Number(val);
+  if(!num || num<1 || num>5){
+    showToast("Введите оценку от 1 до 5");
+    return;
+  }
+  const subj=document.getElementById("gradeSubject")?.value.trim() || "Общий предмет";
+  const title=document.getElementById("gradeTitle")?.value.trim() || "Ответ на уроке";
+  const date=document.getElementById("gradeDate")?.value || localDateISO();
+  const row={
+    student_id: studentId,
+    group_id: selectedGroup(),
+    subject: subj,
+    title: title,
+    grade: num,
+    grade_date: date,
+    created_by: currentUser.id
+  };
+  const {error}=await supabaseClient.from("grades").insert(row);
+  if(error){ showToast("Ошибка сохранения оценки: "+error.message); return; }
+  showToast("Оценка сохранена");
+  await loadNewCloudData();
+}
+
+function renderEvents(){
+  const list=document.getElementById("eventsList"); if(!list)return;
+  const gid=selectedGroup();
+  const active=eventsCache.filter(e=>!e.group_id || e.group_id===gid);
+  document.getElementById("eventAdminCard")?.classList.toggle("hidden",!canEdit());
+  if(!active.length){ list.innerHTML=`<div class="empty">Нет активных объявлений.</div>`; return; }
+  list.innerHTML=active.map(e=>`
+    <div class="card ${e.is_emergency?'schedule-card':''}">
+      <h3>${e.is_emergency?'🚨 ':''}${escapeHtml(e.title)}</h3>
+      <p>${escapeHtml(e.body)}</p>
+      <div class="small muted">Группа: ${e.group_id?escapeHtml(groupNameById(e.group_id)):'Все группы'} | До: ${new Date(e.ends_at||e.starts_at).toLocaleString("ru-RU")}</div>
+    </div>
+  `).join("");
+  
+  const emergency=active.find(e=>e.is_emergency && new Date(e.ends_at) > new Date());
+  if(emergency){
+    document.getElementById("emergencyTitle").textContent=emergency.title;
+    document.getElementById("emergencyBody").textContent=emergency.body;
+    document.getElementById("emergencyOverlay").classList.add("show");
+  }
+}
+
+function closeEmergency(){
+  document.getElementById("emergencyOverlay").classList.remove("show");
+}
+
+async function createEvent(){
+  if(!canEdit())return;
+  const title=document.getElementById("eventTitle").value.trim();
+  const body=document.getElementById("eventBody").value.trim();
+  const startsAt=document.getElementById("eventStartsAt").value;
+  const endsAt=document.getElementById("eventEndsAt").value;
+  const groupVal=document.getElementById("eventGroup").value;
+  const isEmergency=document.getElementById("eventEmergency").checked;
+  if(!title || !body){ showToast("Заполните заголовок и текст объявления"); return; }
+  const row={
+    title, body,
+    starts_at: startsAt ? new Date(startsAt).toISOString() : new Date().toISOString(),
+    ends_at: endsAt ? new Date(endsAt).toISOString() : new Date(Date.now()+86400000*3).toISOString(),
+    group_id: groupVal || null,
+    is_emergency: isEmergency,
+    created_by: currentUser.id
+  };
+  const {error}=await supabaseClient.from("events").insert(row);
+  if(error){ showToast("Ошибка создания: "+error.message); return; }
+  showToast("Объявление опубликовано");
+  document.getElementById("eventTitle").value="";
+  document.getElementById("eventBody").value="";
+  await loadNewCloudData();
+}
+
+function updateHeaderUser(){
+  const bar=document.getElementById("currentUserBar"); if(!bar)return;
+  if(!currentProfile){ bar.innerHTML=""; return; }
+  bar.innerHTML=`
+    <div class="user-info">
+      <b>${escapeHtml(currentProfile.full_name)}</b> 
+      <span class="role-badge">${roleLabel(currentProfile.role)}</span>
+      ${currentProfile.group_id ? `<span>(${escapeHtml(groupNameById(currentProfile.group_id))})</span>` : ''}
+    </div>
+    <button class="btn btn-light" onclick="logout()">🚪 Выйти</button>
+  `;
+  renderProfile();
+}
+
+function renderProfile(){
+  const info=document.getElementById("profileInfo"); if(!info || !currentProfile)return;
+  info.innerHTML=`
+    <p><b>ФИО:</b> ${escapeHtml(currentProfile.full_name)}</p>
+    <p><b>Роль:</b> <span class="role-badge">${roleLabel(currentProfile.role)}</span></p>
+    <p><b>Группа:</b> ${currentProfile.group_id ? escapeHtml(groupNameById(currentProfile.group_id)) : '—'}</p>
+  `;
+  document.getElementById("adminPanel")?.classList.toggle("hidden", !isAdmin());
+  if(isAdmin()) loadAdminUsers();
+}
+
+async function changePassword(){
+  const oldP=document.getElementById("oldPassword").value;
+  const newP=document.getElementById("newPassword").value;
+  const newP2=document.getElementById("newPassword2").value;
+  if(!newP || newP!==newP2){ showToast("Новые пароли не совпадают!"); return; }
+  if(newP.length<4){ showToast("Пароль слишком короткий!"); return; }
+  const {error}=await supabaseClient.auth.updateUser({password: newP});
+  if(error){ showToast("Ошибка смены пароля: "+error.message); return; }
+  await supabaseClient.from("profiles").update({must_change_password: false}).eq("id", currentUser.id);
+  currentProfile.must_change_password=false;
+  document.getElementById("oldPassword").value="";
+  document.getElementById("newPassword").value="";
+  document.getElementById("newPassword2").value="";
+  showToast("Пароль успешно изменён!");
+}
+
+async function loadAdminUsers(){
+  const sel=document.getElementById("adminUser"); if(!sel)return;
+  const {data,error}=await supabaseClient.from("profiles").select("id, full_name, role").order("full_name");
+  if(error)return;
+  sel.innerHTML=data.map(u=>`<option value="${u.id}">${escapeHtml(u.full_name)} (${roleLabel(u.role)})</option>`).join("");
+}
+
+async function adminResetPassword(){
+  if(!isAdmin())return;
+  const uid=document.getElementById("adminUser").value;
+  const pass=document.getElementById("adminNewPassword").value.trim() || "1234";
+  const {error}=await supabaseClient.functions.invoke("admin-reset-password",{body:{user_id: uid, new_password: pass}});
+  if(error){ showToast("Ошибка сброса: "+error.message); return; }
+  showToast(`Пароль сброшен на: ${pass}`);
+  document.getElementById("adminNewPassword").value="";
+}
+
+function startNewRealtime(){
+  if(!supabaseClient)return;
+  if(newRealtimeChannel){
+    try{ supabaseClient.removeChannel(newRealtimeChannel); }catch(e){}
+  }
+  newRealtimeChannel=supabaseClient.channel("college-realtime-changes")
+    .on("postgres_changes", {event: "*", schema: "public", table: "attendance"}, ()=>loadNewCloudData())
+    .on("postgres_changes", {event: "*", schema: "public", table: "grades"}, ()=>loadNewCloudData())
+    .on("postgres_changes", {event: "*", schema: "public", table: "events"}, ()=>loadNewCloudData())
+    .on("postgres_changes", {event: "*", schema: "public", table: "schedule_overrides"}, ()=>loadNewCloudData())
+    .subscribe();
+}
+
+window.addEventListener("DOMContentLoaded", async ()=>{
+  init();
+  if(supabaseClient){
+    const {data:{session}}=await supabaseClient.auth.getSession();
+    if(session){
+      currentUser=session.user;
+      try{
+        await loadProfile();
+        document.getElementById("loginScreen").classList.add("hidden");
+        updateHeaderUser();
+        await loadGroups();
+        await loadGroupData();
+        await loadNewCloudData();
+        startNewRealtime();
+        refreshAll();
+      }catch(e){
+        console.error(e);
+        logout();
+      }
+    }
+  }
+});
 </script>
 
 </body>
