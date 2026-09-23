@@ -542,10 +542,10 @@ tbody tr:nth-child(even) {
     <h2>Электронный журнал колледжа</h2>
     <p class="small">Вход выполняется по ФИО. Email вводить не нужно.</p>
     <div class="form-group"><label>ФИО / имя администратора</label><input id="loginName" autocomplete="username" placeholder="Введите ФИО"></div>
-    <div class="form-group"><label>Пароль</label><input id="loginPassword" type="password" autocomplete="current-password" value="1234"></div>
+    <div class="form-group"><label>Пароль</label><input id="loginPassword" type="password" autocomplete="current-password" value="1234567890"></div>
     <button class="btn btn-primary" style="width:100%;margin:0" onclick="login()">🔐 Войти</button>
     <div id="loginError" class="alert hidden" style="margin-top:12px"></div>
-    <p class="small" style="margin-bottom:0">Первичный пароль для созданных аккаунтов: <b>1234</b>. После входа пароль можно изменить.</p>
+    <p class="small" style="margin-bottom:0">Первичный пароль для созданных аккаунтов: <b>1234567890</b>. После входа пароль можно изменить.</p>
   </div>
 </div>
 
@@ -1111,8 +1111,8 @@ tbody tr:nth-child(even) {
   </div>
   <div id="adminPanel" class="card hidden">
     <h3>🛡️ Администрирование пользователей</h3>
-    <p class="small">Администратор может сбросить пароль любого аккаунта на 1234 или задать новый пароль.</p>
-    <div class="grid"><div class="form-group"><label>Пользователь</label><select id="adminUser"></select></div><div class="form-group"><label>Новый пароль</label><input id="adminNewPassword" placeholder="Оставьте пустым для 1234"></div></div>
+    <p class="small">Администратор может сбросить пароль любого аккаунта на 1234567890 или задать новый пароль.</p>
+    <div class="grid"><div class="form-group"><label>Пользователь</label><select id="adminUser"></select></div><div class="form-group"><label>Новый пароль</label><input id="adminNewPassword" placeholder="Оставьте пустым для 1234567890"></div></div>
     <button class="btn btn-warning" onclick="adminResetPassword()">🔄 Сбросить пароль</button>
   </div>
 </section>
@@ -5852,7 +5852,7 @@ async function ensureInitialSeed(){
   try{
     const {data,error}=await supabaseClient.functions.invoke("bootstrap-users",{body:{}});
     if(error) console.warn("bootstrap-users:",error);
-    else if(data?.created) showToast("Созданы начальные аккаунты. Пароль: 1234");
+    else if(data?.created) showToast("Созданы начальные аккаунты. Пароль: 1234567890");
     authBootstrapped=true;
   }catch(e){ console.warn(e); }
 }
@@ -5878,7 +5878,7 @@ async function login(){
     startNewRealtime();
     if(currentProfile.must_change_password){
       showPage("profile",document.querySelector('nav button[onclick*="profile"]'));
-      showToast("Сначала смените стандартный пароль 1234.");
+      showToast("Сначала смените стандартный пароль 1234567890.");
     }
     refreshAll();
   }catch(e){
@@ -5898,7 +5898,7 @@ async function logout(){
   if(supabaseClient) await supabaseClient.auth.signOut();
   currentUser=null; currentProfile=null; currentGroupId=null;
   document.getElementById("loginScreen").classList.remove("hidden");
-  document.getElementById("loginPassword").value="1234";
+  document.getElementById("loginPassword").value="1234567890";
 }
 
 async function loadProfile(){
@@ -6137,7 +6137,7 @@ async function loadAdminUsers(){
 async function adminResetPassword(){
   if(!isAdmin())return;
   const userId=document.getElementById("adminUser").value;
-  const password=document.getElementById("adminNewPassword").value||"1234";
+  const password=document.getElementById("adminNewPassword").value||"1234567890";
   if(password.length<4){showToast("Пароль слишком короткий.");return;}
   const {data,error}=await supabaseClient.functions.invoke("admin-reset-password",{body:{user_id:userId,password}});
   if(error){showToast("Ошибка сброса: "+error.message);return;}
