@@ -1538,11 +1538,6 @@ function normalizeDayRecord(record) {
     }
 
 
-    /*
-       Старый формат сохраняем
-       в первую пару.
-    */
-
     if (!record.lessons) {
 
         const oldLesson = {
@@ -5047,9 +5042,41 @@ function loadLocalBackup() {
 }
 
 
+
 /* =========================================================
-   СОХРАНЕНИЕ В SUPABASE
+   СТАТУС СИНХРОНИЗАЦИИ
    ========================================================= */
+
+function updateSyncStatus(message, online = false) {
+
+    const el = document.getElementById("syncStatus");
+
+    if (!el) {
+        return;
+    }
+
+    el.textContent = message;
+
+    el.classList.remove(
+        "sync-online",
+        "sync-offline"
+    );
+
+    if (online) {
+        el.classList.add("sync-online");
+    } else if (
+        message.includes("Ошибка") ||
+        message.includes("Нет связи")
+    ) {
+        el.classList.add("sync-offline");
+    }
+}
+
+
+/* =========================================================
+   ОБЛАЧНОЕ ХРАНИЛИЩЕ
+   ========================================================= */
+
 
 async function saveToCloud(
     force = false
@@ -5549,11 +5576,6 @@ function refreshAll() {
 
 async function init() {
 
-    /*
-       Сначала загружаем
-       локальную копию.
-    */
-
     if (!loadLocalBackup()) {
 
         state.students =
@@ -5593,11 +5615,6 @@ async function init() {
     refreshAll();
 
 
-    /*
-       Затем загружаем
-       общие данные.
-    */
-
     if (supabaseClient) {
 
         await loadFromCloud();
@@ -5613,11 +5630,6 @@ async function init() {
 
     }
 
-
-    /*
-       Резервная проверка
-       каждые 10 секунд.
-    */
 
     setInterval(
         async () => {
