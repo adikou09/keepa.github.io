@@ -5826,12 +5826,17 @@ let newRealtimeChannel = null;
 function isAdmin(){ return ["admin"].includes(currentProfile?.role); }
 function isTeacher(){ return ["teacher","admin","group_leader"].includes(currentProfile?.role); }
 function canEdit(){ return isTeacher(); }
-function selectedGroup(){ return currentGroupId || currentProfile?.group_id || null; }
+function selectedGroup(){
+  if(!currentProfile) return null;
+  if(["student","group_leader"].includes(currentProfile.role)) return currentProfile.group_id || null;
+  return currentGroupId || null;
+}
 function groupNameById(id){ return groupsById[id]?.name || "Группа"; }
 function localDateISO(d=new Date()){ return d.toLocaleDateString("en-CA"); }
 function roleLabel(r){ return ROLE_LABELS[r] || r || ""; }
 async function syntheticEmail(name){
-  const bytes=new TextEncoder().encode(name.trim().toLowerCase());
+  const normalized=name.trim().replace(/\s+/g," ").toLowerCase();
+  const bytes=new TextEncoder().encode(normalized);
   const hash=await crypto.subtle.digest("SHA-256",bytes);
   const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
   return "u_"+hex.slice(0,32)+"@college.local";
@@ -5862,7 +5867,7 @@ async function login(){
     await ensureInitialSeed();
     const email=await syntheticEmail(name);
     const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-    if(error) throw error;
+    if(error) throw new Error(error.message || "Ошибка входа");
     currentUser=data.user;
     await loadProfile();
     document.getElementById("loginScreen").classList.add("hidden");
@@ -5877,8 +5882,15 @@ async function login(){
     }
     refreshAll();
   }catch(e){
-    console.error(e);
-    showLoginError("Не удалось войти. Проверьте ФИО и пароль.");
+    console.error("LOGIN ERROR:",e);
+    const msg=String(e?.message || e || "Неизвестная ошибка");
+    if(/invalid login credentials/i.test(msg)){
+      showLoginError("Неверное ФИО или пароль. Проверьте написание ФИО и убедитесь, что bootstrap-users развёрнут в Supabase.");
+    }else if(/email not confirmed/i.test(msg)){
+      showLoginError("Аккаунт найден, но не подтверждён. Запустите bootstrap-users ещё раз.");
+    }else{
+      showLoginError("Ошибка входа: " + msg);
+    }
   }
 }
 
@@ -6034,195 +6046,224 @@ function gradeAverage(studentId,subject){
 }
 function renderGrades(){
   const body=document.getElementById("gradesBody"); if(!body)return;
-  const gid=selectedGroup(), subj=document.getElementById("gradeSubject")?.value.trim();
   const students=state.students;
+  const can=canEdit();
   body.innerHTML=students.map((s,i)=>{
-    const studentGrades=gradesCache.filter(g=>g.student_id===s.id && (!subj || g.subject.toLowerCase().includes(subj.toLowerCase())));
-    const latest=studentGrades[0]||{};
-    return `<tr>
-      <td>${i+1}</td>
-      <td><b>${escapeHtml(s.name)}</b></td>
-      <td>${escapeHtml(latest.subject||subj||"—")}</td>
-      <td>${escapeHtml(latest.title||"Ответ на уроке")}</td>
-      <td>
-        ${canEdit()?`<input class="grade-input" type="number" min="1" max="5" value="${latest.grade\vert{}\vert{}""}" onchange="saveGrade('${s.id}', this.value)">`:`<b>${latest.grade||"—"}</b>`}
-      </td>
-      <td>${latest.grade_date||localDateISO()}</td>
-      <td><b>${gradeAverage(s.id,subj)}</b></td>
-    </tr>`;
+    const own=gradesCache.filter(g=>g.student_id===s.id);
+    const last=own[0];
+    return `<tr><td>${i+1}</td><td>${escapeHtml(s.name)}</td>
+      <td>${can?`<input id="subj_${s.id}" value="${escapeHtml(last?.subject||document.getElementById("gradeSubject")?.value||"")}" placeholder="Предмет">`:`${escapeHtml(last?.subject||"—")}`}</td>
+      <td>${can?`<input id="title_${s.id}" value="${escapeHtml(last?.title||document.getElementById("gradeTitle")?.value||"")}" placeholder="Работа">`:`${escapeHtml(last?.title||"—")}`}</td>
+      <td>${can?`<input class="grade-input" id="grade_${s.id}" type="number" min="1" max="5" step="1" value="${last?.grade??""}" onchange="saveGrade('${s.id}')">`:`${last?.grade??"—"}`}</td>
+      <td>${last?.grade_date||"—"}</td><td>${gradeAverage(s.id)}</td></tr>`;
   }).join("");
-  const d=document.getElementById("gradeDate"); if(d&&!d.value)d.value=localDateISO();
 }
-
-async function saveGrade(studentId, val){
+async function loadGrades(){await loadNewCloudData();renderGrades();}
+async function saveGrade(studentId){
   if(!canEdit())return;
-  const num=Number(val);
-  if(!num || num<1 || num>5){
-    showToast("Введите оценку от 1 до 5");
-    return;
-  }
-  const subj=document.getElementById("gradeSubject")?.value.trim() || "Общий предмет";
-  const title=document.getElementById("gradeTitle")?.value.trim() || "Ответ на уроке";
-  const date=document.getElementById("gradeDate")?.value || localDateISO();
-  const row={
-    student_id: studentId,
-    group_id: selectedGroup(),
-    subject: subj,
-    title: title,
-    grade: num,
-    grade_date: date,
-    created_by: currentUser.id
-  };
+  const grade=Number(document.getElementById("grade_"+studentId).value);
+  const subject=document.getElementById("subj_"+studentId).value.trim();
+  const title=document.getElementById("title_"+studentId).value.trim();
+  if(!grade||grade<1||grade>5||!subject){showToast("Укажите предмет и оценку 1–5.");return;}
+  const row={student_id:studentId,group_id:selectedGroup(),subject,title,grade,grade_date:document.getElementById("gradeDate").value||todayKey(),teacher_id:currentUser.id,created_by:currentUser.id};
   const {error}=await supabaseClient.from("grades").insert(row);
-  if(error){ showToast("Ошибка сохранения оценки: "+error.message); return; }
-  showToast("Оценка сохранена");
-  await loadNewCloudData();
+  if(error){showToast("Ошибка оценки: "+error.message);return;}
+  showToast("Оценка сохранена автоматически.");
+  await loadNewCloudData(); renderGrades(); renderStatistics();
 }
-
-function renderEvents(){
-  const list=document.getElementById("eventsList"); if(!list)return;
-  const gid=selectedGroup();
-  const active=eventsCache.filter(e=>!e.group_id || e.group_id===gid);
-  document.getElementById("eventAdminCard")?.classList.toggle("hidden",!canEdit());
-  if(!active.length){ list.innerHTML=`<div class="empty">Нет активных объявлений.</div>`; return; }
-  list.innerHTML=active.map(e=>`
-    <div class="card ${e.is_emergency?'schedule-card':''}">
-      <h3>${e.is_emergency?'🚨 ':''}${escapeHtml(e.title)}</h3>
-      <p>${escapeHtml(e.body)}</p>
-      <div class="small muted">Группа: ${e.group_id?escapeHtml(groupNameById(e.group_id)):'Все группы'} | До: ${new Date(e.ends_at||e.starts_at).toLocaleString("ru-RU")}</div>
-    </div>
-  `).join("");
-  
-  const emergency=active.find(e=>e.is_emergency && new Date(e.ends_at) > new Date());
-  if(emergency){
-    document.getElementById("emergencyTitle").textContent=emergency.title;
-    document.getElementById("emergencyBody").textContent=emergency.body;
-    document.getElementById("emergencyOverlay").classList.add("show");
-  }
-}
-
-function closeEmergency(){
-  document.getElementById("emergencyOverlay").classList.remove("show");
-}
-
 async function createEvent(){
   if(!canEdit())return;
-  const title=document.getElementById("eventTitle").value.trim();
-  const body=document.getElementById("eventBody").value.trim();
-  const startsAt=document.getElementById("eventStartsAt").value;
-  const endsAt=document.getElementById("eventEndsAt").value;
-  const groupVal=document.getElementById("eventGroup").value;
-  const isEmergency=document.getElementById("eventEmergency").checked;
-  if(!title || !body){ showToast("Заполните заголовок и текст объявления"); return; }
-  const row={
-    title, body,
-    starts_at: startsAt ? new Date(startsAt).toISOString() : new Date().toISOString(),
-    ends_at: endsAt ? new Date(endsAt).toISOString() : new Date(Date.now()+86400000*3).toISOString(),
-    group_id: groupVal || null,
-    is_emergency: isEmergency,
-    created_by: currentUser.id
-  };
+  const row={title:document.getElementById("eventTitle").value.trim(),body:document.getElementById("eventBody").value.trim(),starts_at:new Date(document.getElementById("eventStartsAt").value||Date.now()).toISOString(),ends_at:document.getElementById("eventEndsAt").value?new Date(document.getElementById("eventEndsAt").value).toISOString():null,target_group_id:document.getElementById("eventGroup").value||null,is_emergency:document.getElementById("eventEmergency").checked,full_screen:document.getElementById("eventEmergency").checked,created_by:currentUser.id};
+  if(!row.title||!row.body){showToast("Заполните заголовок и текст.");return;}
   const {error}=await supabaseClient.from("events").insert(row);
-  if(error){ showToast("Ошибка создания: "+error.message); return; }
-  showToast("Объявление опубликовано");
-  document.getElementById("eventTitle").value="";
-  document.getElementById("eventBody").value="";
-  await loadNewCloudData();
+  if(error){showToast("Ошибка объявления: "+error.message);return;}
+  showToast("Объявление опубликовано и сохранено.");
+  await loadNewCloudData(); renderEvents();
 }
-
-function updateHeaderUser(){
-  const bar=document.getElementById("currentUserBar"); if(!bar)return;
-  if(!currentProfile){ bar.innerHTML=""; return; }
-  bar.innerHTML=`
-    <div class="user-info">
-      <b>${escapeHtml(currentProfile.full_name)}</b> 
-      <span class="role-badge">${roleLabel(currentProfile.role)}</span>
-      ${currentProfile.group_id ? `<span>(${escapeHtml(groupNameById(currentProfile.group_id))})</span>` : ''}
-    </div>
-    <button class="btn btn-light" onclick="logout()">🚪 Выйти</button>
-  `;
-  renderProfile();
+function relevantEvents(){
+  const gid=selectedGroup();
+  const now=Date.now();
+  return eventsCache.filter(e=>(!e.target_group_id||e.target_group_id===gid)&&(!e.ends_at||new Date(e.ends_at).getTime()>=now-86400000));
 }
-
-function renderProfile(){
-  const info=document.getElementById("profileInfo"); if(!info || !currentProfile)return;
-  info.innerHTML=`
-    <p><b>ФИО:</b> ${escapeHtml(currentProfile.full_name)}</p>
-    <p><b>Роль:</b> <span class="role-badge">${roleLabel(currentProfile.role)}</span></p>
-    <p><b>Группа:</b> ${currentProfile.group_id ? escapeHtml(groupNameById(currentProfile.group_id)) : '—'}</p>
-  `;
-  document.getElementById("adminPanel")?.classList.toggle("hidden", !isAdmin());
-  if(isAdmin()) loadAdminUsers();
+function renderEvents(){
+  const box=document.getElementById("eventsList"); if(!box)return;
+  const list=relevantEvents();
+  box.innerHTML=list.length?list.map(e=>`<div class="notice ${e.is_emergency?'notice-danger':''}">
+    <b>${e.is_emergency?'🚨 ':''}${escapeHtml(e.title)}</b><div>${escapeHtml(e.body)}</div>
+    <div class="small">${new Date(e.starts_at).toLocaleString("ru-RU")}</div>
+    ${canEdit()?`<button class="btn btn-light" onclick="deleteEvent('${e.id}')">Удалить</button>`:""}
+  </div>`).join(""):`<div class="empty">Нет объявлений.</div>`;
+  const admin=document.getElementById("eventAdminCard"); if(admin)admin.classList.toggle("hidden",!canEdit());
+  const active=list.find(e=>e.is_emergency&&(!e.ends_at||new Date(e.ends_at).getTime()>=Date.now())&&new Date(e.starts_at).getTime()<=Date.now()+60000);
+  if(active)openEmergency(active);
 }
+async function deleteEvent(id){
+  if(!canEdit()||!confirm("Удалить объявление?"))return;
+  const {error}=await supabaseClient.from("events").delete().eq("id",id);
+  if(error){showToast(error.message);return;}
+  await loadNewCloudData();renderEvents();
+}
+function openEmergency(e){
+  document.getElementById("emergencyTitle").textContent=e.title;
+  document.getElementById("emergencyBody").textContent=e.body;
+  document.getElementById("emergencyOverlay").classList.add("show");
+}
+function closeEmergency(){document.getElementById("emergencyOverlay").classList.remove("show");}
+function showModal(html){document.getElementById("modalContent").innerHTML=html;document.getElementById("modal").classList.add("show");}
+function closeModal(){document.getElementById("modal").classList.remove("show");}
 
 async function changePassword(){
-  const oldP=document.getElementById("oldPassword").value;
-  const newP=document.getElementById("newPassword").value;
-  const newP2=document.getElementById("newPassword2").value;
-  if(!newP || newP!==newP2){ showToast("Новые пароли не совпадают!"); return; }
-  if(newP.length<4){ showToast("Пароль слишком короткий!"); return; }
-  const {error}=await supabaseClient.auth.updateUser({password: newP});
-  if(error){ showToast("Ошибка смены пароля: "+error.message); return; }
-  await supabaseClient.from("profiles").update({must_change_password: false}).eq("id", currentUser.id);
-  currentProfile.must_change_password=false;
-  document.getElementById("oldPassword").value="";
-  document.getElementById("newPassword").value="";
-  document.getElementById("newPassword2").value="";
-  showToast("Пароль успешно изменён!");
+  const oldP=document.getElementById("oldPassword").value,newP=document.getElementById("newPassword").value,newP2=document.getElementById("newPassword2").value;
+  if(!newP||newP!==newP2||newP.length<4){showToast("Новый пароль должен совпадать и содержать минимум 4 символа.");return;}
+  try{
+    const email=await syntheticEmail(currentProfile.full_name);
+    const {error:re}=await supabaseClient.auth.signInWithPassword({email,password:oldP});
+    if(re)throw new Error("Неверный текущий пароль.");
+    const {error}=await supabaseClient.auth.updateUser({password:newP});
+    if(error)throw error;
+    await supabaseClient.from("profiles").update({must_change_password:false}).eq("id",currentUser.id);
+    currentProfile.must_change_password=false;
+    document.getElementById("oldPassword").value=document.getElementById("newPassword").value=document.getElementById("newPassword2").value="";
+    showToast("Пароль изменён.");
+  }catch(e){showToast(e.message||"Ошибка смены пароля.");}
 }
-
 async function loadAdminUsers(){
+  if(!isAdmin())return;
+  const {data,error}=await supabaseClient.from("profiles").select("id,full_name,role,group_id").order("full_name");
+  if(error){console.warn(error);return;}
   const sel=document.getElementById("adminUser"); if(!sel)return;
-  const {data,error}=await supabaseClient.from("profiles").select("id, full_name, role").order("full_name");
-  if(error)return;
-  sel.innerHTML=data.map(u=>`<option value="${u.id}">${escapeHtml(u.full_name)} (${roleLabel(u.role)})</option>`).join("");
+  sel.innerHTML=(data||[]).map(u=>`<option value="${u.id}">${escapeHtml(u.full_name)} — ${roleLabel(u.role)}</option>`).join("");
 }
-
 async function adminResetPassword(){
   if(!isAdmin())return;
-  const uid=document.getElementById("adminUser").value;
-  const pass=document.getElementById("adminNewPassword").value.trim() || "1234";
-  const {error}=await supabaseClient.functions.invoke("admin-reset-password",{body:{user_id: uid, new_password: pass}});
-  if(error){ showToast("Ошибка сброса: "+error.message); return; }
-  showToast(`Пароль сброшен на: ${pass}`);
+  const userId=document.getElementById("adminUser").value;
+  const password=document.getElementById("adminNewPassword").value||"1234";
+  if(password.length<4){showToast("Пароль слишком короткий.");return;}
+  const {data,error}=await supabaseClient.functions.invoke("admin-reset-password",{body:{user_id:userId,password}});
+  if(error){showToast("Ошибка сброса: "+error.message);return;}
   document.getElementById("adminNewPassword").value="";
+  showToast(data?.message||"Пароль сброшен.");
 }
+function updateHeaderUser(){
+  const bar=document.getElementById("currentUserBar");
+  if(bar&&currentProfile)bar.innerHTML=`<span class="role-badge">${escapeHtml(roleLabel(currentProfile.role))}</span><b>${escapeHtml(currentProfile.full_name)}</b><span class="pill">${escapeHtml(groupNameById(currentProfile.group_id))}</span><button class="btn btn-light" onclick="logout()">Выйти</button>`;
+  document.getElementById("appTitle").textContent=`📖 Электронный журнал — ${groupNameById(selectedGroup())}`;
+  const p=document.getElementById("profileInfo");
+  if(p&&currentProfile)p.innerHTML=`<p><b>ФИО:</b> ${escapeHtml(currentProfile.full_name)}</p><p><b>Роль:</b> ${escapeHtml(roleLabel(currentProfile.role))}</p><p><b>Группа:</b> ${escapeHtml(groupNameById(currentProfile.group_id)||"Все группы")}</p>`;
+  const panel=document.getElementById("adminPanel"); if(panel)panel.classList.toggle("hidden",!isAdmin());
+  if(isAdmin())loadAdminUsers();
+}
+function renderNewCloudPanels(){renderSchedule();renderGrades();renderEvents();updateHeaderUser();}
 
 function startNewRealtime(){
-  if(!supabaseClient)return;
-  if(newRealtimeChannel){
-    try{ supabaseClient.removeChannel(newRealtimeChannel); }catch(e){}
-  }
-  newRealtimeChannel=supabaseClient.channel("college-realtime-changes")
-    .on("postgres_changes", {event: "*", schema: "public", table: "attendance"}, ()=>loadNewCloudData())
-    .on("postgres_changes", {event: "*", schema: "public", table: "grades"}, ()=>loadNewCloudData())
-    .on("postgres_changes", {event: "*", schema: "public", table: "events"}, ()=>loadNewCloudData())
-    .on("postgres_changes", {event: "*", schema: "public", table: "schedule_overrides"}, ()=>loadNewCloudData())
+  if(!supabaseClient||newRealtimeChannel)return;
+  newRealtimeChannel=supabaseClient.channel("college-journal-realtime")
+    .on("postgres_changes",{event:"*",schema:"public",table:"attendance"},async()=>{await loadNewCloudData();refreshAll();})
+    .on("postgres_changes",{event:"*",schema:"public",table:"grades"},async()=>{await loadNewCloudData();renderGrades();renderStatistics();})
+    .on("postgres_changes",{event:"*",schema:"public",table:"schedule_overrides"},async()=>{await loadNewCloudData();renderSchedule();})
+    .on("postgres_changes",{event:"*",schema:"public",table:"events"},async()=>{await loadNewCloudData();renderEvents();})
     .subscribe();
 }
 
-window.addEventListener("DOMContentLoaded", async ()=>{
-  init();
-  if(supabaseClient){
-    const {data:{session}}=await supabaseClient.auth.getSession();
-    if(session){
-      currentUser=session.user;
-      try{
-        await loadProfile();
-        document.getElementById("loginScreen").classList.add("hidden");
-        updateHeaderUser();
-        await loadGroups();
-        await loadGroupData();
-        await loadNewCloudData();
-        startNewRealtime();
-        refreshAll();
-      }catch(e){
-        console.error(e);
-        logout();
-      }
-    }
+/* Облачное сохранение каждой отметки: старый интерфейс остаётся, но данные
+   дополнительно записываются в нормализованную таблицу attendance. */
+async function saveAttendanceRow(date,studentId,lessonId,record){
+  if(!supabaseClient||!currentUser||!canEdit())return;
+  const l=record.lessons[lessonId], lesson=LESSONS.find(x=>x.id===lessonId);
+  const row={student_id:studentId,group_id:selectedGroup(),lesson_date:date,lesson_no:lessonId,status:l.status,arrival_time:l.arrival||null,late_minutes:calculateLateMinutes(lesson.start,l.arrival),toilet:Number(l.toilet||0),reason:record.reason||"",marked_by:currentUser.id};
+  const {error}=await supabaseClient.from("attendance").upsert(row,{onConflict:"student_id,lesson_date,lesson_no"});
+  if(error)console.error("attendance:",error);
+}
+async function setLessonStatus(date,studentId,lessonId,status){
+  if(!canEdit()){showToast("Только преподаватель/администратор может менять посещаемость.");return;}
+  const record=getDayRecord(date,studentId),l=record.lessons[lessonId];
+  l.status=status;if(status==="absent")l.arrival="";
+  syncCriticalLateDuty(studentId,date);addHistory(date,`${getStudentById(studentId)?.name||"Студент"} — ${LESSONS[lessonId-1].name}: ${statusText(status)}`);
+  await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
+}
+async function setLessonArrival(date,studentId,lessonId,arrival){
+  if(!canEdit()){showToast("Только преподаватель/администратор может менять посещаемость.");return;}
+  const record=getDayRecord(date,studentId),lesson=LESSONS.find(l=>l.id===lessonId),l=record.lessons[lessonId];
+  l.arrival=arrival;l.status=arrival?(calculateLateMinutes(lesson.start,arrival)>0?"late":"present"):l.status;
+  syncCriticalLateDuty(studentId,date);await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
+}
+async function setToilet(date,studentId,lessonId,value){
+  if(!canEdit())return;
+  const record=getDayRecord(date,studentId);record.lessons[lessonId].toilet=Math.max(0,Number(value)||0);
+  await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
+}
+async function changeToilet(date,studentId,lessonId,amount){
+  if(!canEdit())return;
+  const record=getDayRecord(date,studentId);record.lessons[lessonId].toilet=Math.max(0,Number(record.lessons[lessonId].toilet||0)+amount);
+  await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
+}
+async function setDayField(date,studentId,field,value){
+  if(!canEdit())return;
+  const record=getDayRecord(date,studentId);record[field]=value;
+  for(const l of LESSONS) await saveAttendanceRow(date,studentId,l.id,record);
+  refreshAll();
+}
+
+/* Старые функции saveToCloud/loadFromCloud теперь являются резервным локальным
+   JSON-хранилищем, чтобы существующие функции журнала/дежурств не ломались. */
+async function saveToCloud(){
+  saveLocalBackup();
+  updateSyncStatus(currentUser?"☁️ Облако подключено":"💾 Локальный режим",!!currentUser);
+}
+async function loadFromCloud(){
+  if(!currentUser){updateSyncStatus("🔐 Требуется вход",false);return;}
+  await loadNewCloudData();
+  updateSyncStatus("☁️ Облако подключено",true);
+}
+function updateSyncStatus(message,online=false){
+  const el=document.getElementById("syncStatus");if(!el)return;
+  el.textContent=message;el.classList.toggle("sync-online",online);el.classList.toggle("sync-offline",!online&&/Ошибка|Нет связи/.test(message));
+}
+
+/* Студентам запрещено редактировать журнал, но старые страницы остаются. */
+function renderJournal(){
+  const date=document.getElementById("journalDate")?.value||todayKey();
+  const tbody=document.getElementById("journalBody");if(!tbody)return;
+  document.getElementById("journalDate").value=date;tbody.innerHTML="";
+  state.students.forEach((student,index)=>{
+    const record=getDayRecord(date,student.id),critical=isCriticalLate(date,student.id),row=document.createElement("tr");
+    row.innerHTML=`<td>${index+1}</td><td class="student-name ${critical?"late-critical":""}">${escapeHtml(student.name)} ${critical?'<div class="critical-box">⚠️ ВНЕ ОЧЕРЕДИ</div>':""}</td>
+      ${LESSONS.map(lesson=>renderLessonCell(date,student,lesson,record.lessons[lesson.id])).join("")}
+      <td style="min-width:220px;"><input type="text" value="${escapeHtml(record.reason)}" placeholder="Причина" ${canEdit()?`onchange="setDayField('${date}','${student.id}','reason',this.value)"`:"disabled"}><br><br><input type="text" value="${escapeHtml(record.note)}" placeholder="Примечание" ${canEdit()?`onchange="setDayField('${date}','${student.id}','note',this.value)"`:"disabled"}></td>`;
+    tbody.appendChild(row);
+  });
+}
+function renderLessonCell(date,student,lesson,data){
+  const late=calculateLateMinutes(lesson.start,data.arrival),critical=data.status==="late"&&late>Number(state.settings.lateLimit);
+  return `<td><div class="lesson-box"><div class="lesson-title">${lesson.name} · ${lesson.start}–${lesson.end}</div><div class="lesson-grid">
+    <div class="full"><label>Статус</label><select class="lesson-status" ${canEdit()?"":"disabled"} onchange="setLessonStatus('${date}','${student.id}',${lesson.id},this.value)">
+      <option value="present" ${data.status==="present"?"selected":""}>✅ Присутствует</option><option value="late" ${data.status==="late"?"selected":""}>⏰ Опоздал</option><option value="absent" ${data.status==="absent"?"selected":""}>❌ Отсутствует</option></select></div>
+    <div><label>Время прихода</label><input type="time" value="${escapeHtml(data.arrival)}" ${canEdit()?"":"disabled"} onchange="setLessonArrival('${date}','${student.id}',${lesson.id},this.value)"></div>
+    <div><label>Опоздание</label><div style="padding-top:8px">${late>0?`<b class="${critical?"danger-text":""}">${late} мин.</b>`:"—"}</div></div>
+    <div class="full"><label>🚻 Выходы в туалет</label><div class="toilet-control"><button class="btn btn-light" ${canEdit()?"":"disabled"} onclick="changeToilet('${date}','${student.id}',${lesson.id},-1)">−</button><input type="number" min="0" value="${Number(data.toilet||0)}" ${canEdit()?"":"disabled"} onchange="setToilet('${date}','${student.id}',${lesson.id},this.value)"><button class="btn btn-light" ${canEdit()?"":"disabled"} onclick="changeToilet('${date}','${student.id}',${lesson.id},1)">+</button></div></div>
+    ${critical?`<div class="full critical-box">🔴 Опоздание больше ${state.settings.lateLimit} минут</div>`:""}</div></div></td>`;
+}
+function refreshAll(){
+  renderHome();renderJournal();renderDuties();renderStudents();renderStatistics();renderHistory();renderNotes();renderCalendar();renderReminders();renderSettings();renderNewCloudPanels();
+}
+async function init(){
+  state=normalizeState(state);
+  document.getElementById("journalDate").value=todayKey();
+  document.getElementById("scheduleDate").value=todayKey();
+  document.getElementById("overrideDate").value=todayKey();
+  document.getElementById("gradeDate").value=todayKey();
+  updateSyncStatus("🔐 Выполните вход",false);
+  await ensureInitialSeed();
+  const {data}=await supabaseClient.auth.getSession();
+  if(data?.session?.user){
+    currentUser=data.session.user;
+    try{
+      await loadProfile();document.getElementById("loginScreen").classList.add("hidden");
+      await loadGroups();await loadGroupData();await loadNewCloudData();startNewRealtime();updateHeaderUser();refreshAll();
+    }catch(e){console.error(e);await logout();}
   }
-});
+}
+init();
 </script>
 
 </body>
