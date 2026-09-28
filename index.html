@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📖 Электронный журнал — Колледж</title>
+<title>📖 Электронный журнал — Группа 3</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
@@ -462,21 +462,6 @@ tbody tr:nth-child(even) {
         padding: 12px;
     }
 }
-
-.login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#263746,#455a64);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
-.login-card{width:min(460px,100%);background:#fff;border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-card h2{margin-top:0;text-align:center}.login-logo{font-size:42px;text-align:center}.hidden{display:none!important}
-.user-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.user-info{font-size:13px}
-.role-badge{padding:5px 9px;border-radius:12px;background:#e3f2fd;color:#1565c0;font-size:12px;font-weight:bold}
-.modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
-.modal-backdrop.show{display:flex}.modal-card{background:white;border-radius:14px;width:min(760px,100%);max-height:90vh;overflow:auto;padding:24px}
-.emergency-overlay{position:fixed;inset:0;background:#b71c1c;color:#fff;z-index:10000;display:none;align-items:center;justify-content:center;text-align:center;padding:30px}
-.emergency-overlay.show{display:flex}.emergency-box{max-width:900px}.emergency-box h1{font-size:clamp(32px,7vw,76px);margin:0 0 20px}.emergency-box p{font-size:clamp(20px,3vw,34px)}
-.notice{padding:12px 15px;border-radius:8px;background:#e3f2fd;margin:10px 0}.notice-danger{background:#ffebee;color:#b71c1c}.notice-warning{background:#fff3e0;color:#e65100}
-.schedule-card{border-left:5px solid #1976d2}.override-row{background:#fff8e1}.cancelled-row{text-decoration:line-through;opacity:.55}
-.grade-input{width:90px}.muted{color:#78909c}.pill{display:inline-block;padding:3px 8px;border-radius:10px;background:#eceff1;font-size:12px}
-@media(max-width:700px){.modal-card{padding:16px}.login-card{padding:22px}}
-
 </style>
 </head>
 
@@ -484,7 +469,7 @@ tbody tr:nth-child(even) {
 
 <header>
     <div class="header-inner">
-        <h1 id="appTitle">📖 Электронный журнал — Колледж</h1>
+        <h1>📖 Электронный журнал — Группа 3</h1>
         <div id="syncStatus" class="sync-status">
             Подключение...
         </div>
@@ -526,38 +511,13 @@ tbody tr:nth-child(even) {
             📅 Календарь
         </button>
 
-        <button onclick="showPage('schedule', this)">🗓️ Расписание</button>
-        <button onclick="showPage('grades', this)">🎓 Оценки</button>
-        <button onclick="showPage('events', this)">🚨 События</button>
-        <button onclick="showPage('settings', this)">⚙️ Настройки</button>
-        <button onclick="showPage('profile', this)">👤 Профиль</button>
+        <button onclick="showPage('settings', this)">
+            ⚙️ Настройки
+        </button>
 
     </div>
 </nav>
 
-
-<div id="loginScreen" class="login-screen">
-  <div class="login-card">
-    <div class="login-logo">📖</div>
-    <h2>Электронный журнал колледжа</h2>
-    <p class="small" style="text-align:center">Общий вход в журнал. Все пользователи входят с правами администратора.</p>
-    <button class="btn btn-primary" style="width:100%;margin:0;margin-top:10px;font-size:16px;padding:13px" onclick="login()">🚀 Войти в журнал</button>
-    <div id="loginError" class="alert hidden" style="margin-top:12px"></div>
-  </div>
-</div>
-
-<div id="emergencyOverlay" class="emergency-overlay">
-  <div class="emergency-box">
-    <h1>🚨 СРОЧНОЕ ОБЪЯВЛЕНИЕ</h1>
-    <p id="emergencyTitle"></p>
-    <p id="emergencyBody"></p>
-    <button class="btn btn-light" onclick="closeEmergency()">Закрыть</button>
-  </div>
-</div>
-
-<div id="modal" class="modal-backdrop" onclick="if(event.target===this)closeModal()">
-  <div class="modal-card"><div id="modalContent"></div></div>
-</div>
 <main>
 
 <section id="home" class="page active">
@@ -566,7 +526,6 @@ tbody tr:nth-child(even) {
 
         <h2>Добро пожаловать 👋</h2>
 
-        <div id="currentUserBar" class="user-bar"></div>
         <p>
             Общий электронный журнал группы.
             Все изменения синхронизируются между компьютерами.
@@ -671,10 +630,18 @@ tbody tr:nth-child(even) {
 
         <p class="small">
 
-            1-я пара: <b>08:00–09:20</b> |
-            2-я пара: <b>09:30–10:50</b> |
-            3-я пара: <b>11:00–12:20</b> |
-            4-я пара: <b>13:25–14:45</b>
+            1-я пара:
+            <b>08:45–10:05</b>
+
+            |
+
+            2-я пара:
+            <b>10:15–11:35</b>
+
+            |
+
+            3-я пара:
+            <b>11:55–13:15</b>
 
         </p>
 
@@ -703,11 +670,21 @@ tbody tr:nth-child(even) {
                     <th>№</th>
 
                     <th>ФИО</th>
-                    <th>1-я пара<br>08:00–09:20</th>
 
-                    <th>2-я пара<br>09:30–10:50</th>
-                    <th>3-я пара<br>11:00–12:20</th>
-                    <th>4-я пара<br>13:25–14:45</th>
+                    <th>
+                        1-я пара<br>
+                        08:45–10:05
+                    </th>
+
+                    <th>
+                        2-я пара<br>
+                        10:15–11:35
+                    </th>
+
+                    <th>
+                        3-я пара<br>
+                        11:55–13:15
+                    </th>
 
                     <th>
                         Причина / примечание
@@ -1036,79 +1013,11 @@ tbody tr:nth-child(even) {
 </section>
 
 
-
-<section id="schedule" class="page">
-  <div class="card">
-    <h2>🗓️ Расписание</h2>
-    <div class="grid">
-      <div class="form-group"><label>Дата</label><input type="date" id="scheduleDate" onchange="renderSchedule()"></div>
-      <div class="form-group"><label>Группа</label><select id="scheduleGroup" onchange="changeSelectedGroup(this.value)"></select></div>
-    </div>
-    <div id="scheduleHoliday"></div>
-  </div>
-  <div class="card"><div class="table-wrap"><table><thead><tr><th>№</th><th>Время</th><th>Предмет</th><th>Преподаватель</th><th>Кабинет</th><th>Статус</th><th>Действие</th></tr></thead><tbody id="scheduleBody"></tbody></table></div></div>
-  <div id="overrideAdminCard" class="card hidden">
-    <h3>🔁 Замена пары на один день</h3>
-    <div class="grid">
-      <div class="form-group"><label>Дата</label><input type="date" id="overrideDate"></div>
-      <div class="form-group"><label>№ пары</label><select id="overrideLesson"><option value="1">1</option><option value="2">2</option><option value="3">3</option><option value="4">4</option></select></div>
-      <div class="form-group"><label>Новый предмет</label><input id="overrideSubject" placeholder="Например: Алгебра"></div>
-      <div class="form-group"><label>Преподаватель</label><input id="overrideTeacher" placeholder="ФИО преподавателя"></div>
-      <div class="form-group"><label>Кабинет</label><input id="overrideRoom" placeholder="101"></div>
-      <div class="form-group"><label>Причина</label><input id="overrideReason" placeholder="Замена преподавателя"></div>
-    </div>
-    <label><input type="checkbox" id="overrideCancelled" style="width:auto"> Отменить пару</label>
-    <br><button class="btn btn-primary" onclick="saveScheduleOverride()">🔁 Применить замену</button>
-  </div>
-</section>
-
-<section id="grades" class="page">
-  <div class="card">
-    <h2>🎓 Оценки</h2>
-    <div class="grid">
-      <div class="form-group"><label>Группа</label><select id="gradesGroup" onchange="loadGrades()"></select></div>
-      <div class="form-group"><label>Предмет</label><input id="gradeSubject" placeholder="Например: Алгебра"></div>
-      <div class="form-group"><label>Название работы</label><input id="gradeTitle" placeholder="Контрольная / ответ"></div>
-      <div class="form-group"><label>Дата</label><input type="date" id="gradeDate"></div>
-    </div>
-    <p class="small">Для студентов оценки отображаются только для просмотра. Для преподавателя/администратора ввод оценки сохраняется в облако автоматически.</p>
-  </div>
-  <div class="card"><div class="table-wrap"><table><thead><tr><th>№</th><th>Студент</th><th>Предмет</th><th>Работа</th><th>Оценка</th><th>Дата</th><th>Средняя</th></tr></thead><tbody id="gradesBody"></tbody></table></div></div>
-</section>
-
-<section id="events" class="page">
-  <div class="card">
-    <h2>🚨 Срочные объявления</h2>
-    <div id="eventsList"></div>
-  </div>
-  <div id="eventAdminCard" class="card hidden">
-    <h3>📢 Создать объявление</h3>
-    <div class="grid">
-      <div class="form-group"><label>Заголовок</label><input id="eventTitle" placeholder="Срочный сбор"></div>
-      <div class="form-group"><label>Когда</label><input type="datetime-local" id="eventStartsAt"></div>
-      <div class="form-group"><label>До</label><input type="datetime-local" id="eventEndsAt"></div>
-      <div class="form-group"><label>Группа</label><select id="eventGroup"></select></div>
-    </div>
-    <div class="form-group"><label>Текст</label><textarea id="eventBody" placeholder="В 15:00 сбор в актовом зале"></textarea></div>
-    <label><input type="checkbox" id="eventEmergency" style="width:auto"> Показать как срочное полноэкранное сообщение</label>
-    <br><button class="btn btn-danger" onclick="createEvent()">🚨 Опубликовать</button>
-  </div>
-</section>
-
-<section id="profile" class="page">
-  <div class="card"><h2>👤 Профиль</h2><div id="profileInfo"></div></div>
-  <div class="card">
-    <h3>🛡️ Доступ</h3>
-    <p>Все пользователи этого журнала автоматически входят как <b>Администратор</b>. Отдельные аккаунты, пароли и роли отключены.</p>
-  </div>
-</section>
-
 <section id="settings" class="page">
 
     <div class="card">
 
         <h2>⚙️ Настройки</h2>
-        <div class="form-group"><label>Активная группа</label><select id="settingsGroup" onchange="changeSelectedGroup(this.value)"></select></div>
 
         <div class="form-group">
 
@@ -1258,31 +1167,6 @@ const LESSONS = [
 
 ];
 
-
-/* Расписание колледжа: 4 пары, 4-я заканчивается ровно в 14:45. */
-LESSONS.splice(0, LESSONS.length,
-    { id: 1, name: "1-я пара", start: "08:00", end: "09:20" },
-    { id: 2, name: "2-я пара", start: "09:30", end: "10:50" },
-    { id: 3, name: "3-я пара", start: "11:00", end: "12:20" },
-    { id: 4, name: "4-я пара", start: "13:25", end: "14:45" }
-);
-
-const COLLEGE_GROUPS = {
-    G1: {
-        code: "G1", name: "Группа 1", specialty: "Менеджмент",
-        students: ["Абдылдаева Айназик Калыгуловна","Адилов Абдулла Холназвич","Айдаралиева Арууке Улановна","Акжолбеков Бакай Айманбекович","Акылбеков Мирзат Русланович","Алапаев Умар Айбекович","Алмазов Амир Алмазович","Алымбеков Алим Алымбекович","Асанакунов Раззак Каныбекович","Базарбаева Асема Белековна","Байышбекова Сабина Талгатовна","Бекматбекова Айбийке Уланбековна","Бирюкова Ксения Владиславовна","Ботоканов Эмир Адылбекович","Джумакеев Марсел Мирбекович","Дильмухамедов Мухаммад Амин Дильмухамедович","Кабылбеков Алинур Бактыбекович","Казбекова Айдай Урматовна"]
-    },
-    G2: {
-        code: "G2", name: "Группа 2", specialty: "Менеджмент",
-        students: ["Абасов Шерзатбек Тургуналиевич","Асаналиев Асланбек Ажыбекович","Камчыбекова Бегимай Суюмкуловна","Каныбеков Абдурахим Курсанбекович","Керималиев Умар Жуман Казбекович","Консулбекова Айдана Айтбековна","Курманов Амаль Ильясович","Марсова Аделя Нурлановна","Пазылов Нурсултан Абдыразакович","Рысбек Кызы Раяна","Суванкулов Азат Суванкулович","Суйналиева Айлин Уланбековна","Султанбеков Амантур Миржанович","Таабалдиева Мээримай Дамирбековна","Талантбекова Тумар Рустамовна","Шавкетов Измир Лучезарович","Шаршекеев Рыспек Телекович","Эркинбеков Абдулазиз Эркинбекович"]
-    },
-    G3: {
-        code: "G3", name: "Группа 3", specialty: "ПОВТАС",
-        students: ["Абдужапаров Ибрагим Кубанычбекович","Абдыкадыров Алихан Чыныбекович","Джумагулов Тимур Алмазбекович","Жаркынбаев Тимурлан Кубанычбекович","Закиров Камиль Шамилевич","Икболиддинов Бехруз Икболиддинович","Казбеков Адилет Урматович","Крамаренко Руслан Дмитриевич","Курманбеков Хамза Мунарбекович","Курманбеков Эмиль Баатырбекович","Миршакиров Азирет Нурланович","Муктаров Арген Афтандилович","Мурзараимов Алинур Нуртилекович","Сулайманов Улар Уланбекович","Таласбеков Абдуллах Таласбекович","Таласбеков Абдурахман Таласбекович","Тороев Амир Уланбекович","Хакимов Санжар Рахимжанович"]
-    }
-};
-
-const ROLE_LABELS = { student: "Студент", teacher: "Преподаватель", admin: "Администратор", group_leader: "Староста" };
 
 const STORAGE_KEY =
     "group3_journal_cloud_backup";
@@ -5163,41 +5047,9 @@ function loadLocalBackup() {
 }
 
 
-
 /* =========================================================
-   СТАТУС СИНХРОНИЗАЦИИ
+   СОХРАНЕНИЕ В SUPABASE
    ========================================================= */
-
-function updateSyncStatus(message, online = false) {
-
-    const el = document.getElementById("syncStatus");
-
-    if (!el) {
-        return;
-    }
-
-    el.textContent = message;
-
-    el.classList.remove(
-        "sync-online",
-        "sync-offline"
-    );
-
-    if (online) {
-        el.classList.add("sync-online");
-    } else if (
-        message.includes("Ошибка") ||
-        message.includes("Нет связи")
-    ) {
-        el.classList.add("sync-offline");
-    }
-}
-
-
-/* =========================================================
-   ОБЛАЧНОЕ ХРАНИЛИЩЕ
-   ========================================================= */
-
 
 async function saveToCloud(
     force = false
@@ -5785,410 +5637,8 @@ async function init() {
 }
 
 
-/* legacy init disabled: new authenticated init runs below */
-
-</script>
-
-<script>
-/* =========================================================
-   НОВАЯ КОЛЛЕДЖНАЯ ЛОГИКА: AUTH + GROUPS + SCHEDULE + GRADES + EVENTS
-   ========================================================= */
-
-const DEFAULT_ADMIN_NAME = "Администратор";
-let currentUser = null;
-let currentProfile = null;
-let currentGroupId = null;
-let groupsById = {};
-let groupsByCode = {};
-let scheduleCache = [];
-let overrideCache = [];
-let holidaysCache = [];
-let gradesCache = [];
-let eventsCache = [];
-let newRealtimeChannel = null;
-
-function isAdmin(){ return true; }
-function isTeacher(){ return true; }
-function canEdit(){ return true; }
-function selectedGroup(){
-  return currentGroupId || groupsByCode.G3?.id || Object.values(groupsById)[0]?.id || null;
-}
-function groupNameById(id){ return groupsById[id]?.name || "Группа"; }
-function localDateISO(d=new Date()){ return d.toLocaleDateString("en-CA"); }
-function roleLabel(r){ return "Администратор"; }
-
-function showLoginError(message){
-  const e=document.getElementById("loginError"); e.textContent=message; e.classList.remove("hidden");
-}
-function clearLoginError(){ document.getElementById("loginError")?.classList.add("hidden"); }
-
-async function login(){
-  clearLoginError();
-  currentUser = { id: "public-admin", role: "admin" };
-  currentProfile = {
-    id: "public-admin",
-    full_name: DEFAULT_ADMIN_NAME,
-    role: "admin",
-    group_id: null,
-    must_change_password: false
-  };
-  try{
-    if(supabaseClient) await loadGroups();
-    currentGroupId = groupsByCode.G3?.id || Object.values(groupsById)[0]?.id || null;
-    currentProfile.group_id = currentGroupId;
-    document.getElementById("loginScreen").classList.add("hidden");
-    updateHeaderUser();
-    if(supabaseClient){
-      await loadGroupData();
-      await loadNewCloudData();
-      startNewRealtime();
-    }
-    refreshAll();
-    updateSyncStatus(supabaseClient ? "☁️ Облако подключено" : "💾 Локальный режим", !!supabaseClient);
-  }catch(e){
-    console.error("LOGIN/LOAD ERROR:",e);
-    document.getElementById("loginScreen").classList.add("hidden");
-    refreshAll();
-    updateSyncStatus("⚠️ Локальный режим", false);
-    showToast("Журнал открыт. Облачные данные временно недоступны.");
-  }
-}
-
-function logout(){
-  currentUser=null;
-  currentProfile=null;
-  currentGroupId=null;
-  document.getElementById("loginScreen").classList.remove("hidden");
-} 
-
-async function loadProfile(){
-  // Аккаунты отключены: профиль всегда административный.
-  currentProfile = {
-    id: "public-admin",
-    full_name: DEFAULT_ADMIN_NAME,
-    role: "admin",
-    group_id: currentGroupId,
-    must_change_password: false
-  };
-}
-
-async function loadGroups(){
-  const {data,error}=await supabaseClient.from("groups").select("*").order("code");
-  if(error) throw error;
-  groupsById={}; groupsByCode={};
-  (data||[]).forEach(g=>{groupsById[g.id]=g;groupsByCode[g.code]=g;});
-  currentGroupId = groupsByCode.G3?.id || currentGroupId || Object.values(groupsById)[0]?.id || null;
-  if(currentProfile) currentProfile.group_id = currentGroupId;
-  renderGroupSelects();
-}
-function renderGroupSelects(){
-  ["scheduleGroup","gradesGroup","eventGroup","settingsGroup"].forEach(id=>{
-    const el=document.getElementById(id); if(!el) return;
-    const allowAll=isTeacher();
-    el.innerHTML=(allowAll?'<option value="">Все группы</option>':"")+
-      Object.values(groupsById).map(g=>`<option value="${g.id}">${escapeHtml(g.name)} — ${escapeHtml(g.specialty||"")}</option>`).join("");
-    if(currentGroupId) el.value=currentGroupId;
-  });
-  if(isTeacher()){
-    document.getElementById("scheduleGroup")?.removeAttribute("disabled");
-    document.getElementById("gradesGroup")?.removeAttribute("disabled");
-    document.getElementById("eventGroup")?.removeAttribute("disabled");
-    document.getElementById("settingsGroup")?.removeAttribute("disabled");
-  }else{
-    ["scheduleGroup","gradesGroup","eventGroup","settingsGroup"].forEach(id=>{const el=document.getElementById(id);if(el){el.value=currentGroupId||"";el.disabled=true;}});
-  }
-}
-async function changeSelectedGroup(id){
-  if(!isTeacher()) return;
-  currentGroupId=id||null;
-  await loadGroupData();
-  await loadNewCloudData();
-  renderGroupSelects();
-  refreshAll();
-}
-async function loadGroupData(){
-  const gid=selectedGroup();
-  if(!gid){state.students=[];return;}
-  let q=supabaseClient.from("profiles").select("id,full_name,role,group_id,is_active").eq("role","student").eq("is_active",true).order("full_name");
-  if(gid) q=q.eq("group_id",gid);
-  const {data,error}=await q;
-  if(error){console.error(error);return;}
-  state.students=(data||[]).map(p=>({id:p.id,name:p.full_name}));
-  if(!state.students.length && groupsById[gid]){
-    const fallback=Object.values(COLLEGE_GROUPS).find(x=>x.name===groupsById[gid].name);
-    if(fallback) state.students=fallback.students.map(name=>({id:uid("local"),name}));
-  }
-}
-
-async function loadNewCloudData(){
-  if(!supabaseClient || !currentUser) return;
-  const gid=selectedGroup();
-  try{
-    let aq=supabaseClient.from("attendance").select("*").order("lesson_date");
-    if(gid) aq=aq.eq("group_id",gid);
-    const {data:att,error:ae}=await aq;
-    if(ae) throw ae;
-    state.attendance={};
-    (att||[]).forEach(r=>{
-      if(!state.attendance[r.lesson_date]) state.attendance[r.lesson_date]={};
-      if(!state.attendance[r.lesson_date][r.student_id]) state.attendance[r.lesson_date][r.student_id]={lessons:{},reason:"",note:""};
-      state.attendance[r.lesson_date][r.student_id].lessons[r.lesson_no]={
-        status:r.status||"present",arrival:r.arrival_time||"",toilet:Number(r.toilet||0),reason:r.reason||""
-      };
-    });
-    const {data:gr,error:ge}=await supabaseClient.from("grades").select("*").order("grade_date",{ascending:false});
-    if(ge) console.warn(ge); else gradesCache=gr||[];
-    const {data:ev,error:ee}=await supabaseClient.from("events").select("*").order("starts_at",{ascending:false});
-    if(ee) console.warn(ee); else eventsCache=ev||[];
-    const {data:ov,error:oe}=await supabaseClient.from("schedule_overrides").select("*").order("lesson_date");
-    if(oe) console.warn(oe); else overrideCache=ov||[];
-    const {data:hol,error:he}=await supabaseClient.from("holidays").select("*").order("holiday_date");
-    if(he) console.warn(he); else holidaysCache=hol||[];
-    await loadSchedule();
-    renderGrades(); renderEvents(); renderSchedule();
-  }catch(e){console.error("loadNewCloudData",e);}
-}
-
-function buildDefaultSchedule(){
-  const gid=selectedGroup();
-  const g=groupsById[gid];
-  const prefix=g?.specialty==="ПОВТАС" ? ["Технология","Математика","Информатика","Физика"] : ["Менеджмент","Экономика","Алгебра","Право"];
-  return LESSONS.map((l,i)=>({group_id:gid,lesson_no:l.id,starts_at:l.start,ends_at:l.end,subject:prefix[i],teacher_name:"",room:""}));
-}
-async function loadSchedule(){
-  const gid=selectedGroup();
-  if(!gid){scheduleCache=[];return;}
-  const {data,error}=await supabaseClient.from("schedule").select("*").eq("group_id",gid).order("lesson_no");
-  if(error){console.warn(error);scheduleCache=buildDefaultSchedule();return;}
-  scheduleCache=data||[];
-  if(!scheduleCache.length) scheduleCache=buildDefaultSchedule();
-}
-function getOverride(date,no){return overrideCache.find(x=>x.group_id===selectedGroup()&&x.lesson_date===date&&x.lesson_no===no);}
-function effectiveLesson(date,no){
-  const base=scheduleCache.find(x=>Number(x.lesson_no)===Number(no))||buildDefaultSchedule().find(x=>Number(x.lesson_no)===Number(no))||{};
-  const ov=getOverride(date,no);
-  return ov ? {...base,...ov,subject:ov.is_cancelled?"Отменено":(ov.subject||base.subject)} : base;
-}
-function renderSchedule(){
-  const date=document.getElementById("scheduleDate")?.value||todayKey();
-  const body=document.getElementById("scheduleBody"); if(!body)return;
-  const holiday=holidaysCache.find(h=>h.holiday_date===date);
-  document.getElementById("scheduleHoliday").innerHTML=holiday?`<div class="notice notice-warning">🏖️ ${escapeHtml(holiday.title||"Выходной")} — занятия отменены.</div>`:"";
-  body.innerHTML=LESSONS.map(l=>{
-    const x=effectiveLesson(date,l.id), cancelled=holiday||x.is_cancelled;
-    return `<tr class="${x.id?'':''} ${x.is_cancelled?'cancelled-row':''}">
-      <td>${l.id}</td><td>${escapeHtml(x.starts_at||l.start)}–${escapeHtml(x.ends_at||l.end)}</td>
-      <td><b>${escapeHtml(x.subject||"—")}</b></td><td>${escapeHtml(x.teacher_name||"—")}</td><td>${escapeHtml(x.room||"—")}</td>
-      <td>${cancelled?'<span class="pill">Не проводится</span>':getOverride(date,l.id)?'<span class="pill">Замена на сегодня</span>':'По расписанию'}</td>
-      <td>${canEdit()&&!holiday?`<button class="btn btn-light" onclick="editOverride(${l.id})">🔁 Замена</button>`:""}</td>
-    </tr>`;
-  }).join("");
-  const d=document.getElementById("scheduleDate"); if(d&&!d.value)d.value=todayKey();
-  document.getElementById("overrideAdminCard")?.classList.toggle("hidden",!canEdit());
-}
-function editOverride(no){
-  document.getElementById("overrideDate").value=document.getElementById("scheduleDate").value||todayKey();
-  document.getElementById("overrideLesson").value=String(no);
-  const x=effectiveLesson(document.getElementById("overrideDate").value,no);
-  document.getElementById("overrideSubject").value=x.subject||"";
-  document.getElementById("overrideTeacher").value=x.teacher_name||"";
-  document.getElementById("overrideRoom").value=x.room||"";
-  document.getElementById("overrideReason").value=x.reason||"";
-  document.getElementById("overrideCancelled").checked=!!x.is_cancelled;
-  showPage("schedule",document.querySelector('nav button[onclick*="schedule"]'));
-}
-async function saveScheduleOverride(){
-  if(!canEdit())return;
-  const row={group_id:selectedGroup(),lesson_date:document.getElementById("overrideDate").value,lesson_no:Number(document.getElementById("overrideLesson").value),subject:document.getElementById("overrideSubject").value.trim(),teacher_name:document.getElementById("overrideTeacher").value.trim(),room:document.getElementById("overrideRoom").value.trim(),reason:document.getElementById("overrideReason").value.trim(),is_cancelled:document.getElementById("overrideCancelled").checked,created_by:currentUser.id};
-  const {error}=await supabaseClient.from("schedule_overrides").upsert(row,{onConflict:"group_id,lesson_date,lesson_no"});
-  if(error){showToast("Ошибка замены: "+error.message);return;}
-  showToast("Замена пары сохранена в облако.");
-  await loadNewCloudData(); renderSchedule();
-}
-function gradeAverage(studentId,subject){
-  const a=gradesCache.filter(g=>g.student_id===studentId&&(!subject||g.subject===subject));
-  if(!a.length)return "—";
-  return (a.reduce((s,g)=>s+Number(g.grade||0),0)/a.length).toFixed(2);
-}
-function renderGrades(){
-  const body=document.getElementById("gradesBody"); if(!body)return;
-  const students=state.students;
-  const can=canEdit();
-  body.innerHTML=students.map((s,i)=>{
-    const own=gradesCache.filter(g=>g.student_id===s.id);
-    const last=own[0];
-    return `<tr><td>${i+1}</td><td>${escapeHtml(s.name)}</td>
-      <td>${can?`<input id="subj_${s.id}" value="${escapeHtml(last?.subject||document.getElementById("gradeSubject")?.value||"")}" placeholder="Предмет">`:`${escapeHtml(last?.subject||"—")}`}</td>
-      <td>${can?`<input id="title_${s.id}" value="${escapeHtml(last?.title||document.getElementById("gradeTitle")?.value||"")}" placeholder="Работа">`:`${escapeHtml(last?.title||"—")}`}</td>
-      <td>${can?`<input class="grade-input" id="grade_${s.id}" type="number" min="1" max="5" step="1" value="${last?.grade??""}" onchange="saveGrade('${s.id}')">`:`${last?.grade??"—"}`}</td>
-      <td>${last?.grade_date||"—"}</td><td>${gradeAverage(s.id)}</td></tr>`;
-  }).join("");
-}
-async function loadGrades(){await loadNewCloudData();renderGrades();}
-async function saveGrade(studentId){
-  if(!canEdit())return;
-  const grade=Number(document.getElementById("grade_"+studentId).value);
-  const subject=document.getElementById("subj_"+studentId).value.trim();
-  const title=document.getElementById("title_"+studentId).value.trim();
-  if(!grade||grade<1||grade>5||!subject){showToast("Укажите предмет и оценку 1–5.");return;}
-  const row={student_id:studentId,group_id:selectedGroup(),subject,title,grade,grade_date:document.getElementById("gradeDate").value||todayKey(),teacher_id:currentUser.id,created_by:currentUser.id};
-  const {error}=await supabaseClient.from("grades").insert(row);
-  if(error){showToast("Ошибка оценки: "+error.message);return;}
-  showToast("Оценка сохранена автоматически.");
-  await loadNewCloudData(); renderGrades(); renderStatistics();
-}
-async function createEvent(){
-  if(!canEdit())return;
-  const row={title:document.getElementById("eventTitle").value.trim(),body:document.getElementById("eventBody").value.trim(),starts_at:new Date(document.getElementById("eventStartsAt").value||Date.now()).toISOString(),ends_at:document.getElementById("eventEndsAt").value?new Date(document.getElementById("eventEndsAt").value).toISOString():null,target_group_id:document.getElementById("eventGroup").value||null,is_emergency:document.getElementById("eventEmergency").checked,full_screen:document.getElementById("eventEmergency").checked,created_by:currentUser.id};
-  if(!row.title||!row.body){showToast("Заполните заголовок и текст.");return;}
-  const {error}=await supabaseClient.from("events").insert(row);
-  if(error){showToast("Ошибка объявления: "+error.message);return;}
-  showToast("Объявление опубликовано и сохранено.");
-  await loadNewCloudData(); renderEvents();
-}
-function relevantEvents(){
-  const gid=selectedGroup();
-  const now=Date.now();
-  return eventsCache.filter(e=>(!e.target_group_id||e.target_group_id===gid)&&(!e.ends_at||new Date(e.ends_at).getTime()>=now-86400000));
-}
-function renderEvents(){
-  const box=document.getElementById("eventsList"); if(!box)return;
-  const list=relevantEvents();
-  box.innerHTML=list.length?list.map(e=>`<div class="notice ${e.is_emergency?'notice-danger':''}">
-    <b>${e.is_emergency?'🚨 ':''}${escapeHtml(e.title)}</b><div>${escapeHtml(e.body)}</div>
-    <div class="small">${new Date(e.starts_at).toLocaleString("ru-RU")}</div>
-    ${canEdit()?`<button class="btn btn-light" onclick="deleteEvent('${e.id}')">Удалить</button>`:""}
-  </div>`).join(""):`<div class="empty">Нет объявлений.</div>`;
-  const admin=document.getElementById("eventAdminCard"); if(admin)admin.classList.toggle("hidden",!canEdit());
-  const active=list.find(e=>e.is_emergency&&(!e.ends_at||new Date(e.ends_at).getTime()>=Date.now())&&new Date(e.starts_at).getTime()<=Date.now()+60000);
-  if(active)openEmergency(active);
-}
-async function deleteEvent(id){
-  if(!canEdit()||!confirm("Удалить объявление?"))return;
-  const {error}=await supabaseClient.from("events").delete().eq("id",id);
-  if(error){showToast(error.message);return;}
-  await loadNewCloudData();renderEvents();
-}
-function openEmergency(e){
-  document.getElementById("emergencyTitle").textContent=e.title;
-  document.getElementById("emergencyBody").textContent=e.body;
-  document.getElementById("emergencyOverlay").classList.add("show");
-}
-function closeEmergency(){document.getElementById("emergencyOverlay").classList.remove("show");}
-function showModal(html){document.getElementById("modalContent").innerHTML=html;document.getElementById("modal").classList.add("show");}
-function closeModal(){document.getElementById("modal").classList.remove("show");}
-
-function updateHeaderUser(){
-  const bar=document.getElementById("currentUserBar");
-  if(bar) bar.innerHTML=`<span class="role-badge">Администратор</span><b>${escapeHtml(DEFAULT_ADMIN_NAME)}</b><span class="pill">${escapeHtml(groupNameById(selectedGroup()))}</span>`;
-  document.getElementById("appTitle").textContent=`📖 Электронный журнал — ${groupNameById(selectedGroup())}`;
-  const p=document.getElementById("profileInfo");
-  if(p)p.innerHTML=`<p><b>Пользователь:</b> ${escapeHtml(DEFAULT_ADMIN_NAME)}</p><p><b>Доступ:</b> Администратор</p><p><b>Режим:</b> общий вход без аккаунтов и паролей</p>`;
-}
-function renderNewCloudPanels(){renderSchedule();renderGrades();renderEvents();updateHeaderUser();}
-
-function startNewRealtime(){
-  if(!supabaseClient||newRealtimeChannel)return;
-  newRealtimeChannel=supabaseClient.channel("college-journal-realtime")
-    .on("postgres_changes",{event:"*",schema:"public",table:"attendance"},async()=>{await loadNewCloudData();refreshAll();})
-    .on("postgres_changes",{event:"*",schema:"public",table:"grades"},async()=>{await loadNewCloudData();renderGrades();renderStatistics();})
-    .on("postgres_changes",{event:"*",schema:"public",table:"schedule_overrides"},async()=>{await loadNewCloudData();renderSchedule();})
-    .on("postgres_changes",{event:"*",schema:"public",table:"events"},async()=>{await loadNewCloudData();renderEvents();})
-    .subscribe();
-}
-
-/* Облачное сохранение каждой отметки: старый интерфейс остаётся, но данные
-   дополнительно записываются в нормализованную таблицу attendance. */
-async function saveAttendanceRow(date,studentId,lessonId,record){
-  if(!supabaseClient||!currentUser||!canEdit())return;
-  const l=record.lessons[lessonId], lesson=LESSONS.find(x=>x.id===lessonId);
-  const row={student_id:studentId,group_id:selectedGroup(),lesson_date:date,lesson_no:lessonId,status:l.status,arrival_time:l.arrival||null,late_minutes:calculateLateMinutes(lesson.start,l.arrival),toilet:Number(l.toilet||0),reason:record.reason||"",marked_by:currentUser.id};
-  const {error}=await supabaseClient.from("attendance").upsert(row,{onConflict:"student_id,lesson_date,lesson_no"});
-  if(error)console.error("attendance:",error);
-}
-async function setLessonStatus(date,studentId,lessonId,status){
-  if(!canEdit()){showToast("Только преподаватель/администратор может менять посещаемость.");return;}
-  const record=getDayRecord(date,studentId),l=record.lessons[lessonId];
-  l.status=status;if(status==="absent")l.arrival="";
-  syncCriticalLateDuty(studentId,date);addHistory(date,`${getStudentById(studentId)?.name||"Студент"} — ${LESSONS[lessonId-1].name}: ${statusText(status)}`);
-  await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
-}
-async function setLessonArrival(date,studentId,lessonId,arrival){
-  if(!canEdit()){showToast("Только преподаватель/администратор может менять посещаемость.");return;}
-  const record=getDayRecord(date,studentId),lesson=LESSONS.find(l=>l.id===lessonId),l=record.lessons[lessonId];
-  l.arrival=arrival;l.status=arrival?(calculateLateMinutes(lesson.start,arrival)>0?"late":"present"):l.status;
-  syncCriticalLateDuty(studentId,date);await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
-}
-async function setToilet(date,studentId,lessonId,value){
-  if(!canEdit())return;
-  const record=getDayRecord(date,studentId);record.lessons[lessonId].toilet=Math.max(0,Number(value)||0);
-  await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
-}
-async function changeToilet(date,studentId,lessonId,amount){
-  if(!canEdit())return;
-  const record=getDayRecord(date,studentId);record.lessons[lessonId].toilet=Math.max(0,Number(record.lessons[lessonId].toilet||0)+amount);
-  await saveAttendanceRow(date,studentId,lessonId,record);refreshAll();
-}
-async function setDayField(date,studentId,field,value){
-  if(!canEdit())return;
-  const record=getDayRecord(date,studentId);record[field]=value;
-  for(const l of LESSONS) await saveAttendanceRow(date,studentId,l.id,record);
-  refreshAll();
-}
-
-/* Старые функции saveToCloud/loadFromCloud теперь являются резервным локальным
-   JSON-хранилищем, чтобы существующие функции журнала/дежурств не ломались. */
-async function saveToCloud(){
-  saveLocalBackup();
-  updateSyncStatus(currentUser?"☁️ Облако подключено":"💾 Локальный режим",!!currentUser);
-}
-async function loadFromCloud(){
-  if(!currentUser){updateSyncStatus("🔐 Требуется вход",false);return;}
-  await loadNewCloudData();
-  updateSyncStatus("☁️ Облако подключено",true);
-}
-function updateSyncStatus(message,online=false){
-  const el=document.getElementById("syncStatus");if(!el)return;
-  el.textContent=message;el.classList.toggle("sync-online",online);el.classList.toggle("sync-offline",!online&&/Ошибка|Нет связи/.test(message));
-}
-
-/* Студентам запрещено редактировать журнал, но старые страницы остаются. */
-function renderJournal(){
-  const date=document.getElementById("journalDate")?.value||todayKey();
-  const tbody=document.getElementById("journalBody");if(!tbody)return;
-  document.getElementById("journalDate").value=date;tbody.innerHTML="";
-  state.students.forEach((student,index)=>{
-    const record=getDayRecord(date,student.id),critical=isCriticalLate(date,student.id),row=document.createElement("tr");
-    row.innerHTML=`<td>${index+1}</td><td class="student-name ${critical?"late-critical":""}">${escapeHtml(student.name)} ${critical?'<div class="critical-box">⚠️ ВНЕ ОЧЕРЕДИ</div>':""}</td>
-      ${LESSONS.map(lesson=>renderLessonCell(date,student,lesson,record.lessons[lesson.id])).join("")}
-      <td style="min-width:220px;"><input type="text" value="${escapeHtml(record.reason)}" placeholder="Причина" ${canEdit()?`onchange="setDayField('${date}','${student.id}','reason',this.value)"`:"disabled"}><br><br><input type="text" value="${escapeHtml(record.note)}" placeholder="Примечание" ${canEdit()?`onchange="setDayField('${date}','${student.id}','note',this.value)"`:"disabled"}></td>`;
-    tbody.appendChild(row);
-  });
-}
-function renderLessonCell(date,student,lesson,data){
-  const late=calculateLateMinutes(lesson.start,data.arrival),critical=data.status==="late"&&late>Number(state.settings.lateLimit);
-  return `<td><div class="lesson-box"><div class="lesson-title">${lesson.name} · ${lesson.start}–${lesson.end}</div><div class="lesson-grid">
-    <div class="full"><label>Статус</label><select class="lesson-status" ${canEdit()?"":"disabled"} onchange="setLessonStatus('${date}','${student.id}',${lesson.id},this.value)">
-      <option value="present" ${data.status==="present"?"selected":""}>✅ Присутствует</option><option value="late" ${data.status==="late"?"selected":""}>⏰ Опоздал</option><option value="absent" ${data.status==="absent"?"selected":""}>❌ Отсутствует</option></select></div>
-    <div><label>Время прихода</label><input type="time" value="${escapeHtml(data.arrival)}" ${canEdit()?"":"disabled"} onchange="setLessonArrival('${date}','${student.id}',${lesson.id},this.value)"></div>
-    <div><label>Опоздание</label><div style="padding-top:8px">${late>0?`<b class="${critical?"danger-text":""}">${late} мин.</b>`:"—"}</div></div>
-    <div class="full"><label>🚻 Выходы в туалет</label><div class="toilet-control"><button class="btn btn-light" ${canEdit()?"":"disabled"} onclick="changeToilet('${date}','${student.id}',${lesson.id},-1)">−</button><input type="number" min="0" value="${Number(data.toilet||0)}" ${canEdit()?"":"disabled"} onchange="setToilet('${date}','${student.id}',${lesson.id},this.value)"><button class="btn btn-light" ${canEdit()?"":"disabled"} onclick="changeToilet('${date}','${student.id}',${lesson.id},1)">+</button></div></div>
-    ${critical?`<div class="full critical-box">🔴 Опоздание больше ${state.settings.lateLimit} минут</div>`:""}</div></div></td>`;
-}
-function refreshAll(){
-  renderHome();renderJournal();renderDuties();renderStudents();renderStatistics();renderHistory();renderNotes();renderCalendar();renderReminders();renderSettings();renderNewCloudPanels();
-}
-async function init(){
-  state=normalizeState(state);
-  document.getElementById("journalDate").value=todayKey();
-  document.getElementById("scheduleDate").value=todayKey();
-  document.getElementById("overrideDate").value=todayKey();
-  document.getElementById("gradeDate").value=todayKey();
-  updateSyncStatus("🔐 Нажмите «Войти в журнал»",false);
-  // Никакой авторизации Supabase здесь больше нет.
-  // Один общий вход выдаёт права администратора.
-}
 init();
+
 </script>
 
 </body>
