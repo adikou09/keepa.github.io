@@ -588,6 +588,8 @@ tbody tr:hover{background:#eef6ff !important}
         padding: 12px;
     }
 }
+
+.header-title-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.group-selector{width:auto;min-width:140px;border:1px solid rgba(255,255,255,.35);background:#fff;color:#263238;border-radius:10px;padding:8px 12px;font-weight:bold}.student-birthday-editor{margin:10px 0;max-width:260px}.student-birthday-editor label{display:block;font-size:12px;color:#607d8b;font-weight:bold;margin-bottom:4px}.birthday-event{background:#ffd6e0}.birthday-list{margin-top:16px}.birthday-row{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid #eceff1}.birthday-row:last-child{border-bottom:0}.birthday-date{font-weight:bold;color:#1565c0}
 </style>
 </head>
 
@@ -595,7 +597,7 @@ tbody tr:hover{background:#eef6ff !important}
 
 <header>
     <div class="header-inner">
-        <h1>📖 Электронный журнал — Группа 3</h1>
+        <div class="header-title-wrap"><h1 id="appTitle">📖 Электронный журнал — Группа 3</h1><select id="groupSelector" class="group-selector" onchange="switchGroup(this.value)" aria-label="Выбор группы"><option value="group1">Группа 1</option><option value="group2">Группа 2</option><option value="group3" selected>Группа 3</option></select></div>
         <div id="syncStatus" class="sync-status">
             Подключение...
         </div>
@@ -1094,6 +1096,8 @@ tbody tr:hover{background:#eef6ff !important}
             id="calendarGrid"
         ></div>
 
+        <div class="birthday-list" id="birthdayList"></div>
+
     </div>
 
     <div class="card">
@@ -1353,6 +1357,68 @@ let state = {
 
 };
 
+let selectedGroupId = "group3";
+const GROUP_NAMES = { group1: "Группа 1", group2: "Группа 2", group3: "Группа 3" };
+
+function cloneState(value) {
+    return JSON.parse(JSON.stringify(value));
+}
+
+function makeEmptyGroup(name) {
+    return normalizeState({
+        students: [], attendance: {}, history: [], notes: [], reminders: [],
+        duties: { currentIndex: 0, dailyAssignments: {}, dailyStatus: {}, extra: [] },
+        settings: { groupName: name, lateLimit: 20 }
+    });
+}
+
+function normalizeGroups() {
+    if (!state.groups || typeof state.groups !== "object") {
+        const oldGroup = cloneState(state);
+        delete oldGroup.groups;
+        delete oldGroup.selectedGroupId;
+        state.groups = {
+            group1: makeEmptyGroup("Группа 1"),
+            group2: makeEmptyGroup("Группа 2"),
+            group3: oldGroup
+        };
+    }
+    Object.keys(GROUP_NAMES).forEach(id => {
+        if (!state.groups[id]) state.groups[id] = makeEmptyGroup(GROUP_NAMES[id]);
+        state.groups[id] = normalizeState(state.groups[id]);
+    });
+}
+
+function saveActiveGroup() {
+    normalizeGroups();
+    state.groups[selectedGroupId] = cloneState({
+        students: state.students, attendance: state.attendance, history: state.history,
+        notes: state.notes, reminders: state.reminders, duties: state.duties, settings: state.settings
+    });
+}
+
+function switchGroup(groupId) {
+    if (!GROUP_NAMES[groupId] || groupId === selectedGroupId) return;
+    saveActiveGroup();
+    selectedGroupId = groupId;
+    const target = normalizeState(cloneState(state.groups[groupId]));
+    state.students = target.students;
+    state.attendance = target.attendance;
+    state.history = target.history;
+    state.notes = target.notes;
+    state.reminders = target.reminders;
+    state.duties = target.duties;
+    state.settings = target.settings;
+    state.settings.groupName = GROUP_NAMES[groupId];
+    document.getElementById("groupSelector").value = groupId;
+    document.getElementById("appTitle").textContent = "📖 Электронный журнал — " + GROUP_NAMES[groupId];
+    ensureTodayDuty();
+    refreshAll();
+    saveActiveGroup();
+    saveLocalBackup();
+    saveToCloud(true);
+}
+
 
 let calendarDate = new Date();
 
@@ -1518,7 +1584,9 @@ function normalizeState(data) {
 
                         id: uid("student"),
 
-                        name: s
+                        name: s,
+
+                        birthday: ""
 
                     };
 
@@ -1532,7 +1600,9 @@ function normalizeState(data) {
 
                     name:
                         s.name ||
-                        `Студент ${index + 1}`
+                        `Студент ${index + 1}`,
+
+                    birthday: s.birthday || ""
 
                 };
 
@@ -2046,6 +2116,22 @@ function renderJournal() {
         ).value ||
         todayKey();
 
+
+    normalizeGroups();
+    selectedGroupId = state.selectedGroupId || "group3";
+    if (!state.groups[selectedGroupId]) selectedGroupId = "group3";
+    const initialActive = normalizeState(cloneState(state.groups[selectedGroupId]));
+    state.students = initialActive.students;
+    state.attendance = initialActive.attendance;
+    state.history = initialActive.history;
+    state.notes = initialActive.notes;
+    state.reminders = initialActive.reminders;
+    state.duties = initialActive.duties;
+    state.settings = initialActive.settings;
+    const selector = document.getElementById("groupSelector");
+    if (selector) selector.value = selectedGroupId;
+    const title = document.getElementById("appTitle");
+    if (title) title.textContent = "📖 Электронный журнал — " + GROUP_NAMES[selectedGroupId];
 
     document.getElementById(
         "journalDate"
@@ -3490,6 +3576,15 @@ async function deleteStudent(
    ПЕРЕИМЕНОВАТЬ
    ========================================================= */
 
+async function setStudentBirthday(studentId, birthday) {
+    const student = state.students.find(s => s.id === studentId);
+    if (!student) return;
+    student.birthday = birthday || "";
+    addHistory(todayKey(), "Изменён день рождения: " + student.name);
+    refreshAll();
+    saveToCloud();
+}
+
 async function renameStudent(
     id
 ) {
@@ -3705,6 +3800,11 @@ function renderStudents() {
 
                         </p>
 
+
+                        <div class="student-birthday-editor">
+                            <label>🎂 День рождения</label>
+                            <input type="date" value="${escapeHtml(student.birthday || "")}" onchange="setStudentBirthday('${student.id}', this.value)">
+                        </div>
 
                         <button
                             class="btn btn-primary"
@@ -4322,6 +4422,21 @@ function changeMonth(
    КАЛЕНДАРЬ
    ========================================================= */
 
+function renderBirthdayList() {
+    const el = document.getElementById("birthdayList");
+    if (!el) return;
+    const rows = [...state.students].filter(s => s.birthday).sort((a,b) => String(a.birthday).slice(5).localeCompare(String(b.birthday).slice(5)));
+    if (!rows.length) {
+        el.innerHTML = '<div class="empty">Дни рождения пока не указаны. Укажите дату у студентов во вкладке «Студенты».</div>';
+        return;
+    }
+    el.innerHTML = '<h3>🎂 Дни рождения студентов</h3>' + rows.map(s => {
+        const d = new Date(s.birthday + "T00:00:00");
+        const date = d.toLocaleDateString("ru-RU", {day:"2-digit", month:"long"});
+        return `<div class="birthday-row"><span>🎂 ${escapeHtml(s.name)}</span><span class="birthday-date">${date}</span></div>`;
+    }).join('');
+}
+
 function renderCalendar() {
 
     const grid =
@@ -4457,6 +4572,12 @@ function renderCalendar() {
                     r.date === key
             );
 
+        const birthdays = state.students.filter(student => {
+            if (!student.birthday) return false;
+            const parts = String(student.birthday).split("-");
+            return parts.length >= 3 && parts[1] === String(month + 1).padStart(2, "0") && parts[2] === String(day).padStart(2, "0");
+        });
+
 
         const today =
             key === todayKey();
@@ -4468,7 +4589,7 @@ function renderCalendar() {
                 class="calendar-day
                     ${today ? "today" : ""}
                     ${
-                        reminders.length
+                        (reminders.length || birthdays.length)
                         ? "has-event"
                         : ""
                     }
@@ -4481,18 +4602,20 @@ function renderCalendar() {
 
 
                 ${
+                    birthdays.map(
+                        student => `
+                            <div class="calendar-event birthday-event">
+                                🎂 ${escapeHtml(student.name)}
+                            </div>
+                        `
+                    ).join("")
+                }
+                ${
                     reminders.map(
                         r => `
-
-                            <div
-                                class="calendar-event"
-                            >
-                                🎂
-                                ${escapeHtml(
-                                    r.text
-                                )}
+                            <div class="calendar-event">
+                                🔔 ${escapeHtml(r.text)}
                             </div>
-
                         `
                     ).join("")
                 }
@@ -4506,6 +4629,7 @@ function renderCalendar() {
 
     grid.innerHTML =
         html;
+    renderBirthdayList();
 
 }
 
@@ -5202,6 +5326,8 @@ async function saveToCloud(
     force = false
 ) {
 
+    saveActiveGroup();
+    state.selectedGroupId = selectedGroupId;
     saveLocalBackup();
 
 
@@ -5350,6 +5476,16 @@ async function loadFromCloud() {
                     data.data
                 );
 
+            normalizeGroups();
+            selectedGroupId = state.selectedGroupId || "group3";
+            const active = normalizeState(cloneState(state.groups[selectedGroupId]));
+            state.students = active.students;
+            state.attendance = active.attendance;
+            state.history = active.history;
+            state.notes = active.notes;
+            state.reminders = active.reminders;
+            state.duties = active.duties;
+            state.settings = active.settings;
 
             saveLocalBackup();
 
