@@ -619,8 +619,16 @@ tbody tr:hover{background:#eef6ff !important}
             👮 Дежурства
         </button>
 
-        <button onclick="showPage('students', this)">
-            👥 Студенты
+        <button onclick="openGroupStudents('group1', this)">
+            👥 Группа 1
+        </button>
+
+        <button onclick="openGroupStudents('group2', this)">
+            👥 Группа 2
+        </button>
+
+        <button onclick="openGroupStudents('group3', this)">
+            👥 Группа 3
         </button>
 
         <button onclick="showPage('statistics', this)">
@@ -879,11 +887,43 @@ tbody tr:hover{background:#eef6ff !important}
 </section>
 
 
-<section id="students" class="page">
+<section id="students-group1" class="page">
+
+    <div class="card">
+        <h2>👥 Студенты — Группа 1</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label>ФИО</label>
+                <input type="text" id="newStudentNameGroup1" placeholder="Введите ФИО">
+            </div>
+            <div><label>&nbsp;</label><button class="btn btn-success" onclick="addStudentToGroup('group1')">➕ Добавить</button></div>
+        </div>
+    </div>
+    <div class="card"><div id="studentsListGroup1"></div></div>
+
+</section>
+
+<section id="students-group2" class="page">
+
+    <div class="card">
+        <h2>👥 Студенты — Группа 2</h2>
+        <div class="grid">
+            <div class="form-group">
+                <label>ФИО</label>
+                <input type="text" id="newStudentNameGroup2" placeholder="Введите ФИО">
+            </div>
+            <div><label>&nbsp;</label><button class="btn btn-success" onclick="addStudentToGroup('group2')">➕ Добавить</button></div>
+        </div>
+    </div>
+    <div class="card"><div id="studentsListGroup2"></div></div>
+
+</section>
+
+<section id="students-group3" class="page">
 
     <div class="card">
 
-        <h2>👥 Студенты</h2>
+        <h2>👥 Студенты — Группа 3</h2>
 
         <div class="grid">
 
@@ -3646,7 +3686,64 @@ async function renameStudent(
    СТУДЕНТЫ
    ========================================================= */
 
+function openGroupStudents(groupId, button) {
+    switchGroup(groupId);
+    showPage("students-" + groupId.replace("group", "group"), button);
+    renderStudentsForGroup(groupId);
+}
+
+function addStudentToGroup(groupId) {
+    const input = document.getElementById("newStudentName" + groupId.charAt(0).toUpperCase() + groupId.slice(1));
+    const name = input ? input.value.trim() : "";
+    if (!name) return;
+
+    normalizeGroups();
+    const target = state.groups[groupId];
+    target.students.push({ id: crypto.randomUUID ? crypto.randomUUID() : (Date.now() + ""), name, birthday: "" });
+    saveActiveGroup();
+    state.groups[groupId] = normalizeState(target);
+    renderStudentsForGroup(groupId);
+    saveToCloud();
+    input.value = "";
+}
+
+function renderStudentsForGroup(groupId) {
+    normalizeGroups();
+    const target = groupId === selectedGroupId ? state : state.groups[groupId];
+    const container = document.getElementById("studentsList" + groupId.charAt(0).toUpperCase() + groupId.slice(1));
+    if (!container) return;
+    if (!target.students.length) {
+        container.innerHTML = `<div class="empty">В этой группе пока нет студентов</div>`;
+        return;
+    }
+    container.innerHTML = target.students.map((student, index) => `
+        <div class="student-card">
+            <h3>${index + 1}. ${escapeHtml(student.name)}</h3>
+            <div class="student-birthday-editor">
+                <label>🎂 День рождения</label>
+                <input type="date" value="${escapeHtml(student.birthday || "")}" onchange="setStudentBirthdayForGroup('${groupId}','${student.id}',this.value)">
+            </div>
+        </div>`).join("");
+}
+
+async function setStudentBirthdayForGroup(groupId, studentId, birthday) {
+    normalizeGroups();
+    const target = groupId === selectedGroupId ? state : state.groups[groupId];
+    const student = target.students.find(s => s.id === studentId);
+    if (!student) return;
+    student.birthday = birthday || "";
+    if (groupId === selectedGroupId) saveActiveGroup();
+    else state.groups[groupId] = normalizeState(target);
+    renderCalendar();
+    renderStudentsForGroup(groupId);
+    saveToCloud();
+}
+
 function renderStudents() {
+
+    renderStudentsForGroup("group1");
+    renderStudentsForGroup("group2");
+    renderStudentsForGroup("group3");
 
     const container =
         document.getElementById(
@@ -4423,215 +4520,30 @@ function changeMonth(
    ========================================================= */
 
 function renderBirthdayList() {
-    const el = document.getElementById("birthdayList");
-    if (!el) return;
-    const rows = [...state.students].filter(s => s.birthday).sort((a,b) => String(a.birthday).slice(5).localeCompare(String(b.birthday).slice(5)));
-    if (!rows.length) {
-        el.innerHTML = '<div class="empty">Дни рождения пока не указаны. Укажите дату у студентов во вкладке «Студенты».</div>';
-        return;
-    }
-    el.innerHTML = '<h3>🎂 Дни рождения студентов</h3>' + rows.map(s => {
-        const d = new Date(s.birthday + "T00:00:00");
-        const date = d.toLocaleDateString("ru-RU", {day:"2-digit", month:"long"});
-        return `<div class="birthday-row"><span>🎂 ${escapeHtml(s.name)}</span><span class="birthday-date">${date}</span></div>`;
-    }).join('');
-}
-
-function renderCalendar() {
-
-    const grid =
-        document.getElementById(
-            "calendarGrid"
-        );
-
-
-    const title =
-        document.getElementById(
-            "calendarTitle"
-        );
-
-
-    const year =
-        calendarDate.getFullYear();
-
-
-    const month =
-        calendarDate.getMonth();
-
-
-    const monthName =
-        calendarDate.toLocaleDateString(
-            "ru-RU",
-            {
-                month: "long",
-                year: "numeric"
-            }
-        );
-
-
-    title.textContent =
-        monthName.charAt(0)
-            .toUpperCase()
-        +
-        monthName.slice(1);
-
-
-    const firstDay =
-        new Date(
-            year,
-            month,
-            1
-        );
-
-
-    let start =
-        firstDay.getDay();
-
-
-    start =
-        start === 0
-        ? 6
-        : start - 1;
-
-
-    const days =
-        new Date(
-            year,
-            month + 1,
-            0
-        ).getDate();
-
-
-    const weekNames = [
-
-        "Пн",
-
-        "Вт",
-
-        "Ср",
-
-        "Чт",
-
-        "Пт",
-
-        "Сб",
-
-        "Вс"
-
-    ];
-
-
-    let html =
-
-        weekNames.map(
-            d =>
-                `<div class="calendar-head">
-                    ${d}
-                 </div>`
-        ).join("");
-
-
-    for (
-        let i = 0;
-        i < start;
-        i++
-    ) {
-
-        html +=
-            `<div></div>`;
-
-    }
-
-
-    for (
-        let day = 1;
-        day <= days;
-        day++
-    ) {
-
-        const key =
-
-            `${year}-${
-                String(
-                    month + 1
-                ).padStart(
-                    2,
-                    "0"
-                )
-            }-${
-                String(day).padStart(
-                    2,
-                    "0"
-                )
-            }`;
-
-
-        const reminders =
-            state.reminders.filter(
-                r =>
-                    r.date === key
-            );
-
-        const birthdays = state.students.filter(student => {
-            if (!student.birthday) return false;
+    const container = document.getElementById("birthdayList");
+    if (!container) return;
+    normalizeGroups();
+    saveActiveGroup();
+    const month = calendarDate.getMonth() + 1;
+    const items = [];
+    Object.keys(GROUP_NAMES).forEach(groupId => {
+        const group = state.groups[groupId];
+        (group.students || []).forEach(student => {
+            if (!student.birthday) return;
             const parts = String(student.birthday).split("-");
-            return parts.length >= 3 && parts[1] === String(month + 1).padStart(2, "0") && parts[2] === String(day).padStart(2, "0");
+            if (parts.length >= 3 && Number(parts[1]) === month) {
+                items.push({student, groupName: GROUP_NAMES[groupId], day: Number(parts[2])});
+            }
         });
-
-
-        const today =
-            key === todayKey();
-
-
-        html += `
-
-            <div
-                class="calendar-day
-                    ${today ? "today" : ""}
-                    ${
-                        (reminders.length || birthdays.length)
-                        ? "has-event"
-                        : ""
-                    }
-                "
-            >
-
-                <b>
-                    ${day}
-                </b>
-
-
-                ${
-                    birthdays.map(
-                        student => `
-                            <div class="calendar-event birthday-event">
-                                🎂 ${escapeHtml(student.name)}
-                            </div>
-                        `
-                    ).join("")
-                }
-                ${
-                    reminders.map(
-                        r => `
-                            <div class="calendar-event">
-                                🔔 ${escapeHtml(r.text)}
-                            </div>
-                        `
-                    ).join("")
-                }
-
-            </div>
-
-        `;
-
-    }
-
-
-    grid.innerHTML =
-        html;
-    renderBirthdayList();
-
+    });
+    items.sort((a,b) => a.day - b.day || a.student.name.localeCompare(b.student.name));
+    container.innerHTML = `<h3>🎂 Дни рождения в этом месяце</h3>` + (items.length ? items.map(item => `
+        <div class="birthday-row">
+            <span>🎂 ${escapeHtml(item.student.name)} <span class="small">(${escapeHtml(item.groupName)})</span></span>
+            <span class="birthday-date">${String(item.day).padStart(2,"0")}.${String(month).padStart(2,"0")}</span>
+        </div>`).join("") : `<div class="empty">Дней рождения в этом месяце пока нет</div>`);
 }
+
 
 
 /* =========================================================
