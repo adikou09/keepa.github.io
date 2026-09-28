@@ -3,10 +3,8 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>📖 Электронный журнал — Группа 3</title>
-
+<title>📖 Электронный журнал — Все группы</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
 * {
     box-sizing: border-box;
@@ -435,132 +433,6 @@ tbody tr:nth-child(even) {
     font-weight: bold;
 }
 
-
-/* =========================================================
-   MODERN UI — glass cards, gradients, responsive controls
-   ========================================================= */
-:root{
-    --bg:#eef3f8;
-    --surface:#ffffff;
-    --surface-soft:#f7f9fc;
-    --ink:#182635;
-    --muted:#6b7b8c;
-    --primary:#2563eb;
-    --primary-2:#1d4ed8;
-    --success:#16a34a;
-    --danger:#dc2626;
-    --warning:#ea580c;
-    --line:#e2e8f0;
-    --shadow:0 10px 30px rgba(15,23,42,.08);
-    --shadow-hover:0 16px 38px rgba(15,23,42,.12);
-    --radius:16px;
-}
-
-html{scroll-behavior:smooth}
-body{
-    background:
-      radial-gradient(circle at 10% 0%,rgba(37,99,235,.08),transparent 28%),
-      radial-gradient(circle at 90% 10%,rgba(14,165,233,.07),transparent 25%),
-      var(--bg);
-    color:var(--ink);
-}
-header{
-    background:linear-gradient(135deg,#17283a,#263f55 60%,#315b78);
-    border-bottom:1px solid rgba(255,255,255,.08);
-    padding:16px 25px;
-    box-shadow:0 8px 25px rgba(15,23,42,.18);
-}
-header h1{letter-spacing:-.3px}
-.sync-status{
-    border:1px solid rgba(255,255,255,.12);
-    box-shadow:0 4px 12px rgba(0,0,0,.12);
-    backdrop-filter:blur(8px);
-}
-nav{
-    background:rgba(31,52,70,.96);
-    backdrop-filter:blur(12px);
-    box-shadow:0 5px 18px rgba(15,23,42,.10);
-}
-nav button{
-    transition:background .2s,transform .2s;
-}
-nav button:hover{transform:translateY(-1px)}
-main{padding:28px 25px}
-.card{
-    border:1px solid rgba(148,163,184,.22);
-    border-radius:var(--radius);
-    box-shadow:var(--shadow);
-    transition:transform .2s,box-shadow .2s;
-}
-.card:hover{box-shadow:var(--shadow-hover)}
-.stat{
-    border:1px solid var(--line);
-    background:linear-gradient(145deg,#fff,#f6f9fc);
-    border-radius:14px;
-    box-shadow:0 4px 14px rgba(15,23,42,.04);
-    transition:transform .2s;
-}
-.stat:hover{transform:translateY(-2px)}
-.stat-number{color:var(--primary)}
-.btn{
-    border-radius:10px;
-    padding:10px 15px;
-    font-weight:600;
-    transition:transform .15s,box-shadow .15s,opacity .15s;
-}
-.btn:hover{
-    opacity:1;
-    transform:translateY(-1px);
-    box-shadow:0 5px 12px rgba(15,23,42,.12);
-}
-.btn-primary{background:linear-gradient(135deg,var(--primary),var(--primary-2))}
-.btn-success{background:linear-gradient(135deg,#16a34a,#15803d)}
-.btn-danger{background:linear-gradient(135deg,#dc2626,#b91c1c)}
-.btn-warning{background:linear-gradient(135deg,#f97316,#ea580c)}
-input,select,textarea{
-    border:1px solid #d7e0e8;
-    border-radius:10px;
-    padding:10px 11px;
-    transition:border-color .15s,box-shadow .15s;
-}
-input:focus,select:focus,textarea:focus{
-    outline:none;
-    border-color:#60a5fa;
-    box-shadow:0 0 0 3px rgba(37,99,235,.12);
-}
-table{border-collapse:separate;border-spacing:0}
-th{
-    background:linear-gradient(135deg,#334b5d,#415e73);
-}
-th:first-child{border-top-left-radius:8px}
-th:last-child{border-top-right-radius:8px}
-tbody tr{transition:background .15s}
-tbody tr:hover{background:#eef6ff !important}
-.lesson-box{
-    border:1px solid #e3eaf0;
-    border-radius:12px;
-    box-shadow:0 3px 10px rgba(15,23,42,.04);
-}
-.lesson-title{
-    background:linear-gradient(135deg,#3b5264,#526f83);
-    border-radius:8px;
-}
-.duty-person,.student-card{
-    border-radius:14px;
-    box-shadow:0 4px 14px rgba(15,23,42,.05);
-}
-.calendar-day{
-    border-radius:10px;
-    transition:transform .15s,box-shadow .15s;
-}
-.calendar-day:hover{
-    transform:translateY(-2px);
-    box-shadow:0 6px 14px rgba(15,23,42,.08);
-}
-.alert,.success-message{border-radius:10px}
-.toast{border-radius:12px}
-.small{color:var(--muted)}
-
 @media(max-width:700px) {
 
     main {
@@ -588,709 +460,676 @@ tbody tr:hover{background:#eef6ff !important}
         padding: 12px;
     }
 }
-
-.header-title-wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap}.group-selector{width:auto;min-width:140px;border:1px solid rgba(255,255,255,.35);background:#fff;color:#263238;border-radius:10px;padding:8px 12px;font-weight:bold}.student-birthday-editor{margin:10px 0;max-width:260px}.student-birthday-editor label{display:block;font-size:12px;color:#607d8b;font-weight:bold;margin-bottom:4px}.birthday-event{background:#ffd6e0}.birthday-list{margin-top:16px}.birthday-row{display:flex;justify-content:space-between;gap:12px;padding:9px 12px;border-bottom:1px solid #eceff1}.birthday-row:last-child{border-bottom:0}.birthday-date{font-weight:bold;color:#1565c0}
 </style>
 </head>
-
 <body>
-
 <header>
     <div class="header-inner">
-        <div class="header-title-wrap"><h1 id="appTitle">📖 Электронный журнал — Группа 3</h1><select id="groupSelector" class="group-selector" onchange="switchGroup(this.value)" aria-label="Выбор группы"><option value="group1">Группа 1</option><option value="group2">Группа 2</option><option value="group3" selected>Группа 3</option></select></div>
-        <div id="syncStatus" class="sync-status">
-            Подключение...
+        <h1 id="journalTitle">📖 Электронный журнал — Группа 3</h1>
+        <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap;">
+            <select id="groupSelector" onchange="switchGroup(this.value)"
+                style="width:auto;min-width:150px;background:white;color:#263238;font-weight:bold;">
+                <option value="group3" selected>Группа 3</option>
+                <option value="group4">Группа 4</option>
+                <option value="group5">Группа 5</option>
+            </select>
+            <div id="syncStatus" class="sync-status">
+                Подключение...
+            </div>
         </div>
     </div>
 </header>
-
 <nav>
     <div class="nav-inner">
 
-        <button onclick="showPage('home', this)" class="active">
-            🏠 Главная
-        </button>
+```
+    <button onclick="showPage('home', this)" class="active">
+        🏠 Главная
+    </button>
 
-        <button onclick="showPage('journal', this)">
-            📖 Журнал
-        </button>
+    <button onclick="showPage('journal', this)">
+        📖 Журнал
+    </button>
 
-        <button onclick="showPage('duties', this)">
-            👮 Дежурства
-        </button>
+    <button onclick="showPage('duties', this)">
+        👮 Дежурства
+    </button>
 
-        <button onclick="openGroupStudents('group1', this)">
-            👥 Группа 1
-        </button>
+    <button onclick="showPage('students', this)">
+        👥 Студенты
+    </button>
 
-        <button onclick="openGroupStudents('group2', this)">
-            👥 Группа 2
-        </button>
+    <button onclick="showPage('statistics', this)">
+        📊 Статистика
+    </button>
 
-        <button onclick="openGroupStudents('group3', this)">
-            👥 Группа 3
-        </button>
+    <button onclick="showPage('history', this)">
+        📜 История
+    </button>
 
-        <button onclick="showPage('statistics', this)">
-            📊 Статистика
-        </button>
+    <button onclick="showPage('notes', this)">
+        📝 Заметки
+    </button>
 
-        <button onclick="showPage('history', this)">
-            📜 История
-        </button>
+    <button onclick="showPage('calendar', this)">
+        📅 Календарь
+    </button>
 
-        <button onclick="showPage('notes', this)">
-            📝 Заметки
-        </button>
+    <button onclick="showPage('settings', this)">
+        ⚙️ Настройки
+    </button>
 
-        <button onclick="showPage('calendar', this)">
-            📅 Календарь
-        </button>
+</div>
+```
 
-        <button onclick="showPage('settings', this)">
-            ⚙️ Настройки
-        </button>
-
-    </div>
 </nav>
-
 <main>
-
 <section id="home" class="page active">
 
-    <div class="card">
+```
+<div class="card">
 
-        <h2>Добро пожаловать 👋</h2>
+    <h2>Добро пожаловать 👋</h2>
 
-        <p>
-            Общий электронный журнал группы.
-            Все изменения синхронизируются между компьютерами.
-        </p>
+    <p>
+        Общий электронный журнал всех групп.
+        Все изменения синхронизируются между устройствами через одну облачную базу.
+    </p>
 
-    </div>
+</div>
 
-    <div class="card">
+<div class="card">
 
-        <h2>
-            📅 Сегодня:
-            <span id="homeDate"></span>
-        </h2>
+    <h2>
+        📅 Сегодня:
+        <span id="homeDate"></span>
+    </h2>
 
-        <div class="grid">
+    <div class="grid">
 
-            <div class="stat">
-                <div class="stat-number" id="homeStudents">0</div>
-                <div class="stat-label">
-                    Студентов
-                </div>
+        <div class="stat">
+            <div class="stat-number" id="homeStudents">0</div>
+            <div class="stat-label">
+                Студентов
             </div>
+        </div>
 
-            <div class="stat">
-                <div class="stat-number" id="homePresent">0</div>
-                <div class="stat-label">
-                    Присутствуют
-                </div>
+        <div class="stat">
+            <div class="stat-number" id="homePresent">0</div>
+            <div class="stat-label">
+                Присутствуют
             </div>
+        </div>
 
-            <div class="stat">
-                <div class="stat-number" id="homeAbsent">0</div>
-                <div class="stat-label">
-                    Отсутствуют
-                </div>
+        <div class="stat">
+            <div class="stat-number" id="homeAbsent">0</div>
+            <div class="stat-label">
+                Отсутствуют
             </div>
+        </div>
 
-            <div class="stat">
-                <div class="stat-number" id="homeLate">0</div>
-                <div class="stat-label">
-                    Опоздали
-                </div>
+        <div class="stat">
+            <div class="stat-number" id="homeLate">0</div>
+            <div class="stat-label">
+                Опоздали
             </div>
-
         </div>
 
     </div>
 
-    <div class="card">
+</div>
 
-        <h2>👮 Дежурные сегодня</h2>
+<div class="card">
 
-        <div id="homeDuties"></div>
+    <h2>👮 Дежурные сегодня</h2>
 
-    </div>
+    <div id="homeDuties"></div>
 
-    <div class="card">
+</div>
 
-        <h2>🔴 Важные уведомления</h2>
+<div class="card">
 
-        <div id="homeAlerts"></div>
+    <h2>🔴 Важные уведомления</h2>
 
-    </div>
+    <div id="homeAlerts"></div>
+
+</div>
+```
 
 </section>
-
-
 <section id="journal" class="page">
 
-    <div class="card">
+```
+<div class="card">
 
-        <h2>📖 Журнал посещаемости</h2>
+    <h2>📖 Журнал посещаемости</h2>
 
-        <div class="grid">
-
-            <div class="form-group">
-
-                <label>Дата</label>
-
-                <input
-                    type="date"
-                    id="journalDate"
-                    onchange="renderJournal()"
-                >
-
-            </div>
-
-            <div>
-
-                <label>&nbsp;</label>
-
-                <button
-                    class="btn btn-primary"
-                    onclick="setToday()"
-                >
-                    Сегодня
-                </button>
-
-            </div>
-
-        </div>
-
-        <p class="small">
-
-            1-я пара:
-            <b>08:45–10:15</b>
-
-            |
-
-            2-я пара:
-            <b>10:25–11:35</b>
-
-            |
-
-            3-я пара:
-            <b>11:55–13:15</b>
-
-            |
-
-            4-я пара:
-            <b>13:25–14:45</b>
-
-        </p>
-
-        <p class="small">
-
-            Если опоздание больше 20 минут —
-            <span class="danger-text">
-                ФИО подчёркивается красным
-            </span>
-            и студент получает дежурство вне очереди.
-
-        </p>
-
-    </div>
-
-    <div class="card">
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                <tr>
-
-                    <th>№</th>
-
-                    <th>ФИО</th>
-
-                    <th>
-                        1-я пара<br>
-                        08:45–10:15
-                    </th>
-
-                    <th>
-                        2-я пара<br>
-                        10:25–11:35
-                    </th>
-
-                    <th>
-                        3-я пара<br>
-                        11:55–13:15
-                    </th>
-
-                    <th>
-                        4-я пара<br>
-                        13:25–14:45
-                    </th>
-
-                    <th>
-                        Причина / примечание
-                    </th>
-
-                </tr>
-
-                </thead>
-
-                <tbody id="journalBody"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section id="duties" class="page">
-
-    <div class="card">
-
-        <h2>👮 Дежурства сегодня</h2>
-
-        <p>
-            Каждый день назначаются <b>2 человека</b>.
-            Следующая пара начинается после того,
-            как оба человека завершили или пропустили
-            своё дежурство.
-        </p>
-
-        <div id="todayDuties"></div>
-
-    </div>
-
-    <div class="card">
-
-        <h2>📋 Очередь дежурств</h2>
-
-        <div id="dutyQueue"></div>
-
-    </div>
-
-    <div class="card">
-
-        <h2>⚠️ Вне очереди</h2>
-
-        <div id="extraDuties"></div>
-
-    </div>
-
-</section>
-
-
-<section id="students-group1" class="page">
-
-    <div class="card">
-        <h2>👥 Студенты — Группа 1</h2>
-        <div class="grid">
-            <div class="form-group">
-                <label>ФИО</label>
-                <input type="text" id="newStudentNameGroup1" placeholder="Введите ФИО">
-            </div>
-            <div><label>&nbsp;</label><button class="btn btn-success" onclick="addStudentToGroup('group1')">➕ Добавить</button></div>
-        </div>
-    </div>
-    <div class="card"><div id="studentsListGroup1"></div></div>
-
-</section>
-
-<section id="students-group2" class="page">
-
-    <div class="card">
-        <h2>👥 Студенты — Группа 2</h2>
-        <div class="grid">
-            <div class="form-group">
-                <label>ФИО</label>
-                <input type="text" id="newStudentNameGroup2" placeholder="Введите ФИО">
-            </div>
-            <div><label>&nbsp;</label><button class="btn btn-success" onclick="addStudentToGroup('group2')">➕ Добавить</button></div>
-        </div>
-    </div>
-    <div class="card"><div id="studentsListGroup2"></div></div>
-
-</section>
-
-<section id="students-group3" class="page">
-
-    <div class="card">
-
-        <h2>👥 Студенты — Группа 3</h2>
-
-        <div class="grid">
-
-            <div class="form-group">
-
-                <label>ФИО</label>
-
-                <input
-                    type="text"
-                    id="newStudentName"
-                    placeholder="Введите ФИО"
-                >
-
-            </div>
-
-            <div>
-
-                <label>&nbsp;</label>
-
-                <button
-                    class="btn btn-success"
-                    onclick="addStudent()"
-                >
-                    ➕ Добавить
-                </button>
-
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <div id="studentsList"></div>
-
-    </div>
-
-</section>
-
-
-<section id="statistics" class="page">
-
-    <div class="card">
-
-        <h2>📊 Статистика</h2>
-
-        <div class="grid">
-
-            <div class="stat">
-                <div class="stat-number" id="statTotal">0</div>
-                <div class="stat-label">
-                    Всего отметок
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-number" id="statPresent">0</div>
-                <div class="stat-label">
-                    Присутствие
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-number" id="statAbsent">0</div>
-                <div class="stat-label">
-                    Отсутствия
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-number" id="statLate">0</div>
-                <div class="stat-label">
-                    Опоздания
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-number" id="statCritical">0</div>
-                <div class="stat-label">
-                    Опоздание >20 мин
-                </div>
-            </div>
-
-            <div class="stat">
-                <div class="stat-number" id="statToilet">0</div>
-                <div class="stat-label">
-                    Выходы в туалет
-                </div>
-            </div>
-
-        </div>
-
-    </div>
-
-    <div class="card">
-
-        <h2>Статистика по студентам</h2>
-
-        <div class="table-wrap">
-
-            <table>
-
-                <thead>
-
-                <tr>
-
-                    <th>№</th>
-                    <th>ФИО</th>
-                    <th>Присутствий</th>
-                    <th>Отсутствий</th>
-                    <th>Опозданий</th>
-                    <th>>20 минут</th>
-                    <th>Туалет</th>
-
-                </tr>
-
-                </thead>
-
-                <tbody id="statisticsBody"></tbody>
-
-            </table>
-
-        </div>
-
-    </div>
-
-</section>
-
-
-<section id="history" class="page">
-
-    <div class="card">
-
-        <h2>📜 История</h2>
-
-        <div id="historyList"></div>
-
-    </div>
-
-</section>
-
-
-<section id="notes" class="page">
-
-    <div class="card">
-
-        <h2>📝 Заметки</h2>
+    <div class="grid">
 
         <div class="form-group">
 
-            <label>Новая заметка</label>
-
-            <textarea
-                id="newNoteText"
-                placeholder="Введите заметку..."
-            ></textarea>
-
-        </div>
-
-        <button
-            class="btn btn-primary"
-            onclick="addNote()"
-        >
-            Добавить заметку
-        </button>
-
-    </div>
-
-    <div class="card">
-
-        <div id="notesList"></div>
-
-    </div>
-
-</section>
-
-
-<section id="calendar" class="page">
-
-    <div class="card">
-
-        <h2>📅 Календарь</h2>
-
-        <div class="grid">
-
-            <button
-                class="btn"
-                onclick="changeMonth(-1)"
-            >
-                ← Предыдущий
-            </button>
-
-            <h3
-                id="calendarTitle"
-                style="text-align:center;"
-            ></h3>
-
-            <button
-                class="btn"
-                onclick="changeMonth(1)"
-            >
-                Следующий →
-            </button>
-
-        </div>
-
-        <div
-            class="calendar"
-            id="calendarGrid"
-        ></div>
-
-        <div class="birthday-list" id="birthdayList"></div>
-
-    </div>
-
-    <div class="card">
-
-        <h2>
-            🎂 Добавить день рождения / напоминание
-        </h2>
-
-        <div class="grid">
-
-            <div class="form-group">
-
-                <label>Дата</label>
-
-                <input
-                    type="date"
-                    id="reminderDate"
-                >
-
-            </div>
-
-            <div class="form-group">
-
-                <label>Текст</label>
-
-                <input
-                    type="text"
-                    id="reminderText"
-                    placeholder="Например: День рождения Алихана"
-                >
-
-            </div>
-
-        </div>
-
-        <button
-            class="btn btn-primary"
-            onclick="addReminder()"
-        >
-            Добавить
-        </button>
-
-    </div>
-
-    <div class="card">
-
-        <h2>🔔 Напоминания</h2>
-
-        <div id="remindersList"></div>
-
-    </div>
-
-</section>
-
-
-<section id="settings" class="page">
-
-    <div class="card">
-
-        <h2>⚙️ Настройки</h2>
-
-        <div class="form-group">
-
-            <label>Название группы</label>
-
-            <input id="settingGroupName">
-
-        </div>
-
-        <div class="form-group">
-
-            <label>
-                Порог опоздания для дежурства вне очереди
-            </label>
+            <label>Дата</label>
 
             <input
-                type="number"
-                id="settingLateLimit"
-                min="1"
+                type="date"
+                id="journalDate"
+                onchange="renderJournal()"
             >
 
         </div>
 
-        <button
-            class="btn btn-success"
-            onclick="saveSettings()"
-        >
-            💾 Сохранить настройки
-        </button>
+        <div>
+
+            <label>&nbsp;</label>
+
+            <button
+                class="btn btn-primary"
+                onclick="setToday()"
+            >
+                Сегодня
+            </button>
+
+        </div>
 
     </div>
 
-    <div class="card">
+    <p class="small">
 
-        <h2>☁️ Синхронизация</h2>
+        1-я пара:
+        <b>08:45–10:05</b>
 
-        <p>
-            Данные журнала хранятся в общей облачной базе.
-            Поэтому один и тот же журнал можно открыть
-            на нескольких компьютерах.
-        </p>
+        |
 
-        <button
-            class="btn btn-primary"
-            onclick="loadFromCloud()"
-        >
-            ☁️ Загрузить данные из облака
-        </button>
+        2-я пара:
+        <b>10:15–11:35</b>
 
-        <button
-            class="btn btn-success"
-            onclick="saveToCloud(true)"
-        >
-            ☁️ Принудительно сохранить
-        </button>
+        |
+
+        3-я пара:
+        <b>11:55–13:15</b>
+
+        |
+
+        4-я пара:
+        <b>13:25–14:45</b>
+
+    </p>
+
+    <p class="small">
+
+        Если опоздание больше 20 минут —
+        <span class="danger-text">
+            ФИО подчёркивается красным
+        </span>
+        и студент получает дежурство вне очереди.
+
+    </p>
+
+</div>
+
+<div class="card">
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>№</th>
+
+                <th>ФИО</th>
+
+                <th>
+                    1-я пара<br>
+                    08:45–10:05
+                </th>
+
+                <th>
+                    2-я пара<br>
+                    10:15–11:35
+                </th>
+
+                <th>
+                    3-я пара<br>
+                    11:55–13:15
+                </th>
+
+                <th>
+                    4-я пара<br>
+                    13:25–14:45
+                </th>
+
+                <th>
+                    Причина / примечание
+                </th>
+
+            </tr>
+
+            </thead>
+
+            <tbody id="journalBody"></tbody>
+
+        </table>
 
     </div>
 
-    <div class="card">
-
-        <h2>💾 Резервная копия</h2>
-
-        <button
-            class="btn btn-primary"
-            onclick="exportData()"
-        >
-            📤 Экспорт
-        </button>
-
-        <button
-            class="btn btn-warning"
-            onclick="document.getElementById('importFile').click()"
-        >
-            📥 Импорт
-        </button>
-
-        <input
-            type="file"
-            id="importFile"
-            accept=".json"
-            style="display:none"
-            onchange="importData(event)"
-        >
-
-    </div>
+</div>
+```
 
 </section>
+<section id="duties" class="page">
 
+```
+<div class="card">
+
+    <h2>👮 Дежурства сегодня</h2>
+
+    <p>
+        Каждый день назначаются <b>2 человека</b>.
+        Следующая пара начинается после того,
+        как оба человека завершили или пропустили
+        своё дежурство.
+    </p>
+
+    <div id="todayDuties"></div>
+
+</div>
+
+<div class="card">
+
+    <h2>📋 Очередь дежурств</h2>
+
+    <div id="dutyQueue"></div>
+
+</div>
+
+<div class="card">
+
+    <h2>⚠️ Вне очереди</h2>
+
+    <div id="extraDuties"></div>
+
+</div>
+```
+
+</section>
+<section id="students" class="page">
+
+```
+<div class="card">
+
+    <h2>👥 Студенты</h2>
+
+    <div class="grid">
+
+        <div class="form-group">
+
+            <label>ФИО</label>
+
+            <input
+                type="text"
+                id="newStudentName"
+                placeholder="Введите ФИО"
+            >
+
+        </div>
+
+        <div>
+
+            <label>&nbsp;</label>
+
+            <button
+                class="btn btn-success"
+                onclick="addStudent()"
+            >
+                ➕ Добавить
+            </button>
+
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <div id="studentsList"></div>
+
+</div>
+```
+
+</section>
+<section id="statistics" class="page">
+
+```
+<div class="card">
+
+    <h2>📊 Статистика</h2>
+
+    <div class="grid">
+
+        <div class="stat">
+            <div class="stat-number" id="statTotal">0</div>
+            <div class="stat-label">
+                Всего отметок
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="statPresent">0</div>
+            <div class="stat-label">
+                Присутствие
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="statAbsent">0</div>
+            <div class="stat-label">
+                Отсутствия
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="statLate">0</div>
+            <div class="stat-label">
+                Опоздания
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="statCritical">0</div>
+            <div class="stat-label">
+                Опоздание >20 мин
+            </div>
+        </div>
+
+        <div class="stat">
+            <div class="stat-number" id="statToilet">0</div>
+            <div class="stat-label">
+                Выходы в туалет
+            </div>
+        </div>
+
+    </div>
+
+</div>
+
+<div class="card">
+
+    <h2>Статистика по студентам</h2>
+
+    <div class="table-wrap">
+
+        <table>
+
+            <thead>
+
+            <tr>
+
+                <th>№</th>
+                <th>ФИО</th>
+                <th>Присутствий</th>
+                <th>Отсутствий</th>
+                <th>Опозданий</th>
+                <th>>20 минут</th>
+                <th>Туалет</th>
+
+            </tr>
+
+            </thead>
+
+            <tbody id="statisticsBody"></tbody>
+
+        </table>
+
+    </div>
+
+</div>
+```
+
+</section>
+<section id="history" class="page">
+
+```
+<div class="card">
+
+    <h2>📜 История</h2>
+
+    <div id="historyList"></div>
+
+</div>
+```
+
+</section>
+<section id="notes" class="page">
+
+```
+<div class="card">
+
+    <h2>📝 Заметки</h2>
+
+    <div class="form-group">
+
+        <label>Новая заметка</label>
+
+        <textarea
+            id="newNoteText"
+            placeholder="Введите заметку..."
+        ></textarea>
+
+    </div>
+
+    <button
+        class="btn btn-primary"
+        onclick="addNote()"
+    >
+        Добавить заметку
+    </button>
+
+</div>
+
+<div class="card">
+
+    <div id="notesList"></div>
+
+</div>
+```
+
+</section>
+<section id="calendar" class="page">
+
+```
+<div class="card">
+
+    <h2>📅 Календарь</h2>
+
+    <div class="grid">
+
+        <button
+            class="btn"
+            onclick="changeMonth(-1)"
+        >
+            ← Предыдущий
+        </button>
+
+        <h3
+            id="calendarTitle"
+            style="text-align:center;"
+        ></h3>
+
+        <button
+            class="btn"
+            onclick="changeMonth(1)"
+        >
+            Следующий →
+        </button>
+
+    </div>
+
+    <div
+        class="calendar"
+        id="calendarGrid"
+    ></div>
+
+</div>
+
+<div class="card">
+
+    <h2>
+        🎂 Добавить день рождения / напоминание
+    </h2>
+
+    <div class="grid">
+
+        <div class="form-group">
+
+            <label>Дата</label>
+
+            <input
+                type="date"
+                id="reminderDate"
+            >
+
+        </div>
+
+        <div class="form-group">
+
+            <label>Текст</label>
+
+            <input
+                type="text"
+                id="reminderText"
+                placeholder="Например: День рождения Алихана"
+            >
+
+        </div>
+
+    </div>
+
+    <button
+        class="btn btn-primary"
+        onclick="addReminder()"
+    >
+        Добавить
+    </button>
+
+</div>
+
+<div class="card">
+
+    <h2>🔔 Напоминания</h2>
+
+    <div id="remindersList"></div>
+
+</div>
+```
+
+</section>
+<section id="settings" class="page">
+
+```
+<div class="card">
+
+    <h2>⚙️ Настройки</h2>
+
+    <div class="form-group">
+
+        <label>Название группы</label>
+
+        <input
+            id="settingGroupName"
+            placeholder="Например: Грей группа"
+        >
+
+        <small style="display:block;margin-top:6px;color:#607d8b;">
+            Название сохраняется в общей Supabase-базе и будет одинаковым на всех устройствах.
+        </small>
+
+    </div>
+
+    <div class="form-group">
+
+        <label>
+            Порог опоздания для дежурства вне очереди
+        </label>
+
+        <input
+            type="number"
+            id="settingLateLimit"
+            min="1"
+        >
+
+    </div>
+
+    <button
+        class="btn btn-success"
+        onclick="saveSettings()"
+    >
+        💾 Сохранить настройки
+    </button>
+
+</div>
+
+<div class="card">
+
+    <h2>☁️ Синхронизация</h2>
+
+    <p>
+        Данные всех групп хранятся в одной общей облачной базе.
+        Группа 1, Группа 2 и Группа 3 разделены внутри базы,
+        а изменения синхронизируются между всеми устройствами.
+    </p>
+
+    <button
+        class="btn btn-primary"
+        onclick="loadFromCloud()"
+    >
+        ☁️ Загрузить данные из облака
+    </button>
+
+    <button
+        class="btn btn-success"
+        onclick="saveToCloud(true)"
+    >
+        ☁️ Принудительно сохранить
+    </button>
+
+</div>
+
+<div class="card">
+
+    <h2>💾 Резервная копия</h2>
+
+    <button
+        class="btn btn-primary"
+        onclick="exportData()"
+    >
+        📤 Экспорт
+    </button>
+
+    <button
+        class="btn btn-warning"
+        onclick="document.getElementById('importFile').click()"
+    >
+        📥 Импорт
+    </button>
+
+    <input
+        type="file"
+        id="importFile"
+        accept=".json"
+        style="display:none"
+        onchange="importData(event)"
+    >
+
+</div>
+```
+
+</section>
 </main>
-
 <div id="toast" class="toast"></div>
-
-
 <script>
 
 /* =========================================================
@@ -1328,13 +1167,13 @@ const LESSONS = [
         id: 1,
         name: "1-я пара",
         start: "08:45",
-        end: "10:15"
+        end: "10:05"
     },
 
     {
         id: 2,
         name: "2-я пара",
-        start: "10:25",
+        start: "10:15",
         end: "11:35"
     },
 
@@ -1355,8 +1194,45 @@ const LESSONS = [
 ];
 
 
-const STORAGE_KEY =
-    "group3_journal_cloud_backup";
+const GROUPS = [
+    { id: "group3", name: "Группа 3" },
+    { id: "group4", name: "Группа 4" },
+    { id: "group5", name: "Группа 5" }
+];
+
+let selectedGroupId = "group3";
+
+function getSelectedGroup() {
+    return GROUPS.find(g => g.id === selectedGroupId) || GROUPS[0];
+}
+
+function getStorageKey() {
+    return "journal_" + selectedGroupId + "_backup";
+}
+
+function updateGroupSelector() {
+    const selector = document.getElementById("groupSelector");
+    if (!selector) return;
+
+    GROUPS.forEach(group => {
+        const option = selector.querySelector(`option[value="${group.id}"]`);
+        if (option) option.textContent = group.name;
+    });
+
+    selector.value = selectedGroupId;
+
+    const title = document.getElementById("journalTitle");
+    if (title) title.textContent = "📖 Электронный журнал — " + getSelectedGroup().name;
+}
+
+function setCurrentGroupName(name) {
+    const cleanName = String(name || "").trim() || "Группа";
+    const group = getSelectedGroup();
+    if (group) group.name = cleanName;
+    state.settings.groupName = cleanName;
+    updateGroupSelector();
+}
+
 
 
 /* =========================================================
@@ -1396,68 +1272,6 @@ let state = {
     }
 
 };
-
-let selectedGroupId = "group3";
-const GROUP_NAMES = { group1: "Группа 1", group2: "Группа 2", group3: "Группа 3" };
-
-function cloneState(value) {
-    return JSON.parse(JSON.stringify(value));
-}
-
-function makeEmptyGroup(name) {
-    return normalizeState({
-        students: [], attendance: {}, history: [], notes: [], reminders: [],
-        duties: { currentIndex: 0, dailyAssignments: {}, dailyStatus: {}, extra: [] },
-        settings: { groupName: name, lateLimit: 20 }
-    });
-}
-
-function normalizeGroups() {
-    if (!state.groups || typeof state.groups !== "object") {
-        const oldGroup = cloneState(state);
-        delete oldGroup.groups;
-        delete oldGroup.selectedGroupId;
-        state.groups = {
-            group1: makeEmptyGroup("Группа 1"),
-            group2: makeEmptyGroup("Группа 2"),
-            group3: oldGroup
-        };
-    }
-    Object.keys(GROUP_NAMES).forEach(id => {
-        if (!state.groups[id]) state.groups[id] = makeEmptyGroup(GROUP_NAMES[id]);
-        state.groups[id] = normalizeState(state.groups[id]);
-    });
-}
-
-function saveActiveGroup() {
-    normalizeGroups();
-    state.groups[selectedGroupId] = cloneState({
-        students: state.students, attendance: state.attendance, history: state.history,
-        notes: state.notes, reminders: state.reminders, duties: state.duties, settings: state.settings
-    });
-}
-
-function switchGroup(groupId) {
-    if (!GROUP_NAMES[groupId] || groupId === selectedGroupId) return;
-    saveActiveGroup();
-    selectedGroupId = groupId;
-    const target = normalizeState(cloneState(state.groups[groupId]));
-    state.students = target.students;
-    state.attendance = target.attendance;
-    state.history = target.history;
-    state.notes = target.notes;
-    state.reminders = target.reminders;
-    state.duties = target.duties;
-    state.settings = target.settings;
-    state.settings.groupName = GROUP_NAMES[groupId];
-    document.getElementById("groupSelector").value = groupId;
-    document.getElementById("appTitle").textContent = "📖 Электронный журнал — " + GROUP_NAMES[groupId];
-    ensureTodayDuty();
-    refreshAll();
-    saveActiveGroup();
-    saveLocalBackup();
-    saveToCloud(true);
-}
 
 
 let calendarDate = new Date();
@@ -1515,7 +1329,7 @@ const defaultStudents = [
 function uid(prefix = "id") {
 
     return prefix +
-        "_" +
+        "\_" +
         Date.now().toString(36) +
         Math.random()
             .toString(36)
@@ -1624,9 +1438,7 @@ function normalizeState(data) {
 
                         id: uid("student"),
 
-                        name: s,
-
-                        birthday: ""
+                        name: s
 
                     };
 
@@ -1640,9 +1452,7 @@ function normalizeState(data) {
 
                     name:
                         s.name ||
-                        `Студент ${index + 1}`,
-
-                    birthday: s.birthday || ""
+                        `Студент ${index + 1}`
 
                 };
 
@@ -1729,7 +1539,12 @@ function normalizeState(data) {
 
     data.settings.groupName =
         data.settings.groupName ||
-        "Группа 3";
+        (
+            GROUPS.find(
+                g => g.id === selectedGroupId
+            )?.name ||
+            "Группа"
+        );
 
 
     data.settings.lateLimit =
@@ -1779,7 +1594,6 @@ function normalizeDayRecord(record) {
                 2: createLessonRecord(),
 
                 3: createLessonRecord(),
-
                 4: createLessonRecord()
 
             },
@@ -2156,22 +1970,6 @@ function renderJournal() {
         ).value ||
         todayKey();
 
-
-    normalizeGroups();
-    selectedGroupId = state.selectedGroupId || "group3";
-    if (!state.groups[selectedGroupId]) selectedGroupId = "group3";
-    const initialActive = normalizeState(cloneState(state.groups[selectedGroupId]));
-    state.students = initialActive.students;
-    state.attendance = initialActive.attendance;
-    state.history = initialActive.history;
-    state.notes = initialActive.notes;
-    state.reminders = initialActive.reminders;
-    state.duties = initialActive.duties;
-    state.settings = initialActive.settings;
-    const selector = document.getElementById("groupSelector");
-    if (selector) selector.value = selectedGroupId;
-    const title = document.getElementById("appTitle");
-    if (title) title.textContent = "📖 Электронный журнал — " + GROUP_NAMES[selectedGroupId];
 
     document.getElementById(
         "journalDate"
@@ -2602,6 +2400,8 @@ async function setLessonStatus(
 
     );
 
+
+    updateGroupSelector();
 
     await saveToCloud();
 
@@ -3616,15 +3416,6 @@ async function deleteStudent(
    ПЕРЕИМЕНОВАТЬ
    ========================================================= */
 
-async function setStudentBirthday(studentId, birthday) {
-    const student = state.students.find(s => s.id === studentId);
-    if (!student) return;
-    student.birthday = birthday || "";
-    addHistory(todayKey(), "Изменён день рождения: " + student.name);
-    refreshAll();
-    saveToCloud();
-}
-
 async function renameStudent(
     id
 ) {
@@ -3686,64 +3477,7 @@ async function renameStudent(
    СТУДЕНТЫ
    ========================================================= */
 
-function openGroupStudents(groupId, button) {
-    switchGroup(groupId);
-    showPage("students-" + groupId.replace("group", "group"), button);
-    renderStudentsForGroup(groupId);
-}
-
-function addStudentToGroup(groupId) {
-    const input = document.getElementById("newStudentName" + groupId.charAt(0).toUpperCase() + groupId.slice(1));
-    const name = input ? input.value.trim() : "";
-    if (!name) return;
-
-    normalizeGroups();
-    const target = state.groups[groupId];
-    target.students.push({ id: crypto.randomUUID ? crypto.randomUUID() : (Date.now() + ""), name, birthday: "" });
-    saveActiveGroup();
-    state.groups[groupId] = normalizeState(target);
-    renderStudentsForGroup(groupId);
-    saveToCloud();
-    input.value = "";
-}
-
-function renderStudentsForGroup(groupId) {
-    normalizeGroups();
-    const target = groupId === selectedGroupId ? state : state.groups[groupId];
-    const container = document.getElementById("studentsList" + groupId.charAt(0).toUpperCase() + groupId.slice(1));
-    if (!container) return;
-    if (!target.students.length) {
-        container.innerHTML = `<div class="empty">В этой группе пока нет студентов</div>`;
-        return;
-    }
-    container.innerHTML = target.students.map((student, index) => `
-        <div class="student-card">
-            <h3>${index + 1}. ${escapeHtml(student.name)}</h3>
-            <div class="student-birthday-editor">
-                <label>🎂 День рождения</label>
-                <input type="date" value="${escapeHtml(student.birthday || "")}" onchange="setStudentBirthdayForGroup('${groupId}','${student.id}',this.value)">
-            </div>
-        </div>`).join("");
-}
-
-async function setStudentBirthdayForGroup(groupId, studentId, birthday) {
-    normalizeGroups();
-    const target = groupId === selectedGroupId ? state : state.groups[groupId];
-    const student = target.students.find(s => s.id === studentId);
-    if (!student) return;
-    student.birthday = birthday || "";
-    if (groupId === selectedGroupId) saveActiveGroup();
-    else state.groups[groupId] = normalizeState(target);
-    renderCalendar();
-    renderStudentsForGroup(groupId);
-    saveToCloud();
-}
-
 function renderStudents() {
-
-    renderStudentsForGroup("group1");
-    renderStudentsForGroup("group2");
-    renderStudentsForGroup("group3");
 
     const container =
         document.getElementById(
@@ -3897,11 +3631,6 @@ function renderStudents() {
 
                         </p>
 
-
-                        <div class="student-birthday-editor">
-                            <label>🎂 День рождения</label>
-                            <input type="date" value="${escapeHtml(student.birthday || "")}" onchange="setStudentBirthday('${student.id}', this.value)">
-                        </div>
 
                         <button
                             class="btn btn-primary"
@@ -4519,31 +4248,192 @@ function changeMonth(
    КАЛЕНДАРЬ
    ========================================================= */
 
-function renderBirthdayList() {
-    const container = document.getElementById("birthdayList");
-    if (!container) return;
-    normalizeGroups();
-    saveActiveGroup();
-    const month = calendarDate.getMonth() + 1;
-    const items = [];
-    Object.keys(GROUP_NAMES).forEach(groupId => {
-        const group = state.groups[groupId];
-        (group.students || []).forEach(student => {
-            if (!student.birthday) return;
-            const parts = String(student.birthday).split("-");
-            if (parts.length >= 3 && Number(parts[1]) === month) {
-                items.push({student, groupName: GROUP_NAMES[groupId], day: Number(parts[2])});
-            }
-        });
-    });
-    items.sort((a,b) => a.day - b.day || a.student.name.localeCompare(b.student.name));
-    container.innerHTML = `<h3>🎂 Дни рождения в этом месяце</h3>` + (items.length ? items.map(item => `
-        <div class="birthday-row">
-            <span>🎂 ${escapeHtml(item.student.name)} <span class="small">(${escapeHtml(item.groupName)})</span></span>
-            <span class="birthday-date">${String(item.day).padStart(2,"0")}.${String(month).padStart(2,"0")}</span>
-        </div>`).join("") : `<div class="empty">Дней рождения в этом месяце пока нет</div>`);
-}
+function renderCalendar() {
 
+    const grid =
+        document.getElementById(
+            "calendarGrid"
+        );
+
+
+    const title =
+        document.getElementById(
+            "calendarTitle"
+        );
+
+
+    const year =
+        calendarDate.getFullYear();
+
+
+    const month =
+        calendarDate.getMonth();
+
+
+    const monthName =
+        calendarDate.toLocaleDateString(
+            "ru-RU",
+            {
+                month: "long",
+                year: "numeric"
+            }
+        );
+
+
+    title.textContent =
+        monthName.charAt(0)
+            .toUpperCase()
+        +
+        monthName.slice(1);
+
+
+    const firstDay =
+        new Date(
+            year,
+            month,
+            1
+        );
+
+
+    let start =
+        firstDay.getDay();
+
+
+    start =
+        start === 0
+        ? 6
+        : start - 1;
+
+
+    const days =
+        new Date(
+            year,
+            month + 1,
+            0
+        ).getDate();
+
+
+    const weekNames = [
+
+        "Пн",
+
+        "Вт",
+
+        "Ср",
+
+        "Чт",
+
+        "Пт",
+
+        "Сб",
+
+        "Вс"
+
+    ];
+
+
+    let html =
+
+        weekNames.map(
+            d =>
+                `<div class="calendar-head">
+                    ${d}
+                 </div>`
+        ).join("");
+
+
+    for (
+        let i = 0;
+        i < start;
+        i++
+    ) {
+
+        html +=
+            `<div></div>`;
+
+    }
+
+
+    for (
+        let day = 1;
+        day <= days;
+        day++
+    ) {
+
+        const key =
+
+            `${year}-${
+                String(
+                    month + 1
+                ).padStart(
+                    2,
+                    "0"
+                )
+            }-${
+                String(day).padStart(
+                    2,
+                    "0"
+                )
+            }`;
+
+
+        const reminders =
+            state.reminders.filter(
+                r =>
+                    r.date === key
+            );
+
+
+        const today =
+            key === todayKey();
+
+
+        html += `
+
+            <div
+                class="calendar-day
+                    ${today ? "today" : ""}
+                    ${
+                        reminders.length
+                        ? "has-event"
+                        : ""
+                    }
+                "
+            >
+
+                <b>
+                    ${day}
+                </b>
+
+
+                ${
+                    reminders.map(
+                        r => `
+
+                            <div
+                                class="calendar-event"
+                            >
+                                🎂
+                                ${escapeHtml(
+                                    r.text
+                                )}
+                            </div>
+
+                        `
+                    ).join("")
+                }
+
+            </div>
+
+        `;
+
+    }
+
+
+    grid.innerHTML =
+        html;
+
+}
 
 
 /* =========================================================
@@ -4981,13 +4871,12 @@ function renderSettings() {
 
 async function saveSettings() {
 
-    state.settings.groupName =
-
+    setCurrentGroupName(
         document.getElementById(
             "settingGroupName"
         ).value.trim()
-
-        || "Группа 3";
+        || getSelectedGroup().name
+    );
 
 
     state.settings.lateLimit =
@@ -5170,7 +5059,7 @@ function saveLocalBackup() {
 
         localStorage.setItem(
 
-            STORAGE_KEY,
+            getStorageKey(),
 
             JSON.stringify(
                 state
@@ -5194,11 +5083,21 @@ function loadLocalBackup() {
 
     try {
 
-        const raw =
+        let raw =
             localStorage.getItem(
-                STORAGE_KEY
+                getStorageKey()
             );
 
+        // Совместимость со старой локальной копией Группы 3.
+        if (
+            !raw &&
+            selectedGroupId === "group3"
+        ) {
+            raw =
+                localStorage.getItem(
+                    "group3_journal_cloud_backup"
+                );
+        }
 
         if (!raw) {
 
@@ -5238,22 +5137,15 @@ async function saveToCloud(
     force = false
 ) {
 
-    saveActiveGroup();
-    state.selectedGroupId = selectedGroupId;
     saveLocalBackup();
 
-
     if (!supabaseClient) {
-
         updateSyncStatus(
             "💾 Локальный режим",
             false
         );
-
         return;
-
     }
-
 
     try {
 
@@ -5262,49 +5154,29 @@ async function saveToCloud(
             false
         );
 
-
         const payload = {
-
-            id: "main",
-
+            id: selectedGroupId,
             data: state,
-
             updated_at:
-                new Date()
-                    .toISOString()
-
+                new Date().toISOString()
         };
 
-
         const { error } =
-
             await supabaseClient
-
-                .from(
-                    "group3_journal"
-                )
-
+                .from("group3_journal")
                 .upsert(
                     payload,
-                    {
-                        onConflict:
-                            "id"
-                    }
+                    { onConflict: "id" }
                 );
 
-
         if (error) {
-
             throw error;
-
         }
-
 
         updateSyncStatus(
             "☁️ Синхронизировано",
             true
         );
-
 
     } catch (error) {
 
@@ -5313,14 +5185,11 @@ async function saveToCloud(
             error
         );
 
-
         updateSyncStatus(
             "⚠️ Ошибка синхронизации",
             false
         );
-
     }
-
 }
 
 
@@ -5331,16 +5200,12 @@ async function saveToCloud(
 async function loadFromCloud() {
 
     if (!supabaseClient) {
-
         updateSyncStatus(
             "💾 Локальный режим",
             false
         );
-
         return;
-
     }
-
 
     try {
 
@@ -5349,87 +5214,93 @@ async function loadFromCloud() {
             false
         );
 
-
-        const {
-            data,
-            error
-        } =
-
+        let { data, error } =
             await supabaseClient
-
-                .from(
-                    "group3_journal"
-                )
-
+                .from("group3_journal")
                 .select("*")
-
-                .eq(
-                    "id",
-                    "main"
-                )
-
+                .eq("id", selectedGroupId)
                 .maybeSingle();
 
-
         if (error) {
-
             throw error;
-
         }
 
-
+        // Старые данные группы 3 были сохранены как "main".
+        // Один раз переносим их в новую структуру "group3".
         if (
-            data &&
-            data.data
+            !data &&
+            selectedGroupId === "group3"
         ) {
+
+            const legacy =
+                await supabaseClient
+                    .from("group3_journal")
+                    .select("*")
+                    .eq("id", "main")
+                    .maybeSingle();
+
+            if (legacy.error) {
+                throw legacy.error;
+            }
+
+            if (legacy.data && legacy.data.data) {
+                state =
+                    normalizeState(
+                        legacy.data.data
+                    );
+
+                setCurrentGroupName(state.settings.groupName);
+                await saveToCloud(true);
+                saveLocalBackup();
+                refreshAll();
+
+                updateSyncStatus(
+                    "☁️ Онлайн",
+                    true
+                );
+
+                showToast(
+                    "Старые данные Группы 3 перенесены."
+                );
+
+                return;
+            }
+        }
+
+        if (data && data.data) {
 
             state =
                 normalizeState(
                     data.data
                 );
 
-            normalizeGroups();
-            selectedGroupId = state.selectedGroupId || "group3";
-            const active = normalizeState(cloneState(state.groups[selectedGroupId]));
-            state.students = active.students;
-            state.attendance = active.attendance;
-            state.history = active.history;
-            state.notes = active.notes;
-            state.reminders = active.reminders;
-            state.duties = active.duties;
-            state.settings = active.settings;
-
+            setCurrentGroupName(state.settings.groupName);
             saveLocalBackup();
-
-
             refreshAll();
-
 
             updateSyncStatus(
                 "☁️ Онлайн",
                 true
             );
-
 
         } else {
 
-            await saveToCloud(
-                true
-            );
+            state.settings.groupName =
+                GROUPS.find(
+                    g => g.id === selectedGroupId
+                )?.name || "Группа";
 
+            await saveToCloud(true);
 
             updateSyncStatus(
                 "☁️ Онлайн",
                 true
             );
 
-
             showToast(
-                "Создана первая запись в облаке."
+                "Создана запись новой группы в общей базе."
             );
-
         }
-
 
     } catch (error) {
 
@@ -5438,14 +5309,74 @@ async function loadFromCloud() {
             error
         );
 
-
         updateSyncStatus(
             "⚠️ Нет связи с облаком",
             false
         );
+    }
+}
 
+
+/* =========================================================
+   ПЕРЕКЛЮЧЕНИЕ ГРУПП
+   ========================================================= */
+
+async function switchGroup(groupId) {
+
+    if (
+        !GROUPS.some(
+            g => g.id === groupId
+        )
+    ) {
+        return;
     }
 
+    if (groupId === selectedGroupId) {
+        return;
+    }
+
+    selectedGroupId = groupId;
+
+    const group =
+        GROUPS.find(
+            g => g.id === selectedGroupId
+        );
+
+    if (!loadLocalBackup()) {
+
+        state = {
+            students: [],
+            attendance: {},
+            history: [],
+            notes: [],
+            reminders: [],
+            duties: {
+                currentIndex: 0,
+                dailyAssignments: {},
+                dailyStatus: {},
+                extra: []
+            },
+            settings: {
+                groupName: group.name,
+                lateLimit: 20
+            }
+        };
+
+        saveLocalBackup();
+    }
+
+    updateGroupSelector();
+
+    document.getElementById(
+        "journalDate"
+    ).value = todayKey();
+
+    refreshAll();
+
+    if (supabaseClient) {
+        await loadFromCloud();
+        startRealtime();
+    }
 }
 
 
@@ -5453,69 +5384,54 @@ async function loadFromCloud() {
    REALTIME
    ========================================================= */
 
+
 let realtimeChannel = null;
 
 
 function startRealtime() {
 
     if (!supabaseClient) {
-
         return;
-
     }
 
-
     if (realtimeChannel) {
-
         try {
-
             supabaseClient.removeChannel(
                 realtimeChannel
             );
-
         } catch (e) {
-
             console.warn(e);
-
         }
-
     }
 
-
     realtimeChannel =
-
         supabaseClient
-
             .channel(
-                "group3-journal-realtime"
+                "all-groups-journal-realtime"
             )
-
             .on(
-
                 "postgres_changes",
-
                 {
-
                     event: "*",
-
                     schema: "public",
-
-                    table:
-                        "group3_journal",
-
-                    filter:
-                        "id=eq.main"
-
+                    table: "group3_journal"
                 },
-
                 payload => {
 
+                    const incomingId =
+                        payload.new?.id;
+
+                    const isCurrentGroup =
+                        incomingId === selectedGroupId ||
+                        (
+                            selectedGroupId === "group3" &&
+                            incomingId === "main"
+                        );
+
                     if (
-
+                        isCurrentGroup &&
                         payload.new &&
-
                         payload.new.data
-
                     ) {
 
                         state =
@@ -5523,24 +5439,16 @@ function startRealtime() {
                                 payload.new.data
                             );
 
-
                         saveLocalBackup();
-
-
                         refreshAll();
-
 
                         updateSyncStatus(
                             "☁️ Онлайн",
                             true
                         );
-
                     }
-
                 }
-
             )
-
             .subscribe(
                 status => {
 
@@ -5549,37 +5457,26 @@ function startRealtime() {
                         status
                     );
 
-
                     if (
-                        status ===
-                        "SUBSCRIBED"
+                        status === "SUBSCRIBED"
                     ) {
-
                         updateSyncStatus(
                             "☁️ Онлайн",
                             true
                         );
-
                     }
 
-
                     if (
-                        status ===
-                        "CHANNEL_ERROR"
+                        status === "CHANNEL_ERROR"
                     ) {
-
                         updateSyncStatus(
                             "⚠️ Ошибка realtime",
                             false
                         );
-
                     }
-
                 }
             );
-
 }
-
 
 /* =========================================================
    НАВИГАЦИЯ
@@ -5751,30 +5648,41 @@ async function init() {
 
     if (!loadLocalBackup()) {
 
-        state.students =
+        if (
+            selectedGroupId === "group3"
+        ) {
 
-            defaultStudents.map(
-                name => ({
+            state.students =
+                defaultStudents.map(
+                    name => ({
+                        id:
+                            uid("student"),
+                        name
+                    })
+                );
 
-                    id:
-                        uid("student"),
+        } else {
 
-                    name
+            state.students = [];
 
-                })
-            );
+        }
 
+        state.settings.groupName =
+            GROUPS.find(
+                g => g.id === selectedGroupId
+            )?.name || "Группа";
 
         state =
             normalizeState(
                 state
             );
 
-
         saveLocalBackup();
 
     }
 
+
+    updateGroupSelector();
 
     document.getElementById(
         "journalDate"
@@ -5835,6 +5743,5 @@ async function init() {
 init();
 
 </script>
-
 </body>
 </html>
