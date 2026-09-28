@@ -465,7 +465,7 @@ tbody tr:nth-child(even) {
 
 .login-screen{position:fixed;inset:0;background:linear-gradient(135deg,#263746,#455a64);z-index:9000;display:flex;align-items:center;justify-content:center;padding:20px}
 .login-card{width:min(460px,100%);background:#fff;border-radius:18px;padding:30px;box-shadow:0 20px 60px rgba(0,0,0,.3)}
-.login-card h2{margin-top:0}.login-logo{font-size:42px;text-align:center}.hidden{display:none!important}
+.login-card h2{margin-top:0;text-align:center}.login-logo{font-size:42px;text-align:center}.hidden{display:none!important}
 .user-bar{display:flex;align-items:center;gap:10px;flex-wrap:wrap}.user-info{font-size:13px}
 .role-badge{padding:5px 9px;border-radius:12px;background:#e3f2fd;color:#1565c0;font-size:12px;font-weight:bold}
 .modal-backdrop{position:fixed;inset:0;background:rgba(0,0,0,.62);z-index:8000;display:none;align-items:center;justify-content:center;padding:20px}
@@ -540,12 +540,9 @@ tbody tr:nth-child(even) {
   <div class="login-card">
     <div class="login-logo">📖</div>
     <h2>Электронный журнал колледжа</h2>
-    <p class="small">Вход выполняется по ФИО. Email вводить не нужно.</p>
-    <div class="form-group"><label>ФИО / имя администратора</label><input id="loginName" autocomplete="username" placeholder="Введите ФИО"></div>
-    <div class="form-group"><label>Пароль</label><input id="loginPassword" type="password" autocomplete="current-password" value="1234567890"></div>
-    <button class="btn btn-primary" style="width:100%;margin:0" onclick="login()">🔐 Войти</button>
+    <p class="small" style="text-align:center">Общий вход в журнал. Все пользователи входят с правами администратора.</p>
+    <button class="btn btn-primary" style="width:100%;margin:0;margin-top:10px;font-size:16px;padding:13px" onclick="login()">🚀 Войти в журнал</button>
     <div id="loginError" class="alert hidden" style="margin-top:12px"></div>
-    <p class="small" style="margin-bottom:0">Первичный пароль для созданных аккаунтов: <b>1234567890</b>. После входа пароль можно изменить.</p>
   </div>
 </div>
 
@@ -1101,19 +1098,8 @@ tbody tr:nth-child(even) {
 <section id="profile" class="page">
   <div class="card"><h2>👤 Профиль</h2><div id="profileInfo"></div></div>
   <div class="card">
-    <h3>🔑 Сменить пароль</h3>
-    <div class="grid">
-      <div class="form-group"><label>Текущий пароль</label><input type="password" id="oldPassword"></div>
-      <div class="form-group"><label>Новый пароль</label><input type="password" id="newPassword"></div>
-      <div class="form-group"><label>Повтор нового пароля</label><input type="password" id="newPassword2"></div>
-    </div>
-    <button class="btn btn-primary" onclick="changePassword()">🔑 Сменить пароль</button>
-  </div>
-  <div id="adminPanel" class="card hidden">
-    <h3>🛡️ Администрирование пользователей</h3>
-    <p class="small">Администратор может сбросить пароль любого аккаунта на 1234567890 или задать новый пароль.</p>
-    <div class="grid"><div class="form-group"><label>Пользователь</label><select id="adminUser"></select></div><div class="form-group"><label>Новый пароль</label><input id="adminNewPassword" placeholder="Оставьте пустым для 1234567890"></div></div>
-    <button class="btn btn-warning" onclick="adminResetPassword()">🔄 Сбросить пароль</button>
+    <h3>🛡️ Доступ</h3>
+    <p>Все пользователи этого журнала автоматически входят как <b>Администратор</b>. Отдельные аккаунты, пароли и роли отключены.</p>
   </div>
 </section>
 
@@ -5809,7 +5795,6 @@ async function init() {
    ========================================================= */
 
 const DEFAULT_ADMIN_NAME = "Администратор";
-const DEFAULT_TEACHER_NAME = "Преподаватель";
 let currentUser = null;
 let currentProfile = null;
 let currentGroupId = null;
@@ -5820,92 +5805,71 @@ let overrideCache = [];
 let holidaysCache = [];
 let gradesCache = [];
 let eventsCache = [];
-let authBootstrapped = false;
 let newRealtimeChannel = null;
 
-function isAdmin(){ return ["admin"].includes(currentProfile?.role); }
-function isTeacher(){ return ["teacher","admin","group_leader"].includes(currentProfile?.role); }
-function canEdit(){ return isTeacher(); }
+function isAdmin(){ return true; }
+function isTeacher(){ return true; }
+function canEdit(){ return true; }
 function selectedGroup(){
-  if(!currentProfile) return null;
-  if(["student","group_leader"].includes(currentProfile.role)) return currentProfile.group_id || null;
-  return currentGroupId || null;
+  return currentGroupId || groupsByCode.G3?.id || Object.values(groupsById)[0]?.id || null;
 }
 function groupNameById(id){ return groupsById[id]?.name || "Группа"; }
 function localDateISO(d=new Date()){ return d.toLocaleDateString("en-CA"); }
-function roleLabel(r){ return ROLE_LABELS[r] || r || ""; }
-async function syntheticEmail(name){
-  const normalized=name.trim().replace(/\s+/g," ").toLowerCase();
-  const bytes=new TextEncoder().encode(normalized);
-  const hash=await crypto.subtle.digest("SHA-256",bytes);
-  const hex=Array.from(new Uint8Array(hash)).map(b=>b.toString(16).padStart(2,"0")).join("");
-  return "u_"+hex.slice(0,32)+"@college.local";
-}
+function roleLabel(r){ return "Администратор"; }
 
 function showLoginError(message){
   const e=document.getElementById("loginError"); e.textContent=message; e.classList.remove("hidden");
 }
 function clearLoginError(){ document.getElementById("loginError")?.classList.add("hidden"); }
 
-async function ensureInitialSeed(){
-  if(!supabaseClient || authBootstrapped) return;
-  try{
-    const {data,error}=await supabaseClient.functions.invoke("bootstrap-users",{body:{}});
-    if(error) console.warn("bootstrap-users:",error);
-    else if(data?.created) showToast("Созданы начальные аккаунты. Пароль: 1234567890");
-    authBootstrapped=true;
-  }catch(e){ console.warn(e); }
-}
-
 async function login(){
   clearLoginError();
-  const name=document.getElementById("loginName").value.trim();
-  const password=document.getElementById("loginPassword").value;
-  if(!name || !password){ showLoginError("Введите ФИО и пароль."); return; }
-  if(!supabaseClient){ showLoginError("Supabase не подключён."); return; }
+  currentUser = { id: "public-admin", role: "admin" };
+  currentProfile = {
+    id: "public-admin",
+    full_name: DEFAULT_ADMIN_NAME,
+    role: "admin",
+    group_id: null,
+    must_change_password: false
+  };
   try{
-    await ensureInitialSeed();
-    const email=await syntheticEmail(name);
-    const {data,error}=await supabaseClient.auth.signInWithPassword({email,password});
-    if(error) throw new Error(error.message || "Ошибка входа");
-    currentUser=data.user;
-    await loadProfile();
+    if(supabaseClient) await loadGroups();
+    currentGroupId = groupsByCode.G3?.id || Object.values(groupsById)[0]?.id || null;
+    currentProfile.group_id = currentGroupId;
     document.getElementById("loginScreen").classList.add("hidden");
     updateHeaderUser();
-    await loadGroups();
-    await loadGroupData();
-    await loadNewCloudData();
-    startNewRealtime();
-    if(currentProfile.must_change_password){
-      showPage("profile",document.querySelector('nav button[onclick*="profile"]'));
-      showToast("Сначала смените стандартный пароль 1234567890.");
+    if(supabaseClient){
+      await loadGroupData();
+      await loadNewCloudData();
+      startNewRealtime();
     }
     refreshAll();
+    updateSyncStatus(supabaseClient ? "☁️ Облако подключено" : "💾 Локальный режим", !!supabaseClient);
   }catch(e){
-    console.error("LOGIN ERROR:",e);
-    const msg=String(e?.message || e || "Неизвестная ошибка");
-    if(/invalid login credentials/i.test(msg)){
-      showLoginError("Неверное ФИО или пароль. Проверьте написание ФИО и убедитесь, что bootstrap-users развёрнут в Supabase.");
-    }else if(/email not confirmed/i.test(msg)){
-      showLoginError("Аккаунт найден, но не подтверждён. Запустите bootstrap-users ещё раз.");
-    }else{
-      showLoginError("Ошибка входа: " + msg);
-    }
+    console.error("LOGIN/LOAD ERROR:",e);
+    document.getElementById("loginScreen").classList.add("hidden");
+    refreshAll();
+    updateSyncStatus("⚠️ Локальный режим", false);
+    showToast("Журнал открыт. Облачные данные временно недоступны.");
   }
 }
 
-async function logout(){
-  if(supabaseClient) await supabaseClient.auth.signOut();
-  currentUser=null; currentProfile=null; currentGroupId=null;
+function logout(){
+  currentUser=null;
+  currentProfile=null;
+  currentGroupId=null;
   document.getElementById("loginScreen").classList.remove("hidden");
-  document.getElementById("loginPassword").value="1234567890";
-}
+} 
 
 async function loadProfile(){
-  const {data,error}=await supabaseClient.from("profiles").select("*").eq("id",currentUser.id).single();
-  if(error) throw error;
-  currentProfile=data;
-  currentGroupId=data.group_id || null;
+  // Аккаунты отключены: профиль всегда административный.
+  currentProfile = {
+    id: "public-admin",
+    full_name: DEFAULT_ADMIN_NAME,
+    role: "admin",
+    group_id: currentGroupId,
+    must_change_password: false
+  };
 }
 
 async function loadGroups(){
@@ -5913,6 +5877,8 @@ async function loadGroups(){
   if(error) throw error;
   groupsById={}; groupsByCode={};
   (data||[]).forEach(g=>{groupsById[g.id]=g;groupsByCode[g.code]=g;});
+  currentGroupId = groupsByCode.G3?.id || currentGroupId || Object.values(groupsById)[0]?.id || null;
+  if(currentProfile) currentProfile.group_id = currentGroupId;
   renderGroupSelects();
 }
 function renderGroupSelects(){
@@ -6112,46 +6078,12 @@ function closeEmergency(){document.getElementById("emergencyOverlay").classList.
 function showModal(html){document.getElementById("modalContent").innerHTML=html;document.getElementById("modal").classList.add("show");}
 function closeModal(){document.getElementById("modal").classList.remove("show");}
 
-async function changePassword(){
-  const oldP=document.getElementById("oldPassword").value,newP=document.getElementById("newPassword").value,newP2=document.getElementById("newPassword2").value;
-  if(!newP||newP!==newP2||newP.length<4){showToast("Новый пароль должен совпадать и содержать минимум 4 символа.");return;}
-  try{
-    const email=await syntheticEmail(currentProfile.full_name);
-    const {error:re}=await supabaseClient.auth.signInWithPassword({email,password:oldP});
-    if(re)throw new Error("Неверный текущий пароль.");
-    const {error}=await supabaseClient.auth.updateUser({password:newP});
-    if(error)throw error;
-    await supabaseClient.from("profiles").update({must_change_password:false}).eq("id",currentUser.id);
-    currentProfile.must_change_password=false;
-    document.getElementById("oldPassword").value=document.getElementById("newPassword").value=document.getElementById("newPassword2").value="";
-    showToast("Пароль изменён.");
-  }catch(e){showToast(e.message||"Ошибка смены пароля.");}
-}
-async function loadAdminUsers(){
-  if(!isAdmin())return;
-  const {data,error}=await supabaseClient.from("profiles").select("id,full_name,role,group_id").order("full_name");
-  if(error){console.warn(error);return;}
-  const sel=document.getElementById("adminUser"); if(!sel)return;
-  sel.innerHTML=(data||[]).map(u=>`<option value="${u.id}">${escapeHtml(u.full_name)} — ${roleLabel(u.role)}</option>`).join("");
-}
-async function adminResetPassword(){
-  if(!isAdmin())return;
-  const userId=document.getElementById("adminUser").value;
-  const password=document.getElementById("adminNewPassword").value||"1234567890";
-  if(password.length<4){showToast("Пароль слишком короткий.");return;}
-  const {data,error}=await supabaseClient.functions.invoke("admin-reset-password",{body:{user_id:userId,password}});
-  if(error){showToast("Ошибка сброса: "+error.message);return;}
-  document.getElementById("adminNewPassword").value="";
-  showToast(data?.message||"Пароль сброшен.");
-}
 function updateHeaderUser(){
   const bar=document.getElementById("currentUserBar");
-  if(bar&&currentProfile)bar.innerHTML=`<span class="role-badge">${escapeHtml(roleLabel(currentProfile.role))}</span><b>${escapeHtml(currentProfile.full_name)}</b><span class="pill">${escapeHtml(groupNameById(currentProfile.group_id))}</span><button class="btn btn-light" onclick="logout()">Выйти</button>`;
+  if(bar) bar.innerHTML=`<span class="role-badge">Администратор</span><b>${escapeHtml(DEFAULT_ADMIN_NAME)}</b><span class="pill">${escapeHtml(groupNameById(selectedGroup()))}</span>`;
   document.getElementById("appTitle").textContent=`📖 Электронный журнал — ${groupNameById(selectedGroup())}`;
   const p=document.getElementById("profileInfo");
-  if(p&&currentProfile)p.innerHTML=`<p><b>ФИО:</b> ${escapeHtml(currentProfile.full_name)}</p><p><b>Роль:</b> ${escapeHtml(roleLabel(currentProfile.role))}</p><p><b>Группа:</b> ${escapeHtml(groupNameById(currentProfile.group_id)||"Все группы")}</p>`;
-  const panel=document.getElementById("adminPanel"); if(panel)panel.classList.toggle("hidden",!isAdmin());
-  if(isAdmin())loadAdminUsers();
+  if(p)p.innerHTML=`<p><b>Пользователь:</b> ${escapeHtml(DEFAULT_ADMIN_NAME)}</p><p><b>Доступ:</b> Администратор</p><p><b>Режим:</b> общий вход без аккаунтов и паролей</p>`;
 }
 function renderNewCloudPanels(){renderSchedule();renderGrades();renderEvents();updateHeaderUser();}
 
@@ -6252,16 +6184,9 @@ async function init(){
   document.getElementById("scheduleDate").value=todayKey();
   document.getElementById("overrideDate").value=todayKey();
   document.getElementById("gradeDate").value=todayKey();
-  updateSyncStatus("🔐 Выполните вход",false);
-  await ensureInitialSeed();
-  const {data}=await supabaseClient.auth.getSession();
-  if(data?.session?.user){
-    currentUser=data.session.user;
-    try{
-      await loadProfile();document.getElementById("loginScreen").classList.add("hidden");
-      await loadGroups();await loadGroupData();await loadNewCloudData();startNewRealtime();updateHeaderUser();refreshAll();
-    }catch(e){console.error(e);await logout();}
-  }
+  updateSyncStatus("🔐 Нажмите «Войти в журнал»",false);
+  // Никакой авторизации Supabase здесь больше нет.
+  // Один общий вход выдаёт права администратора.
 }
 init();
 </script>
